@@ -22,8 +22,19 @@ export async function api(path, options = {}) {
   if (token) headers.authorization = `Bearer ${token}`;
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  if (!res.ok) throw new Error(readApiError(data, res.status));
   return data;
+}
+
+function readApiError(data, status) {
+  if (data && data.details && Array.isArray(data.details.fields) && data.details.fields[0]) {
+    return data.details.fields[0].message || data.error || `Request failed (${status})`;
+  }
+  if (data && data.details && data.details.fieldErrors) {
+    const first = Object.values(data.details.fieldErrors).flat().find(Boolean);
+    if (first) return first;
+  }
+  return (data && data.error) || `Request failed (${status})`;
 }
 
 export async function login(email, password, role) {

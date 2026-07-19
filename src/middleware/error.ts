@@ -8,7 +8,11 @@ export const notFound = () => {
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (err instanceof ZodError) {
-    res.status(422).json({ error: "Validation failed", details: err.flatten() });
+    const fields = err.issues.map((issue) => ({
+      field: issue.path.filter((part) => part !== "body").join("."),
+      message: issue.message
+    }));
+    res.status(422).json({ error: fields[0]?.message || "Validation failed", details: { fields } });
     return;
   }
   if (err && typeof err === "object" && "code" in err && String((err as { code?: unknown }).code).startsWith("P")) {
