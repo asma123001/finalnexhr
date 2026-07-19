@@ -632,7 +632,7 @@
             <div style="width:72px;height:72px;flex-shrink:0;">
               <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="new-org-logo" shape="rounded" radius="14" placeholder="Logo" hint-size="72px,72px"></x-import>
             </div>
-            <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Organization / Company name</div><input value="{{ formOrgName }}" onChange="{{ onFormOrgNameChange }}" placeholder="Acme Corp" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Organization / Company name</div><input value="{{ formOrgName }}" onChange="{{ onFormOrgNameChange }}" placeholder="Acme Corp" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgNameBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgNameError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgNameError }}</div></sc-if></div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;">
             <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Industry</div>
@@ -647,11 +647,11 @@
                 <option value="Starter">Starter</option><option value="Growth">Growth</option><option value="Enterprise">Enterprise</option>
               </select>
             </div>
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Admin user ID</div><input value="{{ formOrgUserId }}" onChange="{{ onFormOrgUserIdChange }}" placeholder="acme-admin" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Admin password</div><input type="password" value="{{ formOrgUserPass }}" onChange="{{ onFormOrgUserPassChange }}" placeholder="••••••••" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Company email</div><input value="{{ formOrgEmail }}" onChange="{{ onFormOrgEmailChange }}" placeholder="admin@acme.com" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Admin user ID</div><input value="{{ formOrgUserId }}" onChange="{{ onFormOrgUserIdChange }}" placeholder="admin@acme.com" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgUserIdBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgUserIdError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgUserIdError }}</div></sc-if></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Admin password</div><input type="password" value="{{ formOrgUserPass }}" onChange="{{ onFormOrgUserPassChange }}" placeholder="••••••••" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgUserPassBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgUserPassError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgUserPassError }}</div></sc-if></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Company email</div><input value="{{ formOrgEmail }}" onChange="{{ onFormOrgEmailChange }}" placeholder="admin@acme.com" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgEmailBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgEmailError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgEmailError }}</div></sc-if></div>
             <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Phone number</div><input value="{{ formOrgPhone }}" onChange="{{ onFormOrgPhoneChange }}" placeholder="+1 415 555 0100" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
-            <div style="grid-column:1/3;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Website</div><input value="{{ formOrgWebsite }}" onChange="{{ onFormOrgWebsiteChange }}" placeholder="https://acme.com" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div style="grid-column:1/3;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Website</div><input value="{{ formOrgWebsite }}" onChange="{{ onFormOrgWebsiteChange }}" placeholder="https://acme.com" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgWebsiteBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgWebsiteError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgWebsiteError }}</div></sc-if></div>
             <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Country</div><input value="{{ formOrgCountry }}" onChange="{{ onFormOrgCountryChange }}" placeholder="United States" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
             <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">City</div><input value="{{ formOrgCity }}" onChange="{{ onFormOrgCityChange }}" placeholder="San Francisco" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
             <div style="grid-column:1/3;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Address</div><input value="{{ formOrgAddress }}" onChange="{{ onFormOrgAddressChange }}" placeholder="Street address" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
@@ -780,7 +780,7 @@ class Component extends DCLogic {
     saOverviewLayout: 'classic', userSearch: '', userRoleFilter: 'All',
     formOrgName: '', formOrgEmail: '', formOrgPlan: 'Starter', formOrgIndustry: 'Technology',
     formOrgUserId: '', formOrgUserPass: '', formOrgPhone: '', formOrgWebsite: '', formOrgCountry: '', formOrgCity: '', formOrgAddress: '',
-    formOrgTimezone: 'GMT-8 Pacific', formOrgCurrency: 'USD', formOrgDateFormat: 'MM/DD/YYYY', editingOrgId: null,
+    formOrgTimezone: 'GMT-8 Pacific', formOrgCurrency: 'USD', formOrgDateFormat: 'MM/DD/YYYY', editingOrgId: null, formOrgErrors: {},
     formPlanName: '', formPlanPrice: '', formPlanSeats: '',
     editingOrgAdminId: null, formAdminName: '', formAdminEmail: '', formAdminRole: 'HR Admin',
     biometricEnabled: true, auditSearch: '', auditRoleFilter: 'All', ticketStatusFilter: 'All',
@@ -830,7 +830,7 @@ class Component extends DCLogic {
   onGlobalSearchChange(e) { this.setState({ globalSearch: e.target.value }); }
 
   openModal(type) { this.setState({ modal: type }); }
-  closeModal() { this.setState({ modal: null, confirmPayload: null, formOrgName: '', formOrgEmail: '' }); }
+  closeModal() { this.setState({ modal: null, confirmPayload: null, formOrgName: '', formOrgEmail: '', formOrgErrors: {} }); }
   askConfirm(title, message, label, onConfirm) { this.setState({ modal: 'confirm', confirmPayload: { title, message, label, onConfirm } }); }
   confirmAction() { const p = this.state.confirmPayload; if (p && p.onConfirm) p.onConfirm(); this.closeModal(); }
 
@@ -838,38 +838,54 @@ class Component extends DCLogic {
   onOrgSearchChange(e) { this.setState({ orgSearch: e.target.value }); }
   setOrgFilter(f) { this.setState({ orgFilter: f }); }
   openAddOrg() {
-    this.setState({ modal: 'addOrg', editingOrgId: null, formOrgName: '', formOrgEmail: '', formOrgPlan: 'Starter', formOrgIndustry: 'Technology',
+    this.setState({ modal: 'addOrg', editingOrgId: null, formOrgName: '', formOrgEmail: '', formOrgPlan: 'Starter', formOrgIndustry: 'Technology', formOrgErrors: {},
       formOrgUserId: '', formOrgUserPass: '', formOrgPhone: '', formOrgWebsite: '', formOrgCountry: '', formOrgCity: '', formOrgAddress: '',
       formOrgTimezone: 'GMT-8 Pacific', formOrgCurrency: 'USD', formOrgDateFormat: 'MM/DD/YYYY' });
   }
   openEditOrg(o) {
-    this.setState({ modal: 'addOrg', editingOrgId: o.id, formOrgName: o.name, formOrgEmail: o.email, formOrgPlan: o.plan, formOrgIndustry: o.industry,
+    this.setState({ modal: 'addOrg', editingOrgId: o.id, formOrgName: o.name, formOrgEmail: o.email, formOrgPlan: o.plan, formOrgIndustry: o.industry, formOrgErrors: {},
       formOrgUserId: o.userId || '', formOrgUserPass: '', formOrgPhone: o.phone || '', formOrgWebsite: o.website || '', formOrgCountry: o.country || '', formOrgCity: o.city || '', formOrgAddress: o.address || '',
       formOrgTimezone: o.timezone || 'GMT-8 Pacific', formOrgCurrency: o.currency || 'USD', formOrgDateFormat: o.dateFormat || 'MM/DD/YYYY' });
   }
-  onFormOrgNameChange(e) { this.setState({ formOrgName: e.target.value }); }
-  onFormOrgEmailChange(e) { this.setState({ formOrgEmail: e.target.value }); }
+  clearOrgFieldError(field) { this.setState(s => ({ formOrgErrors: { ...s.formOrgErrors, [field]: '' } })); }
+  onFormOrgNameChange(e) { this.clearOrgFieldError('name'); this.setState({ formOrgName: e.target.value }); }
+  onFormOrgEmailChange(e) { this.clearOrgFieldError('email'); this.setState({ formOrgEmail: e.target.value }); }
   onFormOrgPlanChange(e) { this.setState({ formOrgPlan: e.target.value }); }
   onFormOrgIndustryChange(e) { this.setState({ formOrgIndustry: e.target.value }); }
-  onFormOrgUserIdChange(e) { this.setState({ formOrgUserId: e.target.value }); }
-  onFormOrgUserPassChange(e) { this.setState({ formOrgUserPass: e.target.value }); }
+  onFormOrgUserIdChange(e) { this.clearOrgFieldError('userId'); this.setState({ formOrgUserId: e.target.value }); }
+  onFormOrgUserPassChange(e) { this.clearOrgFieldError('password'); this.setState({ formOrgUserPass: e.target.value }); }
   onFormOrgPhoneChange(e) { this.setState({ formOrgPhone: e.target.value }); }
-  onFormOrgWebsiteChange(e) { this.setState({ formOrgWebsite: e.target.value }); }
+  onFormOrgWebsiteChange(e) { this.clearOrgFieldError('website'); this.setState({ formOrgWebsite: e.target.value }); }
   onFormOrgCountryChange(e) { this.setState({ formOrgCountry: e.target.value }); }
   onFormOrgCityChange(e) { this.setState({ formOrgCity: e.target.value }); }
   onFormOrgAddressChange(e) { this.setState({ formOrgAddress: e.target.value }); }
   onFormOrgTimezoneChange(e) { this.setState({ formOrgTimezone: e.target.value }); }
   onFormOrgCurrencyChange(e) { this.setState({ formOrgCurrency: e.target.value }); }
   onFormOrgDateFormatChange(e) { this.setState({ formOrgDateFormat: e.target.value }); }
+  validateOrgForm(fields, password) {
+    const errors = {};
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!fields.name || fields.name.length < 2) errors.name = 'Organization name must be at least 2 characters.';
+    if (!fields.userId || !emailPattern.test(fields.userId.trim())) errors.userId = 'Admin user ID must be a valid email address.';
+    if (!password || password.length < 8) errors.password = 'Admin password must be at least 8 characters.';
+    if (!fields.email || !emailPattern.test(fields.email.trim())) errors.email = 'Company email must be a valid email address.';
+    if (fields.website && !/^(https?:\/\/)?[^\s]+\.[^\s]+$/.test(fields.website.trim())) errors.website = 'Website must be a valid domain, like example.com.';
+    return errors;
+  }
   async submitAddOrg() {
     const s = this.state;
-    const fields = { name: s.formOrgName.trim() || 'New Organization', industry: s.formOrgIndustry, plan: s.formOrgPlan, email: s.formOrgEmail.trim() || 'admin@example.com',
-      userId: s.formOrgUserId, phone: s.formOrgPhone, website: s.formOrgWebsite, country: s.formOrgCountry, city: s.formOrgCity, address: s.formOrgAddress,
+    const fields = { name: s.formOrgName.trim(), industry: s.formOrgIndustry, plan: s.formOrgPlan, email: s.formOrgEmail.trim(),
+      userId: s.formOrgUserId.trim(), phone: s.formOrgPhone, website: s.formOrgWebsite, country: s.formOrgCountry, city: s.formOrgCity, address: s.formOrgAddress,
       timezone: s.formOrgTimezone, currency: s.formOrgCurrency, dateFormat: s.formOrgDateFormat };
     if (s.editingOrgId) {
       this.setState(st => ({ data: { ...st.data, orgs: st.data.orgs.map(o => o.id === s.editingOrgId ? { ...o, ...fields } : o) } }));
       this.showToast('Organization updated', '#0f9d58');
     } else {
+      const formOrgErrors = this.validateOrgForm(fields, s.formOrgUserPass);
+      if (Object.keys(formOrgErrors).length) {
+        this.setState({ formOrgErrors });
+        return;
+      }
       try {
         const adminLoginEmail = (fields.userId || fields.email).trim();
         const result = await this.api.api('/platform/organizations', { method: 'POST', body: JSON.stringify({ name: fields.name, adminEmail: adminLoginEmail, companyEmail: fields.email, adminName: `${fields.name} Admin`, adminPassword: s.formOrgUserPass || undefined, packageName: fields.plan, industry: fields.industry }) });
@@ -878,6 +894,15 @@ class Component extends DCLogic {
         this.setState(st => ({ data: { ...st.data, orgs: [newOrg, ...st.data.orgs] } }));
         this.showToast('Organization and admin credentials created', '#0f9d58');
       } catch (err) {
+        const message = err.message || 'Organization could not be created';
+        if (/admin user id|adminemail|email.*already/i.test(message)) {
+          this.setState({ formOrgErrors: { userId: message } });
+          return;
+        }
+        if (/company email/i.test(message)) {
+          this.setState({ formOrgErrors: { email: message } });
+          return;
+        }
         this.showToast(err.message || 'Organization could not be created', '#dc2626');
         return;
       }
@@ -1212,6 +1237,11 @@ class Component extends DCLogic {
       formOrgUserId: s.formOrgUserId, formOrgUserPass: s.formOrgUserPass, formOrgPhone: s.formOrgPhone, formOrgWebsite: s.formOrgWebsite,
       formOrgCountry: s.formOrgCountry, formOrgCity: s.formOrgCity, formOrgAddress: s.formOrgAddress,
       formOrgTimezone: s.formOrgTimezone, formOrgCurrency: s.formOrgCurrency, formOrgDateFormat: s.formOrgDateFormat,
+      formOrgNameError: s.formOrgErrors.name || '', formOrgUserIdError: s.formOrgErrors.userId || '', formOrgUserPassError: s.formOrgErrors.password || '',
+      formOrgEmailError: s.formOrgErrors.email || '', formOrgWebsiteError: s.formOrgErrors.website || '',
+      formOrgNameBorder: s.formOrgErrors.name ? '#dc2626' : '#e7e9f2', formOrgUserIdBorder: s.formOrgErrors.userId ? '#dc2626' : '#e7e9f2',
+      formOrgUserPassBorder: s.formOrgErrors.password ? '#dc2626' : '#e7e9f2', formOrgEmailBorder: s.formOrgErrors.email ? '#dc2626' : '#e7e9f2',
+      formOrgWebsiteBorder: s.formOrgErrors.website ? '#dc2626' : '#e7e9f2',
       onFormOrgNameChange: (e) => this.onFormOrgNameChange(e), onFormOrgEmailChange: (e) => this.onFormOrgEmailChange(e), onFormOrgPlanChange: (e) => this.onFormOrgPlanChange(e), submitAddOrg: () => this.submitAddOrg(),
       onFormOrgIndustryChange: (e) => this.onFormOrgIndustryChange(e), onFormOrgUserIdChange: (e) => this.onFormOrgUserIdChange(e), onFormOrgUserPassChange: (e) => this.onFormOrgUserPassChange(e),
       onFormOrgPhoneChange: (e) => this.onFormOrgPhoneChange(e), onFormOrgWebsiteChange: (e) => this.onFormOrgWebsiteChange(e), onFormOrgCountryChange: (e) => this.onFormOrgCountryChange(e),
