@@ -871,7 +871,8 @@ class Component extends DCLogic {
       this.showToast('Organization updated', '#0f9d58');
     } else {
       try {
-        const result = await this.api.api('/platform/organizations', { method: 'POST', body: JSON.stringify({ name: fields.name, adminEmail: fields.email, adminName: fields.userId || 'Organization Admin', adminPassword: s.formOrgUserPass || undefined, packageName: fields.plan, industry: fields.industry }) });
+        const adminLoginEmail = (fields.userId || fields.email).trim();
+        const result = await this.api.api('/platform/organizations', { method: 'POST', body: JSON.stringify({ name: fields.name, adminEmail: adminLoginEmail, companyEmail: fields.email, adminName: `${fields.name} Admin`, adminPassword: s.formOrgUserPass || undefined, packageName: fields.plan, industry: fields.industry }) });
         const createdOrg = result.organization || {};
         const newOrg = { id: createdOrg.id || 'org' + Date.now(), ...fields, status: createdOrg.status === 'PENDING' ? 'Pending' : 'Active', employees: 0, joined: createdOrg.createdAt ? new Date(createdOrg.createdAt).toLocaleDateString() : new Date().toLocaleDateString(), mrr: 0 };
         this.setState(st => ({ data: { ...st.data, orgs: [newOrg, ...st.data.orgs] } }));

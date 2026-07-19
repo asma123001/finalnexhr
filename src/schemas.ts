@@ -12,6 +12,7 @@ export const createOrgSchema = z.object({
   body: z.object({
     name: z.string().min(2, "Organization name must be at least 2 characters."),
     adminEmail: z.string().email("Admin user ID must be a valid email address."),
+    companyEmail: z.string().email("Company email must be a valid email address.").optional(),
     adminName: z.string().min(2, "Admin name must be at least 2 characters.").optional(),
     adminPassword: z.string().min(8, "Admin password must be at least 8 characters.").optional(),
     packageName: z.string().default("Starter"),

@@ -18,7 +18,7 @@ export async function createPackage(input: { name: string; priceCents: number; s
   return prisma.package.create({ data: input });
 }
 
-export async function createOrganization(input: { name: string; adminEmail: string; adminName?: string; adminPassword?: string; packageName: string; industry?: string }) {
+export async function createOrganization(input: { name: string; adminEmail: string; companyEmail?: string; adminName?: string; adminPassword?: string; packageName: string; industry?: string }) {
   const pkg = await prisma.package.upsert({
     where: { name: input.packageName },
     update: {},
@@ -34,7 +34,7 @@ export async function createOrganization(input: { name: string; adminEmail: stri
         name: input.name,
         slug,
         industry: input.industry ?? "General",
-        email: input.adminEmail.toLowerCase(),
+        email: (input.companyEmail || input.adminEmail).toLowerCase(),
         status: "ACTIVE",
         packageId: pkg.id,
         settings: { create: { modules: ["Employees", "Departments", "Attendance", "Leave", "Payroll", "Reports", "Employee Portal", "Organization Settings"] } },
