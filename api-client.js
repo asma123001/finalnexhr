@@ -1,4 +1,4 @@
-const API_BASE = window.NEXHR_API_BASE || '/api';
+const API_BASE = window.NEXHR_API_BASE || (location.hostname.endsWith('github.io') ? 'https://finalnexhr-api.onrender.com/api' : '/api');
 
 function tokenKey() { return 'nexhr_token'; }
 
