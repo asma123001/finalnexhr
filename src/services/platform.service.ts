@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma.js";
 import { hashPassword } from "../utils/auth.js";
+import { AppError } from "../utils/http.js";
 
 const slugify = (value: string) =>
   value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || `org-${Date.now()}`;
@@ -19,6 +20,12 @@ export async function createPackage(input: { name: string; priceCents: number; s
 }
 
 export async function createOrganization(input: { name: string; adminEmail: string; companyEmail?: string; adminName?: string; adminPassword?: string; packageName: string; industry?: string }) {
+  const adminEmail = input.adminEmail.toLowerCase();
+  const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail }, select: { id: true } });
+  if (existingAdmin) {
+    throw new AppError(409, "Admin user ID is already used. Use a different admin email.");
+  }
+
   const pkg = await prisma.package.upsert({
     where: { name: input.packageName },
     update: {},
@@ -45,7 +52,7 @@ export async function createOrganization(input: { name: string; adminEmail: stri
       data: {
         organizationId: organization.id,
         name: input.adminName ?? "Organization Admin",
-        email: input.adminEmail.toLowerCase(),
+        email: adminEmail,
         passwordHash,
         role: "ORG_ADMIN",
         permissions: ["*"]
