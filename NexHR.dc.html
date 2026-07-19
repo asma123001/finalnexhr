@@ -979,6 +979,7 @@ class Component extends DCLogic {
     }
     try {
       const rolePages = { super_admin: 'super-admin.dc.html', org_admin: 'organization-admin.dc.html', employee: 'employee.dc.html' };
+      if (!this.api || !this.api.login) this.api = await import('./api-client.js');
       const session = await this.api.login(this.state.loginEmail.trim(), this.state.loginPassword);
       const userRole = (session.user && session.user.role ? session.user.role : '').toLowerCase();
       const pageRole = userRole === 'super_admin' ? 'super_admin' : userRole === 'org_admin' ? 'org_admin' : userRole === 'employee' ? 'employee' : this.state.loginRole;
