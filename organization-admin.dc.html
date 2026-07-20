@@ -81,10 +81,13 @@
       </div>
       <div style="position:relative;">
         <div onClick="{{ toggleProfile }}" style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:5px 8px;border-radius:9px;">
-          <div style="width:32px;height:32px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">IM</div>
+          <div style="width:32px;height:32px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;overflow:hidden;flex-shrink:0;">
+            <sc-if value="{{ headerLogoUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ headerLogoUrl }}" alt="{{ headerOrgName }}" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+            <sc-if value="{{ !headerLogoUrl }}" hint-placeholder-val="{{ true }}">{{ headerOrgInitial }}</sc-if>
+          </div>
           <sc-if value="{{ !isMobile }}" hint-placeholder-val="{{ true }}">
             <div>
-              <div style="font-size:13px;font-weight:700;color:#14152e;">Admin User</div>
+              <div style="font-size:13px;font-weight:700;color:#14152e;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ headerOrgName }}</div>
               <div style="font-size:11px;color:#9296b3;">Organization Admin</div>
             </div>
           </sc-if>
@@ -2347,10 +2350,15 @@ class Component extends DCLogic {
       oaHrLetters: s.screen === 'oa-hr-letters', oaReports: s.screen === 'oa-reports', oaEmployeePortal: s.screen === 'oa-employee-portal',
       oaOrgSettings: s.screen === 'oa-org-settings', oaRolesPermissions: s.screen === 'oa-roles-permissions'
     };
+    const headerProfile = data && data.orgProfile ? data.orgProfile : {};
+    const headerOrgName = (headerProfile.name || 'Organization').trim() || 'Organization';
+    const headerLogoUrl = headerProfile.logoDataUrl || '';
+    const headerOrgInitial = (headerOrgName.charAt(0) || 'O').toUpperCase();
     const shellBase = {
       isMobile, showBackdrop: isMobile && s.mobileNavOpen,
       sidebarLeft: isMobile ? (s.mobileNavOpen ? '0px' : '-260px') : '0px', contentMarginLeft: isMobile ? '0px' : '260px',
       navGroups, currentScreenLabel, isPlaceholderScreen, screenIs, dataReady: !!data,
+      headerOrgName, headerLogoUrl, headerOrgInitial,
       toggleMobileNav: () => this.toggleMobileNav(), closeMobileNav: () => this.closeMobileNav(),
       globalSearch: s.globalSearch, onGlobalSearchChange: (e) => this.onGlobalSearchChange(e),
       toggleNotif: () => this.toggleNotif(), notifOpen: s.notifOpen, notifItems: [],
