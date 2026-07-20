@@ -10,6 +10,7 @@ platformRoutes.get("/dashboard", controller.dashboard);
 platformRoutes.get("/audit-logs", controller.auditLogs);
 platformRoutes.post("/organizations", validate(createOrgSchema), controller.createOrganization);
 platformRoutes.patch("/organizations/:id/status", controller.updateOrganizationStatus);
+platformRoutes.delete("/organizations/:id", controller.deleteOrganization);
 platformRoutes.post("/organization-admins", validate(organizationAdminSchema), controller.createOrganizationAdmin);
 platformRoutes.patch("/organization-admins/:id", validate(updateOrganizationAdminSchema), controller.updateOrganizationAdmin);
 platformRoutes.patch("/organization-admins/:id/password", validate(resetPasswordSchema), controller.resetOrganizationAdminPassword);

@@ -112,6 +112,13 @@ export async function updateOrganizationStatus(id: string, status: "ACTIVE" | "S
   return prisma.organization.update({ where: { id }, data: { status } });
 }
 
+export async function deleteOrganization(id: string) {
+  const organization = await prisma.organization.findUnique({ where: { id }, select: { id: true } });
+  if (!organization) throw new AppError(404, "Organization not found");
+  await prisma.role.deleteMany({ where: { organizationId: id } });
+  return prisma.organization.delete({ where: { id }, select: { id: true, name: true } });
+}
+
 export async function createOrganizationAdmin(input: { organizationId: string; name: string; email: string; password: string; roleLabel: string }) {
   const organization = await prisma.organization.findUnique({ where: { id: input.organizationId }, select: { id: true } });
   if (!organization) throw new AppError(404, "Organization not found");

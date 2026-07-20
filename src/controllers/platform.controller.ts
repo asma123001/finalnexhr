@@ -16,6 +16,12 @@ export const updateOrganizationStatus = asyncHandler(async (req, res) => {
   res.json(organization);
 });
 
+export const deleteOrganization = asyncHandler(async (req, res) => {
+  const organization = await platform.deleteOrganization(req.params.id);
+  await audit(req, "DELETE_ORGANIZATION", "Organization", organization.id, { name: organization.name });
+  res.status(204).send();
+});
+
 export const createOrganizationAdmin = asyncHandler(async (req, res) => {
   const admin = await platform.createOrganizationAdmin(req.body);
   await audit(req, "CREATE_ORGANIZATION_ADMIN", "User", admin.id, { organizationId: admin.organizationId, email: admin.email });

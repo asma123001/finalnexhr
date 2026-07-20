@@ -264,6 +264,7 @@
                 <button onClick="{{ o.onEdit }}" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">Edit</button>
                 <button onClick="{{ o.onManage }}" style="flex:1;padding:9px 0;border-radius:8px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">Manage</button>
                 <button onClick="{{ o.onDeactivate }}" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid #fbdada;background:#fff;color:#dc2626;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">{{ o.deactivateLabel }}</button>
+                <button onClick="{{ o.onDelete }}" style="flex:1;padding:9px 0;border-radius:8px;border:none;background:#dc2626;color:#fff;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">Delete</button>
               </div>
             </div>
           </sc-for>
@@ -1064,10 +1065,16 @@ class Component extends DCLogic {
   }
   suspendSelectedOrg() { this.askConfirm('Suspend organization', 'This organization will lose access immediately. You can reactivate it later.', 'Suspend', () => { this.toggleOrgStatus(this.state.selectedOrgId); }); }
   deleteSelectedOrg() {
+    this.deleteOrgById(this.state.selectedOrgId);
+  }
+  deleteOrgById(id) {
+    const org = this.state.data.orgs.find(o => o.id === id);
+    const name = org ? org.name : 'this organization';
     this.askConfirm('Delete organization', 'This permanently deletes the organization and all of its data. This cannot be undone.', 'Delete', () => {
-      const id = this.state.selectedOrgId;
-      this.setState(s => ({ data: { ...s.data, orgs: s.data.orgs.filter(o => o.id !== id) }, screen: 'sa-orgs' }));
-      this.showToast('Organization deleted', '#dc2626');
+      this.api.api('/platform/organizations/' + encodeURIComponent(id), { method: 'DELETE' }).then(() => {
+        this.setState(s => ({ data: { ...s.data, orgs: s.data.orgs.filter(o => o.id !== id), orgAdmins: s.data.orgAdmins.filter(a => a.orgId !== id && a.organizationId !== id) }, screen: 'sa-orgs', selectedOrgId: s.selectedOrgId === id ? null : s.selectedOrgId }));
+        this.showToast(`${name} deleted`, '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Organization could not be deleted', '#dc2626'));
     });
   }
   onUserSearchChange(e) { this.setState({ userSearch: e.target.value }); }
@@ -1281,7 +1288,7 @@ class Component extends DCLogic {
         status: o.status, joined: o.joined, email: o.email, expiry: o.expiry, lastActivity: o.lastActivity,
         storageLabel: `${o.storageUsedGb} GB / ${o.storageLimitGb} GB`, storagePct: storagePct + '%', deviceCount,
         initial: o.name[0], badgeBg: b.bg, badgeColor: b.color,
-        onView: () => this.selectOrg(o.id), onEdit: () => this.openEditOrg(o), onManage: () => this.selectOrg(o.id),
+        onView: () => this.selectOrg(o.id), onEdit: () => this.openEditOrg(o), onManage: () => this.selectOrg(o.id), onDelete: () => this.deleteOrgById(o.id),
         onDeactivate: () => this.toggleOrgStatus(o.id), deactivateLabel: o.status === 'Suspended' ? 'Reactivate' : 'Suspend' };
     });
     const orgCountLabel = `${data.orgs.length} organizations · ${activeOrgs} active`;
