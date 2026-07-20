@@ -16,10 +16,15 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     return;
   }
   if (err && typeof err === "object" && "code" in err && String((err as { code?: unknown }).code).startsWith("P")) {
-    const prismaErr = err as { code?: unknown; meta?: { target?: unknown } };
+    const prismaErr = err as { code?: unknown; meta?: { target?: unknown }; message?: string };
     if (prismaErr.code === "P2002") {
       const target = Array.isArray(prismaErr.meta?.target) ? prismaErr.meta.target.join(", ") : String(prismaErr.meta?.target || "field");
       res.status(409).json({ error: `This ${target} is already used. Please enter a different value.`, code: prismaErr.code });
+      return;
+    }
+    if (["P1000", "P1001", "P1002", "P1011"].includes(String(prismaErr.code))) {
+      console.error(prismaErr);
+      res.status(503).json({ error: "Database connection failed. Please try again in a moment.", code: prismaErr.code });
       return;
     }
     res.status(409).json({ error: "Database constraint failed. Please check the entered values.", code: err.code });
