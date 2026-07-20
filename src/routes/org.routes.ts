@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate, requireRole, requireTenant } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { attendancePolicySchema, attendanceSchema, departmentSchema, employeeSchema, holidaySchema, leaveSchema, letterSchema, loanSchema, orgSettingsSchema, roleSchema, shiftAssignmentSchema, shiftSchema } from "../schemas.js";
+import { attendancePolicySchema, attendanceSchema, departmentSchema, employeeSchema, holidaySchema, imageDataSchema, leaveSchema, letterSchema, loanSchema, orgSettingsSchema, roleSchema, shiftAssignmentSchema, shiftSchema } from "../schemas.js";
 import * as controller from "../controllers/org.controller.js";
 
 export const orgRoutes = Router();
@@ -9,6 +9,7 @@ orgRoutes.use(authenticate, requireTenant);
 orgRoutes.get("/dashboard", requireRole("ORG_ADMIN"), controller.dashboard);
 orgRoutes.post("/departments", requireRole("ORG_ADMIN"), validate(departmentSchema), controller.createDepartment);
 orgRoutes.post("/employees", requireRole("ORG_ADMIN"), validate(employeeSchema), controller.createEmployee);
+orgRoutes.patch("/employees/:id/photo", requireRole("ORG_ADMIN"), validate(imageDataSchema), controller.updateEmployeePhoto);
 orgRoutes.post("/biometric/sync", requireRole("ORG_ADMIN"), controller.syncBiometricAttendance);
 orgRoutes.post("/attendance/manual", requireRole("ORG_ADMIN"), validate(attendanceSchema), controller.manualAttendance);
 orgRoutes.post("/leave", validate(leaveSchema), controller.applyLeave);
@@ -20,6 +21,7 @@ orgRoutes.post("/shifts", requireRole("ORG_ADMIN"), validate(shiftSchema), contr
 orgRoutes.post("/shift-assignments", requireRole("ORG_ADMIN"), validate(shiftAssignmentSchema), controller.saveShiftAssignment);
 orgRoutes.delete("/shift-assignments/:id", requireRole("ORG_ADMIN"), controller.deleteShiftAssignment);
 orgRoutes.patch("/settings", requireRole("ORG_ADMIN"), validate(orgSettingsSchema), controller.saveSettings);
+orgRoutes.patch("/settings/logo", requireRole("ORG_ADMIN"), validate(imageDataSchema), controller.updateLogo);
 orgRoutes.post("/holidays", requireRole("ORG_ADMIN"), validate(holidaySchema), controller.createHoliday);
 orgRoutes.delete("/holidays/:id", requireRole("ORG_ADMIN"), controller.deleteHoliday);
 orgRoutes.post("/roles", requireRole("ORG_ADMIN"), validate(roleSchema), controller.saveRole);

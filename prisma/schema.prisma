@@ -73,6 +73,7 @@ model Organization {
   phone          String?
   website        String?
   address        String?
+  logoDataUrl    String?             @db.Text
   status         OrganizationStatus  @default(PENDING)
   packageId      String?
   package        Package?            @relation(fields: [packageId], references: [id])
@@ -167,6 +168,7 @@ model Employee {
   lastName       String
   email          String
   phone          String?
+  photoDataUrl   String?      @db.Text
   title          String
   employmentType String       @default("Full-time")
   status         UserStatus   @default(ACTIVE)

@@ -92,6 +92,18 @@ export const saveSettings = asyncHandler(async (req, res) => {
   res.json(result);
 });
 
+export const updateLogo = asyncHandler(async (req, res) => {
+  const organization = await org.updateOrganizationLogo(tenant(req), req.body.dataUrl);
+  await audit(req, "UPDATE_ORGANIZATION_LOGO", "Organization", organization.id);
+  res.json({ logoDataUrl: organization.logoDataUrl });
+});
+
+export const updateEmployeePhoto = asyncHandler(async (req, res) => {
+  const employee = await org.updateEmployeePhoto(tenant(req), req.params.id, req.body.dataUrl);
+  await audit(req, "UPDATE_EMPLOYEE_PHOTO", "Employee", employee.id);
+  res.json(employee);
+});
+
 export const createHoliday = asyncHandler(async (req, res) => {
   const holiday = await org.createHoliday(tenant(req), req.body);
   await audit(req, "CREATE_HOLIDAY", "Holiday", holiday.id);

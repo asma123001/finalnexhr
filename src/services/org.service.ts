@@ -230,6 +230,14 @@ export async function upsertOrganizationSettings(organizationId: string, input: 
   });
 }
 
+export async function updateOrganizationLogo(organizationId: string, dataUrl: string) {
+  return prisma.organization.update({ where: { id: organizationId }, data: { logoDataUrl: dataUrl } });
+}
+
+export async function updateEmployeePhoto(organizationId: string, employeeId: string, dataUrl: string) {
+  return prisma.employee.update({ where: { id: employeeId, organizationId }, data: { photoDataUrl: dataUrl }, include: { department: true } });
+}
+
 export async function createHoliday(organizationId: string, input: { name: string; date: Date; type?: string }) {
   return prisma.holiday.create({ data: { organizationId, name: input.name, date: input.date, type: input.type ?? "Public" } });
 }

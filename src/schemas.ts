@@ -173,3 +173,9 @@ export const letterSchema = z.object({
     notes: z.string().optional()
   })
 });
+
+export const imageDataSchema = z.object({
+  body: z.object({
+    dataUrl: z.string().regex(/^data:image\/(png|jpeg|jpg|webp);base64,/i, "Upload a PNG, JPG, or WEBP image.")
+  })
+});

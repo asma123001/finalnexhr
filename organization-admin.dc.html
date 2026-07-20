@@ -181,8 +181,9 @@
             <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div style="display:flex;gap:12px;align-items:center;">
-                  <div style="width:44px;height:44px;flex-shrink:0;">
-                    <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="emp-photo-{{ e.id }}" shape="circle" placeholder="Photo" hint-size="44px,44px"></x-import>
+                  <div style="width:44px;height:44px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:800;font-size:12px;flex-shrink:0;">
+                    <sc-if value="{{ e.photoDataUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ e.photoDataUrl }}" alt="{{ e.name }}" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+                    <sc-if value="{{ !e.photoDataUrl }}" hint-placeholder-val="{{ true }}">{{ e.initials }}</sc-if>
                   </div>
                   <div>
                     <div style="font-weight:800;font-size:14.5px;">{{ e.name }}</div>
@@ -201,7 +202,10 @@
                 <a href="#" onClick="{{ e.onEdit }}" style="color:#4f46e5;font-weight:700;font-size:12.5px;text-decoration:none;">Edit</a>
                 <a href="#" onClick="{{ e.onToggleStatus }}" style="color:#dc2626;font-weight:700;font-size:12.5px;text-decoration:none;">{{ e.toggleLabel }}</a>
               </div>
-              <button onClick="{{ e.onPrintIdCard }}" style="width:100%;padding:9px 0;border-radius:8px;border:1px solid #e7e9f2;background:#f8f9fc;color:#3f4159;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">Print ID Card</button>
+              <div style="display:flex;gap:8px;">
+                <label style="flex:1;text-align:center;padding:9px 0;border-radius:8px;border:1px solid #e7e9f2;background:#fff;color:#4f46e5;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">Upload photo<input type="file" accept="image/png,image/jpeg,image/webp" onChange="{{ e.onPhotoChange }}" style="display:none;"></label>
+                <button onClick="{{ e.onPrintIdCard }}" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid #e7e9f2;background:#f8f9fc;color:#3f4159;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">Print ID Card</button>
+              </div>
             </div>
           </sc-for>
         </div>
@@ -871,8 +875,9 @@
         <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;margin-bottom:20px;">
           <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">Organization profile</div>
           <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px;">
-            <div style="width:64px;height:64px;flex-shrink:0;">
-              <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="org-settings-logo" shape="rounded" radius="14" placeholder="Logo" hint-size="64px,64px"></x-import>
+            <div style="width:64px;height:64px;border-radius:14px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:800;font-size:22px;flex-shrink:0;">
+              <sc-if value="{{ orgProfile.logoDataUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ orgProfile.logoDataUrl }}" alt="{{ orgProfile.name }}" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+              <sc-if value="{{ !orgProfile.logoDataUrl }}" hint-placeholder-val="{{ true }}">N</sc-if>
             </div>
             <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Organization name</div><input value="{{ orgProfile.name }}" onChange="{{ updateOrgProfileField('name') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
           </div>
@@ -889,7 +894,10 @@
             <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Pay frequency</div><input value="{{ orgProfile.payFrequency }}" onChange="{{ updateOrgProfileField('payFrequency') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
             <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Work week starts</div><input value="{{ orgProfile.workWeekStart }}" onChange="{{ updateOrgProfileField('workWeekStart') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
           </div>
-          <button onClick="{{ saveOrgProfile }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Save profile</button>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <label style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#4f46e5;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Upload logo<input type="file" accept="image/png,image/jpeg,image/webp" onChange="{{ uploadOrgLogo }}" style="display:none;"></label>
+            <button onClick="{{ saveOrgProfile }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Save profile</button>
+          </div>
         </div>
 
         <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;margin-bottom:20px;">
@@ -1134,7 +1142,7 @@
           <div style="width:340px;max-width:100%;margin:0 auto 22px;border-radius:18px;overflow:hidden;border:1px solid #e7e9f2;box-shadow:0 12px 32px rgba(20,21,46,0.14);">
             <div style="background:linear-gradient(135deg,#4f46e5,#312e91);padding:20px 20px 34px;display:flex;align-items:center;gap:12px;position:relative;">
               <div style="width:36px;height:36px;flex-shrink:0;border-radius:9px;overflow:hidden;background:#fff;padding:2px;">
-                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="idcard-company-logo" shape="rounded" radius="6" placeholder="Logo" hint-size="32px,32px"></x-import>
+                <sc-if value="{{ orgProfile.logoDataUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ orgProfile.logoDataUrl }}" alt="{{ orgProfile.name }}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;"></sc-if>
               </div>
               <div>
                 <div style="color:#fff;font-weight:800;font-size:15px;letter-spacing:0.01em;">{{ orgProfile.name }}</div>
@@ -1143,7 +1151,8 @@
             </div>
             <div style="padding:0 22px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;background:#fff;margin-top:-26px;">
               <div style="width:104px;height:104px;border-radius:50%;background:#fff;padding:4px;box-shadow:0 6px 16px rgba(20,21,46,0.18);">
-                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="idcard-photo-{{ idCardEmployee.id }}" shape="circle" placeholder="Photo" hint-size="96px,96px"></x-import>
+                <sc-if value="{{ idCardEmployee.photoDataUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ idCardEmployee.photoDataUrl }}" alt="{{ idCardEmployee.name }}" style="width:96px;height:96px;border-radius:50%;object-fit:cover;"></sc-if>
+                <sc-if value="{{ !idCardEmployee.photoDataUrl }}" hint-placeholder-val="{{ true }}"><div style="width:96px;height:96px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;">{{ idCardEmployee.initials }}</div></sc-if>
               </div>
               <div style="text-align:center;">
                 <div style="font-weight:800;font-size:18px;color:#14152e;">{{ idCardEmployee.name }}</div>
@@ -1441,7 +1450,7 @@ class Component extends DCLogic {
       this.setState({ data: { ...mod, ...tenantOnly } });
       try {
         const dashboard = await this.api.api('/org/dashboard');
-        const employees = dashboard.employees.map(e => ({ id: e.id, name: e.firstName + ' ' + e.lastName, initials: (e.firstName[0] + e.lastName[0]).toUpperCase(), dept: e.department ? e.department.name : 'Unassigned', title: e.title, joined: new Date(e.joinedAt).toLocaleDateString(), status: e.status === 'ACTIVE' ? 'Active' : 'Inactive', email: e.email, phone: e.phone || '', employmentType: e.employmentType }));
+        const employees = dashboard.employees.map(e => ({ id: e.id, name: e.firstName + ' ' + e.lastName, initials: (e.firstName[0] + e.lastName[0]).toUpperCase(), dept: e.department ? e.department.name : 'Unassigned', title: e.title, joined: new Date(e.joinedAt).toLocaleDateString(), status: e.status === 'ACTIVE' ? 'Active' : 'Inactive', email: e.email, phone: e.phone || '', employmentType: e.employmentType, photoDataUrl: e.photoDataUrl || '' }));
         const departments = dashboard.departments.map(d => ({ id: d.id, name: d.name, code: d.code, description: d.description || '', head: '—', headId: d.headId, parentId: d.parentId, status: d.isActive ? 'Active' : 'Inactive', count: employees.filter(e => e.dept === d.name).length }));
         const attendanceToday = (dashboard.attendance || []).map(a => this.mapApiAttendance(a));
         const attendanceAuditLog = (dashboard.biometricSyncLogs || []).map(l => ({ id: l.id, actor: l.device ? l.device.name : 'Biometric device', action: `${l.status === 'SUCCESS' ? 'Synced' : 'Failed to sync'} ${l.records} attendance records`, time: new Date(l.createdAt).toLocaleString() }));
@@ -1455,7 +1464,7 @@ class Component extends DCLogic {
         const roles = (dashboard.roles || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', permissions: r.permissions || [], assignedCount: r.usersCount || 0 }));
         const settings = dashboard.settings || {};
         const org = dashboard.organization || {};
-        const orgProfile = { name: org.name || '', industry: org.industry || '', email: org.email || '', phone: org.phone || '', website: org.website || '', address: org.address || '',
+        const orgProfile = { name: org.name || '', industry: org.industry || '', email: org.email || '', phone: org.phone || '', website: org.website || '', address: org.address || '', logoDataUrl: org.logoDataUrl || '',
           currency: settings.currency || 'USD', timezone: settings.timezone || 'UTC', dateFormat: settings.dateFormat || 'MM/DD/YYYY', payFrequency: settings.payFrequency || 'Monthly', workWeekStart: settings.workWeekStart || 'Monday' };
         const branches = (dashboard.branches || []).map(b => ({ id: b.id, name: b.name, location: b.location || '', employees: 0, status: b.isActive ? 'Active' : 'Inactive' }));
         const holidays = (dashboard.holidays || []).map(h => ({ id: h.id, name: h.name, date: this.formatDate(h.date), type: h.type }));
@@ -1572,6 +1581,42 @@ class Component extends DCLogic {
   mapApiLetter(l) {
     const emp = this.splitEmployeeName(l.employee);
     return { id: l.id, employee: emp.name, type: l.type, generatedOn: this.formatDate(l.createdAt), generatedBy: 'Admin User' };
+  }
+  readImageFile(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) return reject(new Error('Choose an image first.'));
+      if (!/^image\/(png|jpe?g|webp)$/i.test(file.type)) return reject(new Error('Use a PNG, JPG, or WEBP image.'));
+      if (file.size > 4 * 1024 * 1024) return reject(new Error('Image must be under 4 MB.'));
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Image could not be read.'));
+      reader.readAsDataURL(file);
+    });
+  }
+  async uploadOrgLogo(e) {
+    try {
+      const dataUrl = await this.readImageFile(e.target.files && e.target.files[0]);
+      const saved = await this.api.api('/org/settings/logo', { method: 'PATCH', body: JSON.stringify({ dataUrl }) });
+      this.setState(s => ({ data: { ...s.data, orgProfile: { ...s.data.orgProfile, logoDataUrl: saved.logoDataUrl || dataUrl } } }));
+      this.showToast('Organization logo uploaded', '#0f9d58');
+    } catch (err) {
+      this.showToast(err.message || 'Logo could not be uploaded', '#dc2626');
+    } finally {
+      if (e && e.target) e.target.value = '';
+    }
+  }
+  async uploadEmployeePhoto(emp, e) {
+    try {
+      const dataUrl = await this.readImageFile(e.target.files && e.target.files[0]);
+      const saved = await this.api.api('/org/employees/' + encodeURIComponent(emp.id) + '/photo', { method: 'PATCH', body: JSON.stringify({ dataUrl }) });
+      const photoDataUrl = saved.photoDataUrl || dataUrl;
+      this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(x => x.id === emp.id ? { ...x, photoDataUrl } : x) } }));
+      this.showToast('Employee photo uploaded', '#0f9d58');
+    } catch (err) {
+      this.showToast(err.message || 'Employee photo could not be uploaded', '#dc2626');
+    } finally {
+      if (e && e.target) e.target.value = '';
+    }
   }
   apiAttendanceStatus(status) {
     return String(status || 'Present').toUpperCase().replaceAll(' ', '_');
@@ -1959,7 +2004,7 @@ class Component extends DCLogic {
       this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(e => e.id === editingEmpId ? { ...e, name: formEmpName || e.name, email: formEmpEmail || e.email, dept: formEmpDept || e.dept, title: formEmpTitle || e.title, phone: formEmpPhone || e.phone, employmentType: formEmpEmploymentType, userId: formEmpUserId || e.userId } : e) } }));
       this.showToast('Employee updated', '#0f9d58');
     } else {
-      let newEmp = { id: 'e' + Date.now(), name: formEmpName || 'New Employee', initials, dept: formEmpDept || 'Engineering', title: formEmpTitle || 'Employee', joined: 'Jul 19, 2026', status: 'Active', email: formEmpEmail || 'new@nexhr.io', phone: formEmpPhone || '', employmentType: formEmpEmploymentType, userId: formEmpUserId || formEmpEmail || 'new@nexhr.io' };
+      let newEmp = { id: 'e' + Date.now(), name: formEmpName || 'New Employee', initials, dept: formEmpDept || 'Engineering', title: formEmpTitle || 'Employee', joined: 'Jul 19, 2026', status: 'Active', email: formEmpEmail || 'new@nexhr.io', phone: formEmpPhone || '', employmentType: formEmpEmploymentType, userId: formEmpUserId || formEmpEmail || 'new@nexhr.io', photoDataUrl: '' };
       try {
         const nameParts = this.api.splitName(formEmpName || 'New Employee');
         const created = await this.api.api('/org/employees', { method: 'POST', body: JSON.stringify({ ...nameParts, email: formEmpEmail || 'new@nexhr.io', password: this.state.formEmpPassword || undefined, title: formEmpTitle || 'Employee', departmentName: formEmpDept || 'Engineering', phone: formEmpPhone || undefined, employmentType: formEmpEmploymentType }) });
@@ -2346,7 +2391,7 @@ class Component extends DCLogic {
       const b = badge(e.status);
       const bioDevice = (data.biometricDevices || []).find(d => d.enabled && d.status === 'ONLINE') || (data.biometricDevices || [])[0];
       return { ...e, badgeBg: b.bg, badgeColor: b.color, onEdit: () => this.openEditEmployee(e), onToggleStatus: () => this.toggleEmpStatus(e), toggleLabel: e.status === 'Inactive' ? 'Activate' : 'Deactivate',
-        biometricLabel: bioDevice ? (bioDevice.enabled ? 'Ready: ' + bioDevice.name : 'Device disabled') : 'No device', hasBiometric: !!bioDevice && !!bioDevice.enabled, empIdLabel: `EMP-${String(e.id).replace(/\D/g, '').padStart(4, '0')}`, onPrintIdCard: () => this.openPrintIdCard(e) };
+        biometricLabel: bioDevice ? (bioDevice.enabled ? 'Ready: ' + bioDevice.name : 'Device disabled') : 'No device', hasBiometric: !!bioDevice && !!bioDevice.enabled, empIdLabel: `EMP-${String(e.id).replace(/\D/g, '').padStart(4, '0')}`, onPrintIdCard: () => this.openPrintIdCard(e), onPhotoChange: (evt) => this.uploadEmployeePhoto(e, evt) };
     });
     const empCountLabel = `${data.employees.length} employees across ${data.departments.length} departments`;
 
