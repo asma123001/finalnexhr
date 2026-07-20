@@ -24,9 +24,20 @@ export const createPackageSchema = z.object({
   body: z.object({
     name: z.string().min(2, "Package name must be at least 2 characters."),
     priceCents: z.number().int().nonnegative().default(0),
-    seatLimit: z.number().int().positive().optional(),
+    seatLimit: z.number().int().positive().nullable().optional(),
     storageLimitGb: z.number().int().positive().default(5),
     features: z.array(z.string()).default([])
+  })
+});
+
+export const updatePackageSchema = z.object({
+  body: z.object({
+    name: z.string().min(2, "Package name must be at least 2 characters.").optional(),
+    priceCents: z.number().int().nonnegative().optional(),
+    seatLimit: z.number().int().positive().nullable().optional(),
+    storageLimitGb: z.number().int().positive().optional(),
+    features: z.array(z.string()).optional(),
+    isActive: z.boolean().optional()
   })
 });
 

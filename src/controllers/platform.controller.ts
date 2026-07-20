@@ -52,6 +52,18 @@ export const createPackage = asyncHandler(async (req, res) => {
   res.status(201).json(pkg);
 });
 
+export const updatePackage = asyncHandler(async (req, res) => {
+  const pkg = await platform.updatePackage(req.params.id, req.body);
+  await audit(req, "UPDATE_PACKAGE", "Package", pkg.id);
+  res.json(pkg);
+});
+
+export const deletePackage = asyncHandler(async (req, res) => {
+  await platform.deletePackage(req.params.id);
+  await audit(req, "DELETE_PACKAGE", "Package", req.params.id);
+  res.status(204).send();
+});
+
 export const createBiometricDevice = asyncHandler(async (req, res) => {
   const device = await platform.createBiometricDevice(req.body);
   await audit(req, "CREATE_BIOMETRIC_DEVICE", "BiometricDevice", device.id, { organizationId: device.organizationId, serial: device.serial });

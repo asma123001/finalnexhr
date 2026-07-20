@@ -20,6 +20,16 @@ export async function createPackage(input: { name: string; priceCents: number; s
   return prisma.package.create({ data: input });
 }
 
+export async function updatePackage(id: string, input: { name?: string; priceCents?: number; seatLimit?: number | null; storageLimitGb?: number; features?: string[]; isActive?: boolean }) {
+  return prisma.package.update({ where: { id }, data: input, include: { _count: { select: { organizations: true } } } });
+}
+
+export async function deletePackage(id: string) {
+  const linkedOrganizations = await prisma.organization.count({ where: { packageId: id } });
+  if (linkedOrganizations > 0) throw new AppError(409, "Package is assigned to organizations. Move them to another package before deleting.");
+  return prisma.package.delete({ where: { id } });
+}
+
 export async function createBiometricDevice(input: { organizationId: string; name: string; type: string; model?: string; serial: string; ip?: string; port?: number; location?: string }) {
   const organization = await prisma.organization.findUnique({ where: { id: input.organizationId }, select: { id: true } });
   if (!organization) throw new AppError(404, "Organization not found");

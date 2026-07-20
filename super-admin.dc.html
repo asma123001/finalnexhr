@@ -551,6 +551,10 @@
                   <div style="font-size:12.5px;color:#3f4159;">{{ f.text }}</div>
                 </div>
               </sc-for>
+              <div style="display:flex;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid #f0f1f6;">
+                <a href="#" onClick="{{ p.onEdit }}" style="color:#4f46e5;font-weight:700;font-size:12.5px;text-decoration:none;">Edit</a>
+                <a href="#" onClick="{{ p.onDelete }}" style="color:#dc2626;font-weight:700;font-size:12.5px;text-decoration:none;">Delete</a>
+              </div>
             </div>
           </sc-for>
         </div>
@@ -679,12 +683,23 @@
         </sc-if>
 
         <sc-if value="{{ isCreatePlanModal }}" hint-placeholder-val="{{ false }}">
-          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">Create Plan</div>
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">{{ planModalTitle }}</div>
           <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
             <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Plan name</div><input value="{{ formPlanName }}" onChange="{{ onFormPlanNameChange }}" placeholder="Pro" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
               <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Price</div><input value="{{ formPlanPrice }}" onChange="{{ onFormPlanPriceChange }}" placeholder="$49/mo" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
               <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Seat limit</div><input value="{{ formPlanSeats }}" onChange="{{ onFormPlanSeatsChange }}" placeholder="Up to 200 employees" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            </div>
+            <div>
+              <div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:8px;">Custom modules</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;background:#f8f9fc;border-radius:10px;padding:12px;">
+                <sc-for list="{{ planModuleChoices }}" as="m" hint-placeholder-count="8">
+                  <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#3f4159;font-weight:600;cursor:pointer;">
+                    <input type="checkbox" checked="{{ m.checked }}" onChange="{{ m.onToggle }}" />
+                    {{ m.name }}
+                  </label>
+                </sc-for>
+              </div>
             </div>
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
@@ -782,7 +797,7 @@ class Component extends DCLogic {
     formOrgName: '', formOrgEmail: '', formOrgPlan: 'Starter', formOrgIndustry: 'Technology',
     formOrgUserId: '', formOrgUserPass: '', formOrgPhone: '', formOrgWebsite: '', formOrgCountry: '', formOrgCity: '', formOrgAddress: '',
     formOrgTimezone: 'GMT-8 Pacific', formOrgCurrency: 'USD', formOrgDateFormat: 'MM/DD/YYYY', editingOrgId: null, formOrgErrors: {},
-    formPlanName: '', formPlanPrice: '', formPlanSeats: '',
+    formPlanName: '', formPlanPrice: '', formPlanSeats: '', formPlanModules: [], editingPlanId: null,
     editingOrgAdminId: null, formAdminName: '', formAdminEmail: '', formAdminRole: 'HR Admin', formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'edit',
     biometricEnabled: true, auditSearch: '', auditRoleFilter: 'All', ticketStatusFilter: 'All',
     announceTarget: 'All', announceSelectedOrgs: [], announceMessage: '',
@@ -841,6 +856,7 @@ class Component extends DCLogic {
   }
   mapApiPackage(p) {
     return {
+      id: p.id,
       name: p.name,
       price: p.priceCents ? '$' + (p.priceCents / 100).toLocaleString() + '/mo' : 'Custom',
       seats: p.seatLimit ? 'Up to ' + p.seatLimit + ' employees' : 'Unlimited',
@@ -892,7 +908,7 @@ class Component extends DCLogic {
   onGlobalSearchChange(e) { this.setState({ globalSearch: e.target.value }); }
 
   openModal(type) { this.setState({ modal: type }); }
-  closeModal() { this.setState({ modal: null, confirmPayload: null, formOrgName: '', formOrgEmail: '', formOrgErrors: {}, formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'edit' }); }
+  closeModal() { this.setState({ modal: null, confirmPayload: null, formOrgName: '', formOrgEmail: '', formOrgErrors: {}, formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'edit', editingPlanId: null, formPlanModules: [] }); }
   askConfirm(title, message, label, onConfirm) { this.setState({ modal: 'confirm', confirmPayload: { title, message, label, onConfirm } }); }
   confirmAction() { const p = this.state.confirmPayload; if (p && p.onConfirm) p.onConfirm(); this.closeModal(); }
 
@@ -1062,26 +1078,53 @@ class Component extends DCLogic {
       this.showToast('User status updated', '#0f9d58');
     });
   }
-  openCreatePlan() { this.setState({ modal: 'createPlan', formPlanName: '', formPlanPrice: '', formPlanSeats: '' }); }
+  availablePlanModules() {
+    return ['Employees', 'Departments', 'Attendance', 'Attendance Policies', 'Shift & Roster', 'Leave', 'Exit Management', 'Payroll', 'Loans & Advances', 'HR Letters', 'Reports', 'Employee Portal', 'Organization Settings', 'Roles & Permissions', 'Biometric Devices'];
+  }
+  openCreatePlan() { this.setState({ modal: 'createPlan', editingPlanId: null, formPlanName: '', formPlanPrice: '', formPlanSeats: '', formPlanModules: ['Employees', 'Attendance'] }); }
+  openEditPlan(p) { this.setState({ modal: 'createPlan', editingPlanId: p.id, formPlanName: p.name, formPlanPrice: p.price, formPlanSeats: p.seats, formPlanModules: [...(p.features || [])] }); }
   onFormPlanNameChange(e) { this.setState({ formPlanName: e.target.value }); }
   onFormPlanPriceChange(e) { this.setState({ formPlanPrice: e.target.value }); }
   onFormPlanSeatsChange(e) { this.setState({ formPlanSeats: e.target.value }); }
+  togglePlanModule(m) {
+    this.setState(s => ({ formPlanModules: s.formPlanModules.includes(m) ? s.formPlanModules.filter(x => x !== m) : [...s.formPlanModules, m] }));
+  }
+  parsePlanPriceCents(value) {
+    const parsed = Number(String(value || '').replace(/[^0-9.]/g, ''));
+    return Number.isFinite(parsed) ? Math.round(parsed * 100) : 0;
+  }
+  parsePlanSeatLimit(value) {
+    const parsed = Number(String(value || '').replace(/[^0-9]/g, ''));
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  }
   async submitCreatePlan() {
     if (this.state.isSubmittingPlan) return;
-    const newPlan = { name: this.state.formPlanName.trim() || 'New Plan', price: this.state.formPlanPrice.trim() || 'Custom', seats: this.state.formPlanSeats.trim() || 'Custom', activeSubs: 0, features: ['Core HR', 'Attendance'] };
+    const s = this.state;
+    const newPlan = { name: s.formPlanName.trim() || 'New Plan', price: s.formPlanPrice.trim() || 'Custom', seats: s.formPlanSeats.trim() || 'Custom', activeSubs: 0, features: s.formPlanModules.length ? s.formPlanModules : ['Employees', 'Attendance'] };
     try {
       this.setState({ isSubmittingPlan: true });
-      const created = await this.api.api('/platform/packages', { method: 'POST', body: JSON.stringify({ name: newPlan.name, priceCents: Number(String(newPlan.price).replace(/[^0-9]/g, '')) * 100 || 0, seatLimit: Number(String(newPlan.seats).replace(/[^0-9]/g, '')) || undefined, features: newPlan.features }) });
-      const savedPlan = this.mapApiPackage(created);
-      this.setState(s => ({ data: { ...s.data, plans: [...s.data.plans.filter(p => p.name !== savedPlan.name), savedPlan] }, formOrgPlan: savedPlan.name }));
+      const payload = { name: newPlan.name, priceCents: this.parsePlanPriceCents(newPlan.price), seatLimit: this.parsePlanSeatLimit(newPlan.seats), storageLimitGb: 5, features: newPlan.features };
+      const saved = s.editingPlanId
+        ? await this.api.api('/platform/packages/' + encodeURIComponent(s.editingPlanId), { method: 'PATCH', body: JSON.stringify(payload) })
+        : await this.api.api('/platform/packages', { method: 'POST', body: JSON.stringify(payload) });
+      const savedPlan = this.mapApiPackage(saved);
+      this.setState(st => ({ data: { ...st.data, plans: s.editingPlanId ? st.data.plans.map(p => p.id === s.editingPlanId ? savedPlan : p) : [...st.data.plans.filter(p => p.name !== savedPlan.name), savedPlan] }, formOrgPlan: savedPlan.name }));
     } catch (err) {
       this.setState({ isSubmittingPlan: false });
-      this.showToast(err.message || 'Plan could not be created', '#dc2626');
+      this.showToast(err.message || 'Plan could not be saved', '#dc2626');
       return;
     }
     this.setState({ isSubmittingPlan: false });
     this.closeModal();
-    this.showToast('Plan created', '#0f9d58');
+    this.showToast(s.editingPlanId ? 'Plan updated' : 'Plan created', '#0f9d58');
+  }
+  deletePlan(p) {
+    this.askConfirm('Delete plan', `This permanently deletes ${p.name}. Plans assigned to organizations cannot be deleted.`, 'Delete', () => {
+      this.api.api('/platform/packages/' + encodeURIComponent(p.id), { method: 'DELETE' }).then(() => {
+        this.setState(s => ({ data: { ...s.data, plans: s.data.plans.filter(x => x.id !== p.id) } }));
+        this.showToast('Plan deleted', '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Plan could not be deleted', '#dc2626'));
+    });
   }
   toggleSetting(key) { this.setState(s => ({ settings: { ...s.settings, [key]: !s.settings[key] } })); }
   saveSettings() { this.showToast('Settings saved', '#0f9d58'); }
@@ -1260,7 +1303,7 @@ class Component extends DCLogic {
     const userRows = usersFiltered.map(u => { const b = badge(u.status); return { ...u, badgeBg: b.bg, badgeColor: b.color, onToggle: () => this.toggleUserStatus(u), toggleLabel: u.status === 'Active' ? 'Suspend' : 'Reactivate', toggleColor: u.status === 'Active' ? '#dc2626' : '#0f9d58' }; });
     const platformUserCountLabel = `${data.platformUsers.length} users across ${data.orgs.length} organizations`;
 
-    const planCards = data.plans.map(p => ({ ...p, featureRows: p.features.map(f => ({ text: f })) }));
+    const planCards = data.plans.map(p => ({ ...p, featureRows: p.features.map(f => ({ text: f })), onEdit: () => this.openEditPlan(p), onDelete: () => this.deletePlan(p) }));
     const activeSubRows = data.orgs.filter(o => o.status === 'Active').map(o => ({ name: o.name, plan: o.plan, mrrLabel: money(o.mrr), joined: o.joined }));
     const expiredSubRows = data.expiredSubscriptions;
 
@@ -1380,8 +1423,9 @@ class Component extends DCLogic {
       onFormOrgPhoneChange: (e) => this.onFormOrgPhoneChange(e), onFormOrgWebsiteChange: (e) => this.onFormOrgWebsiteChange(e), onFormOrgCountryChange: (e) => this.onFormOrgCountryChange(e),
       onFormOrgCityChange: (e) => this.onFormOrgCityChange(e), onFormOrgAddressChange: (e) => this.onFormOrgAddressChange(e), onFormOrgTimezoneChange: (e) => this.onFormOrgTimezoneChange(e),
       onFormOrgCurrencyChange: (e) => this.onFormOrgCurrencyChange(e), onFormOrgDateFormatChange: (e) => this.onFormOrgDateFormatChange(e),
-      isCreatePlanModal: modal === 'createPlan', formPlanName: s.formPlanName, formPlanPrice: s.formPlanPrice, formPlanSeats: s.formPlanSeats,
-      isSubmittingPlan: s.isSubmittingPlan, submitPlanButtonBg: s.isSubmittingPlan ? '#9296b3' : '#4f46e5', createPlanSubmitLabel: s.isSubmittingPlan ? 'Creating...' : 'Create plan',
+      isCreatePlanModal: modal === 'createPlan', planModalTitle: s.editingPlanId ? 'Edit Plan' : 'Create Plan', formPlanName: s.formPlanName, formPlanPrice: s.formPlanPrice, formPlanSeats: s.formPlanSeats,
+      planModuleChoices: this.availablePlanModules().map(m => ({ name: m, checked: s.formPlanModules.includes(m), onToggle: () => this.togglePlanModule(m) })),
+      isSubmittingPlan: s.isSubmittingPlan, submitPlanButtonBg: s.isSubmittingPlan ? '#9296b3' : '#4f46e5', createPlanSubmitLabel: s.isSubmittingPlan ? 'Saving...' : (s.editingPlanId ? 'Save changes' : 'Create plan'),
       onFormPlanNameChange: (e) => this.onFormPlanNameChange(e), onFormPlanPriceChange: (e) => this.onFormPlanPriceChange(e), onFormPlanSeatsChange: (e) => this.onFormPlanSeatsChange(e), submitCreatePlan: () => this.submitCreatePlan(),
       isOrgAdminModal: modal === 'orgAdmin', orgAdminModalTitle: s.adminPasswordMode === 'reset' ? 'Reset Admin Password' : (s.editingOrgAdminId ? 'Edit Admin' : 'Add Admin'), orgAdminSubmitLabel: s.adminPasswordMode === 'reset' ? 'Reset password' : (s.editingOrgAdminId ? 'Save changes' : 'Add admin'),
       formAdminName: s.formAdminName, formAdminEmail: s.formAdminEmail, formAdminRole: s.formAdminRole, adminRoleOptions: Object.keys(data.adminRolePermissions),
