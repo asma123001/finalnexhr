@@ -30,6 +30,19 @@ export const createPackageSchema = z.object({
   })
 });
 
+export const createBiometricDeviceSchema = z.object({
+  body: z.object({
+    organizationId: z.string().min(1, "Organization is required."),
+    name: z.string().min(2, "Device name must be at least 2 characters."),
+    type: z.string().min(2, "Device type is required."),
+    model: z.string().optional(),
+    serial: z.string().min(2, "Device serial number is required."),
+    ip: z.string().optional(),
+    port: z.coerce.number().int().positive().default(4370),
+    location: z.string().optional()
+  })
+});
+
 export const employeeSchema = z.object({
   body: z.object({
     firstName: z.string().min(1, "First name is required."),

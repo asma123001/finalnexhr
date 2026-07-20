@@ -24,6 +24,12 @@ export const createEmployee = asyncHandler(async (req, res) => {
   res.status(201).json(employee);
 });
 
+export const syncBiometricAttendance = asyncHandler(async (req, res) => {
+  const result = await org.syncBiometricAttendance(tenant(req), req.user?.sub);
+  await audit(req, "SYNC_BIOMETRIC_ATTENDANCE", "BiometricDevice", undefined, { records: result.records, devices: result.devices.length });
+  res.status(201).json(result);
+});
+
 export const manualAttendance = asyncHandler(async (req, res) => {
   const attendance = await org.createManualAttendance(tenant(req), req.user?.sub, req.body);
   await audit(req, "CREATE_MANUAL_ATTENDANCE", "Attendance", attendance.id);

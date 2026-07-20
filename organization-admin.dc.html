@@ -1437,7 +1437,10 @@ class Component extends DCLogic {
         const dashboard = await this.api.api('/org/dashboard');
         const employees = dashboard.employees.map(e => ({ id: e.id, name: e.firstName + ' ' + e.lastName, initials: (e.firstName[0] + e.lastName[0]).toUpperCase(), dept: e.department ? e.department.name : 'Unassigned', title: e.title, joined: new Date(e.joinedAt).toLocaleDateString(), status: e.status === 'ACTIVE' ? 'Active' : 'Inactive', email: e.email, phone: e.phone || '', employmentType: e.employmentType }));
         const departments = dashboard.departments.map(d => ({ id: d.id, name: d.name, code: d.code, description: d.description || '', head: '—', headId: d.headId, parentId: d.parentId, status: d.isActive ? 'Active' : 'Inactive', count: employees.filter(e => e.dept === d.name).length }));
-        this.setState(st => ({ data: { ...st.data, employees: employees.length ? employees : st.data.employees, departments: departments.length ? departments : st.data.departments } }));
+        const attendanceToday = (dashboard.attendance || []).map(a => this.mapApiAttendance(a));
+        const attendanceAuditLog = (dashboard.biometricSyncLogs || []).map(l => ({ id: l.id, actor: l.device ? l.device.name : 'Biometric device', action: `${l.status === 'SUCCESS' ? 'Synced' : 'Failed to sync'} ${l.records} attendance records`, time: new Date(l.createdAt).toLocaleString() }));
+        const biometricDevices = dashboard.biometricDevices || [];
+        this.setState(st => ({ data: { ...st.data, employees, departments, attendanceToday, attendanceAuditLog, biometricDevices, employeeBiometricMap: [] } }));
       } catch (err) {
         console.warn('Using local demo data because org dashboard failed:', err);
       }
@@ -1451,6 +1454,34 @@ class Component extends DCLogic {
     if (this._toastTimer) clearTimeout(this._toastTimer);
     this.setState({ toast: { message, color: color || '#4f46e5' } });
     this._toastTimer = setTimeout(() => this.setState({ toast: null }), 2600);
+  }
+  mapApiAttendance(a) {
+    const first = a.employee ? a.employee.firstName : '';
+    const last = a.employee ? a.employee.lastName : '';
+    const status = String(a.status || 'PRESENT').replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    return {
+      id: a.id,
+      employeeId: a.employeeId,
+      name: `${first} ${last}`.trim() || 'Employee',
+      initials: `${first[0] || ''}${last[0] || ''}`.toUpperCase() || 'NA',
+      status,
+      checkIn: a.checkIn ? new Date(a.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—',
+      checkOut: a.checkOut ? new Date(a.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—',
+      hours: a.hours || '—',
+      date: a.date ? new Date(a.date).toISOString().slice(0, 10) : ''
+    };
+  }
+  apiAttendanceStatus(status) {
+    return String(status || 'Present').toUpperCase().replaceAll(' ', '_');
+  }
+  combineDateAndTime(dateText, timeText) {
+    if (!timeText) return undefined;
+    const date = new Date(dateText || new Date());
+    if (Number.isNaN(date.getTime())) return undefined;
+    const match = String(timeText).trim().match(/^(\d{1,2}):(\d{2})/);
+    if (!match) return undefined;
+    date.setHours(Number(match[1]), Number(match[2]), 0, 0);
+    return date.toISOString();
   }
   setScreen(key) { this.setState({ screen: key, mobileNavOpen: false, notifOpen: false, profileOpen: false }); }
   toggleMobileNav() { this.setState(s => ({ mobileNavOpen: !s.mobileNavOpen })); }
@@ -1735,11 +1766,16 @@ class Component extends DCLogic {
     URL.revokeObjectURL(url);
     this.showToast('Employee list exported', '#0f9d58');
   }
-  syncEmployeesFromDevice() {
-    const s = this.state;
-    const enrolledIds = new Set(s.data.employeeBiometricMap.map(m => m.employeeId));
-    const newlyEnrolled = s.data.employees.filter(e => enrolledIds.has(e.id)).length;
-    this.showToast(`Synced attendance enrollment for ${newlyEnrolled} employees from biometric devices`, '#4f46e5');
+  async syncEmployeesFromDevice() {
+    try {
+      const result = await this.api.api('/org/biometric/sync', { method: 'POST', body: JSON.stringify({}) });
+      const attendanceToday = (result.attendance || []).map(a => this.mapApiAttendance(a));
+      const attendanceAuditLog = (result.logs || []).map(l => ({ id: l.id, actor: l.device ? l.device.name : 'Biometric device', action: `${l.status === 'SUCCESS' ? 'Synced' : 'Failed to sync'} ${l.records} attendance records`, time: new Date(l.createdAt).toLocaleString() }));
+      this.setState(st => ({ data: { ...st.data, attendanceToday: attendanceToday.length ? attendanceToday : st.data.attendanceToday, attendanceAuditLog: [...attendanceAuditLog, ...st.data.attendanceAuditLog] } }));
+      this.showToast(result.message || `Synced ${result.records || 0} attendance records from biometric devices`, '#4f46e5');
+    } catch (err) {
+      this.showToast(err.message || 'Biometric devices could not be synced', '#dc2626');
+    }
   }
   onFormEmpNameChange(e) { this.setState({ formEmpName: e.target.value }); }
   onFormEmpEmailChange(e) { this.setState({ formEmpEmail: e.target.value }); }
@@ -1780,11 +1816,11 @@ class Component extends DCLogic {
   setMonthlyView() { this.setState({ attendanceView: 'monthly' }); }
   openAddManualAttendance() {
     this.setState({ modal: 'manualAttendance', editingAttId: null, formAttEmployeeId: (this.state.data.employees[0] || {}).id || '',
-      formAttDate: 'Jul 19, 2026', formAttStatus: 'Present', formAttCheckIn: '', formAttCheckOut: '', formAttReason: '' });
+      formAttDate: new Date().toISOString().slice(0, 10), formAttStatus: 'Present', formAttCheckIn: '', formAttCheckOut: '', formAttReason: '' });
   }
   openEditAttendance(a) {
     const emp = this.state.data.employees.find(e => e.name === a.name);
-    this.setState({ modal: 'manualAttendance', editingAttId: a.id, formAttEmployeeId: emp ? emp.id : '', formAttDate: 'Jul 19, 2026',
+    this.setState({ modal: 'manualAttendance', editingAttId: a.id, formAttEmployeeId: a.employeeId || (emp ? emp.id : ''), formAttDate: a.date || new Date().toISOString().slice(0, 10),
       formAttStatus: a.status, formAttCheckIn: a.checkIn === '—' ? '' : a.checkIn, formAttCheckOut: a.checkOut === '—' ? '' : a.checkOut, formAttReason: '' });
   }
   onFormAttEmployeeChange(e) { this.setState({ formAttEmployeeId: e.target.value }); }
@@ -1793,10 +1829,29 @@ class Component extends DCLogic {
   onFormAttCheckInChange(e) { this.setState({ formAttCheckIn: e.target.value }); }
   onFormAttCheckOutChange(e) { this.setState({ formAttCheckOut: e.target.value }); }
   onFormAttReasonChange(e) { this.setState({ formAttReason: e.target.value }); }
-  submitManualAttendance() {
+  async submitManualAttendance() {
     const s = this.state;
     const emp = s.data.employees.find(e => e.id === s.formAttEmployeeId);
     const empName = emp ? emp.name : 'Employee';
+    try {
+      const saved = await this.api.api('/org/attendance/manual', { method: 'POST', body: JSON.stringify({
+        employeeId: s.formAttEmployeeId,
+        date: new Date(s.formAttDate || new Date()).toISOString(),
+        checkIn: this.combineDateAndTime(s.formAttDate, s.formAttCheckIn),
+        checkOut: this.combineDateAndTime(s.formAttDate, s.formAttCheckOut),
+        status: this.apiAttendanceStatus(s.formAttStatus),
+        notes: s.formAttReason || undefined
+      }) });
+      const row = this.mapApiAttendance({ ...saved, employee: emp ? { firstName: emp.name.split(' ')[0] || '', lastName: emp.name.split(' ').slice(1).join(' ') || '' } : saved.employee });
+      const auditEntry = { id: 'aa' + Date.now(), actor: 'Admin User', action: `Saved attendance for ${row.name}: ${row.status} on ${s.formAttDate}`, time: new Date().toLocaleString() };
+      this.setState(st => ({ data: { ...st.data, attendanceToday: [row, ...st.data.attendanceToday.filter(x => x.id !== row.id)], attendanceAuditLog: [auditEntry, ...st.data.attendanceAuditLog] } }));
+      this.closeModal();
+      this.showToast('Attendance recorded', '#0f9d58');
+      return;
+    } catch (err) {
+      this.showToast(err.message || 'Attendance could not be saved', '#dc2626');
+      return;
+    }
     const fields = { name: empName, initials: emp ? emp.initials : 'NA', status: s.formAttStatus,
       checkIn: s.formAttCheckIn || '—', checkOut: s.formAttCheckOut || '—', hours: '—' };
     const auditText = s.editingAttId
@@ -2043,9 +2098,9 @@ class Component extends DCLogic {
       bg: s.deptFilter === d ? '#eef1fd' : '#fff', color: s.deptFilter === d ? '#4f46e5' : '#6b6e88', border: s.deptFilter === d ? '#c7cdf7' : '#e7e9f2' }));
     const empRows = empFiltered.map(e => {
       const b = badge(e.status);
-      const bio = data.employeeBiometricMap.find(m => m.employeeId === e.id);
+      const bioDevice = (data.biometricDevices || []).find(d => d.enabled && d.status === 'ONLINE') || (data.biometricDevices || [])[0];
       return { ...e, badgeBg: b.bg, badgeColor: b.color, onEdit: () => this.openEditEmployee(e), onToggleStatus: () => this.toggleEmpStatus(e), toggleLabel: e.status === 'Inactive' ? 'Activate' : 'Deactivate',
-        biometricLabel: bio ? bio.device : 'Not enrolled', hasBiometric: !!bio, empIdLabel: `EMP-${String(e.id).replace(/\D/g, '').padStart(4, '0')}`, onPrintIdCard: () => this.openPrintIdCard(e) };
+        biometricLabel: bioDevice ? (bioDevice.enabled ? 'Ready: ' + bioDevice.name : 'Device disabled') : 'No device', hasBiometric: !!bioDevice && !!bioDevice.enabled, empIdLabel: `EMP-${String(e.id).replace(/\D/g, '').padStart(4, '0')}`, onPrintIdCard: () => this.openPrintIdCard(e) };
     });
     const empCountLabel = `${data.employees.length} employees across ${data.departments.length} departments`;
 

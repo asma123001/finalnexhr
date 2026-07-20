@@ -84,6 +84,8 @@ model Organization {
   timetables     Timetable[]
   attendance     Attendance[]
   attendancePolicies AttendancePolicy[]
+  biometricDevices BiometricDevice[]
+  biometricSyncLogs BiometricSyncLog[]
   leaveTypes     LeaveType[]
   leaveRequests  LeaveRequest[]
   payrollRuns    PayrollRun[]
@@ -256,6 +258,43 @@ model Attendance {
   updatedAt      DateTime         @updatedAt
 
   @@unique([organizationId, employeeId, date])
+}
+
+model BiometricDevice {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  type           String
+  model          String?
+  serial         String
+  ip             String?
+  port           Int          @default(4370)
+  location       String?
+  status         String       @default("ONLINE")
+  enabled        Boolean      @default(true)
+  lastSyncAt     DateTime?
+  syncLogs       BiometricSyncLog[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, serial])
+  @@index([organizationId, enabled])
+}
+
+model BiometricSyncLog {
+  id             String           @id @default(cuid())
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deviceId       String
+  device         BiometricDevice  @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  records        Int              @default(0)
+  status         String
+  message        String?
+  createdAt      DateTime         @default(now())
+
+  @@index([organizationId, createdAt])
+  @@index([deviceId, createdAt])
 }
 
 model LeaveType {

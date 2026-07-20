@@ -6,17 +6,49 @@ const slugify = (value: string) =>
   value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || `org-${Date.now()}`;
 
 export async function dashboard() {
-  const [organizations, users, packages, auditLogs] = await Promise.all([
-    prisma.organization.findMany({ include: { package: true }, orderBy: { createdAt: "desc" } }),
+  const [organizations, users, packages, auditLogs, biometricDevices] = await Promise.all([
+    prisma.organization.findMany({ include: { package: true, _count: { select: { employees: true } } }, orderBy: { createdAt: "desc" } }),
     prisma.user.findMany({ select: { id: true, name: true, email: true, role: true, status: true, organization: { select: { name: true } }, lastLoginAt: true }, orderBy: { createdAt: "desc" } }),
-    prisma.package.findMany({ orderBy: { createdAt: "asc" } }),
-    prisma.auditLog.findMany({ take: 20, orderBy: { createdAt: "desc" }, include: { actor: { select: { name: true, role: true } }, organization: { select: { name: true } } } })
+    prisma.package.findMany({ include: { _count: { select: { organizations: true } } }, orderBy: { createdAt: "asc" } }),
+    prisma.auditLog.findMany({ take: 20, orderBy: { createdAt: "desc" }, include: { actor: { select: { name: true, role: true } }, organization: { select: { name: true } } } }),
+    prisma.biometricDevice.findMany({ include: { organization: { select: { name: true } } }, orderBy: { createdAt: "desc" } })
   ]);
-  return { organizations, users, packages, auditLogs };
+  return { organizations, users, packages, auditLogs, biometricDevices };
 }
 
 export async function createPackage(input: { name: string; priceCents: number; seatLimit?: number; storageLimitGb: number; features: string[] }) {
   return prisma.package.create({ data: input });
+}
+
+export async function createBiometricDevice(input: { organizationId: string; name: string; type: string; model?: string; serial: string; ip?: string; port?: number; location?: string }) {
+  const organization = await prisma.organization.findUnique({ where: { id: input.organizationId }, select: { id: true } });
+  if (!organization) throw new AppError(404, "Organization not found");
+  return prisma.biometricDevice.create({
+    data: {
+      organizationId: input.organizationId,
+      name: input.name,
+      type: input.type,
+      model: input.model,
+      serial: input.serial,
+      ip: input.ip,
+      port: input.port ?? 4370,
+      location: input.location,
+      status: "ONLINE",
+      enabled: true
+    },
+    include: { organization: { select: { name: true } } }
+  });
+}
+
+export async function updateBiometricDevice(id: string, input: { enabled?: boolean; status?: string }) {
+  return prisma.biometricDevice.update({
+    where: { id },
+    data: {
+      enabled: typeof input.enabled === "boolean" ? input.enabled : undefined,
+      status: input.status
+    },
+    include: { organization: { select: { name: true } } }
+  });
 }
 
 export async function createOrganization(input: { name: string; adminEmail: string; companyEmail?: string; adminName?: string; adminPassword?: string; packageName: string; industry?: string }) {
@@ -58,7 +90,11 @@ export async function createOrganization(input: { name: string; adminEmail: stri
         permissions: ["*"]
       }
     });
-    return { organization, admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } };
+    const organizationWithPackage = await tx.organization.findUnique({
+      where: { id: organization.id },
+      include: { package: true, _count: { select: { employees: true } } }
+    });
+    return { organization: organizationWithPackage ?? organization, admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } };
   });
 }
 

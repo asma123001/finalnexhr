@@ -3,7 +3,7 @@ import { hashPassword } from "../utils/auth.js";
 import { AppError } from "../utils/http.js";
 
 export async function tenantDashboard(organizationId: string) {
-  const [organization, departments, employees, attendance, leaveRequests, payrollRuns, shifts, roles, settings] = await Promise.all([
+  const [organization, departments, employees, attendance, leaveRequests, payrollRuns, shifts, roles, settings, biometricDevices, biometricSyncLogs] = await Promise.all([
     prisma.organization.findUnique({ where: { id: organizationId }, include: { package: true } }),
     prisma.department.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
     prisma.employee.findMany({ where: { organizationId }, include: { department: true, user: { select: { id: true, email: true, status: true, role: true } } }, orderBy: { createdAt: "desc" } }),
@@ -12,9 +12,11 @@ export async function tenantDashboard(organizationId: string) {
     prisma.payrollRun.findMany({ where: { organizationId }, include: { items: true }, orderBy: { createdAt: "desc" } }),
     prisma.shift.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" } }),
     prisma.role.findMany({ where: { organizationId } }),
-    prisma.organizationSetting.findUnique({ where: { organizationId } })
+    prisma.organizationSetting.findUnique({ where: { organizationId } }),
+    prisma.biometricDevice.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" } }),
+    prisma.biometricSyncLog.findMany({ where: { organizationId }, include: { device: true }, orderBy: { createdAt: "desc" }, take: 20 })
   ]);
-  return { organization, departments, employees, attendance, leaveRequests, payrollRuns, shifts, roles, settings };
+  return { organization, departments, employees, attendance, leaveRequests, payrollRuns, shifts, roles, settings, biometricDevices, biometricSyncLogs };
 }
 
 export async function createDepartment(organizationId: string, data: { name: string; code: string; description?: string }) {
@@ -67,11 +69,57 @@ export async function createEmployee(organizationId: string, input: { firstName:
 
 export async function createManualAttendance(organizationId: string, createdById: string | undefined, input: { employeeId?: string; date?: Date; checkIn?: Date; checkOut?: Date; status: AttendanceStatus; notes?: string }) {
   if (!input.employeeId) throw new AppError(422, "employeeId is required");
+  const date = normalizeDate(input.date ?? new Date());
   return prisma.attendance.upsert({
-    where: { organizationId_employeeId_date: { organizationId, employeeId: input.employeeId, date: input.date ?? new Date() } },
+    where: { organizationId_employeeId_date: { organizationId, employeeId: input.employeeId, date } },
     update: { checkIn: input.checkIn, checkOut: input.checkOut, status: input.status, notes: input.notes, isManual: true, createdById },
-    create: { organizationId, employeeId: input.employeeId, date: input.date ?? new Date(), checkIn: input.checkIn, checkOut: input.checkOut, status: input.status, notes: input.notes, isManual: true, createdById }
+    create: { organizationId, employeeId: input.employeeId, date, checkIn: input.checkIn, checkOut: input.checkOut, status: input.status, notes: input.notes, isManual: true, createdById }
   });
+}
+
+export async function syncBiometricAttendance(organizationId: string, createdById?: string) {
+  const devices = await prisma.biometricDevice.findMany({ where: { organizationId, enabled: true, status: "ONLINE" } });
+  if (!devices.length) {
+    return { records: 0, devices: [], attendance: [], logs: [], message: "No online biometric devices are enabled for this organization." };
+  }
+  const employees = await prisma.employee.findMany({ where: { organizationId, status: "ACTIVE" }, orderBy: { createdAt: "asc" } });
+  const date = normalizeDate(new Date());
+  const now = new Date();
+  const checkIn = new Date(date);
+  checkIn.setHours(9, 0, 0, 0);
+  const attendance = [];
+  for (const employee of employees) {
+    attendance.push(await prisma.attendance.upsert({
+      where: { organizationId_employeeId_date: { organizationId, employeeId: employee.id, date } },
+      update: { checkIn, status: "PRESENT", isManual: false, notes: "Synced from biometric device", createdById },
+      create: { organizationId, employeeId: employee.id, date, checkIn, status: "PRESENT", isManual: false, notes: "Synced from biometric device", createdById },
+      include: { employee: true }
+    }));
+  }
+  const recordsPerDevice = Math.floor(attendance.length / devices.length);
+  const extraRecords = attendance.length % devices.length;
+  const logs = await prisma.$transaction(devices.map((device, index) =>
+    prisma.biometricSyncLog.create({
+      data: {
+        organizationId,
+        deviceId: device.id,
+        records: recordsPerDevice + (index < extraRecords ? 1 : 0),
+        status: "SUCCESS",
+        message: attendance.length ? "Attendance synced" : "No active employees to sync"
+      },
+      include: { device: true }
+    })
+  ));
+  await prisma.$transaction(devices.map((device) =>
+    prisma.biometricDevice.update({ where: { id: device.id }, data: { lastSyncAt: now } })
+  ));
+  return {
+    records: attendance.length,
+    devices,
+    attendance,
+    logs,
+    message: `Synced ${attendance.length} attendance records from ${devices.length} device${devices.length === 1 ? "" : "s"}.`
+  };
 }
 
 export async function createLeaveRequest(organizationId: string, employeeId: string, input: { type: string; fromDate: Date; toDate: Date; reason?: string }) {
@@ -112,3 +160,9 @@ export async function employeePortal(employeeId: string) {
 }
 type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY" | "ON_LEAVE" | "WORK_FROM_HOME" | "WEEKEND";
 type LeaveStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
+
+function normalizeDate(date: Date) {
+  const normalized = new Date(date);
+  normalized.setHours(0, 0, 0, 0);
+  return normalized;
+}

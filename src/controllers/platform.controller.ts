@@ -22,4 +22,16 @@ export const createPackage = asyncHandler(async (req, res) => {
   res.status(201).json(pkg);
 });
 
+export const createBiometricDevice = asyncHandler(async (req, res) => {
+  const device = await platform.createBiometricDevice(req.body);
+  await audit(req, "CREATE_BIOMETRIC_DEVICE", "BiometricDevice", device.id, { organizationId: device.organizationId, serial: device.serial });
+  res.status(201).json(device);
+});
+
+export const updateBiometricDevice = asyncHandler(async (req, res) => {
+  const device = await platform.updateBiometricDevice(req.params.id, req.body);
+  await audit(req, "UPDATE_BIOMETRIC_DEVICE", "BiometricDevice", device.id, { enabled: device.enabled, status: device.status });
+  res.json(device);
+});
+
 export const auditLogs = asyncHandler(async (_req, res) => res.json(await platform.listAuditLogs()));

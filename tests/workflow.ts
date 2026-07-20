@@ -28,6 +28,20 @@ async function main() {
       packageName: "Starter"
     })
   });
+  const device = await request("/platform/biometric-devices", {
+    method: "POST",
+    headers: { authorization: `Bearer ${superAdmin.token}` },
+    body: JSON.stringify({
+      organizationId: org.organization.id,
+      name: `Workflow Device ${stamp}`,
+      type: "Fingerprint",
+      model: "Test Terminal",
+      serial: `WF-${stamp}`,
+      ip: "192.168.10.10",
+      port: 4370,
+      location: "Main Office"
+    })
+  });
   const orgAdmin = await login(org.admin.email, "WorkflowAdmin123!", "ORG_ADMIN");
   const employee = await request("/org/employees", {
     method: "POST",
@@ -42,10 +56,17 @@ async function main() {
     })
   });
   const employeeLogin = await login(employee.credentials.email, "WorkflowEmployee123!", "EMPLOYEE");
+  const biometricSync = await request("/org/biometric/sync", {
+    method: "POST",
+    headers: { authorization: `Bearer ${orgAdmin.token}` },
+    body: JSON.stringify({})
+  });
   const portal = await request("/org/employee-portal", { headers: { authorization: `Bearer ${employeeLogin.token}` } });
   console.log(JSON.stringify({
     ok: true,
     organizationId: org.organization.id,
+    biometricDeviceId: device.id,
+    biometricSyncRecords: biometricSync.records,
     orgAdminEmail: org.admin.email,
     employeeEmail: employee.credentials.email,
     employeePortalName: `${portal.firstName} ${portal.lastName}`
