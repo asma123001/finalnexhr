@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate, requireRole, requireTenant } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { attendanceSchema, departmentSchema, employeeSchema, leaveSchema } from "../schemas.js";
+import { attendancePolicySchema, attendanceSchema, departmentSchema, employeeSchema, holidaySchema, leaveSchema, letterSchema, loanSchema, orgSettingsSchema, roleSchema, shiftAssignmentSchema, shiftSchema } from "../schemas.js";
 import * as controller from "../controllers/org.controller.js";
 
 export const orgRoutes = Router();
@@ -14,4 +14,18 @@ orgRoutes.post("/attendance/manual", requireRole("ORG_ADMIN"), validate(attendan
 orgRoutes.post("/leave", validate(leaveSchema), controller.applyLeave);
 orgRoutes.patch("/leave/:id/decision", requireRole("ORG_ADMIN"), controller.decideLeave);
 orgRoutes.post("/payroll/run", requireRole("ORG_ADMIN"), controller.runPayroll);
+orgRoutes.post("/attendance-policies", requireRole("ORG_ADMIN"), validate(attendancePolicySchema), controller.saveAttendancePolicy);
+orgRoutes.delete("/attendance-policies/:id", requireRole("ORG_ADMIN"), controller.deleteAttendancePolicy);
+orgRoutes.post("/shifts", requireRole("ORG_ADMIN"), validate(shiftSchema), controller.createShift);
+orgRoutes.post("/shift-assignments", requireRole("ORG_ADMIN"), validate(shiftAssignmentSchema), controller.saveShiftAssignment);
+orgRoutes.delete("/shift-assignments/:id", requireRole("ORG_ADMIN"), controller.deleteShiftAssignment);
+orgRoutes.patch("/settings", requireRole("ORG_ADMIN"), validate(orgSettingsSchema), controller.saveSettings);
+orgRoutes.post("/holidays", requireRole("ORG_ADMIN"), validate(holidaySchema), controller.createHoliday);
+orgRoutes.delete("/holidays/:id", requireRole("ORG_ADMIN"), controller.deleteHoliday);
+orgRoutes.post("/roles", requireRole("ORG_ADMIN"), validate(roleSchema), controller.saveRole);
+orgRoutes.delete("/roles/:id", requireRole("ORG_ADMIN"), controller.deleteRole);
+orgRoutes.post("/loans", requireRole("ORG_ADMIN"), validate(loanSchema), controller.createLoan);
+orgRoutes.patch("/loans/:id", requireRole("ORG_ADMIN"), controller.updateLoan);
+orgRoutes.patch("/exits/:id", requireRole("ORG_ADMIN"), controller.updateExit);
+orgRoutes.post("/letters", requireRole("ORG_ADMIN"), validate(letterSchema), controller.generateLetter);
 orgRoutes.get("/employee-portal", requireRole("EMPLOYEE"), controller.employeePortal);

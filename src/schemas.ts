@@ -84,3 +84,92 @@ export const attendanceSchema = z.object({
     notes: z.string().optional()
   })
 });
+
+export const attendancePolicySchema = z.object({
+  body: z.object({
+    id: z.string().optional(),
+    name: z.string().min(1, "Policy name is required."),
+    status: z.string().optional(),
+    priority: z.string().optional(),
+    effectiveDate: z.string().optional(),
+    rules: z.unknown().optional(),
+    assignments: z.unknown().optional(),
+    exceptions: z.unknown().optional(),
+    history: z.unknown().optional()
+  })
+});
+
+export const shiftSchema = z.object({
+  body: z.object({
+    name: z.string().min(1, "Shift name is required."),
+    startTime: z.string().min(1, "Start time is required."),
+    endTime: z.string().min(1, "End time is required."),
+    workingDays: z.string().min(1, "Working days are required."),
+    breakMinutes: z.coerce.number().int().nonnegative().optional(),
+    graceMinutes: z.coerce.number().int().nonnegative().optional(),
+    overtimeAfter: z.string().optional()
+  })
+});
+
+export const shiftAssignmentSchema = z.object({
+  body: z.object({
+    id: z.string().optional(),
+    shiftId: z.string().min(1),
+    targetType: z.string().min(1),
+    targetId: z.string().optional(),
+    employeeId: z.string().optional(),
+    effectiveFrom: z.coerce.date().optional(),
+    effectiveTo: z.coerce.date().optional()
+  })
+});
+
+export const orgSettingsSchema = z.object({
+  body: z.object({
+    name: z.string().min(1).optional(),
+    industry: z.string().optional(),
+    email: z.string().email().optional().or(z.literal("")),
+    phone: z.string().optional(),
+    website: z.string().optional(),
+    address: z.string().optional(),
+    currency: z.string().optional(),
+    timezone: z.string().optional(),
+    dateFormat: z.string().optional(),
+    payFrequency: z.string().optional(),
+    workWeekStart: z.string().optional()
+  })
+});
+
+export const holidaySchema = z.object({
+  body: z.object({
+    name: z.string().min(1, "Holiday name is required."),
+    date: z.coerce.date(),
+    type: z.string().default("Public")
+  })
+});
+
+export const roleSchema = z.object({
+  body: z.object({
+    id: z.string().optional(),
+    name: z.string().min(1, "Role name is required."),
+    description: z.string().optional(),
+    permissions: z.array(z.string()).default([])
+  })
+});
+
+export const loanSchema = z.object({
+  body: z.object({
+    employeeId: z.string().min(1, "Employee is required."),
+    type: z.string().min(1, "Loan type is required."),
+    amount: z.coerce.number().positive("Amount must be greater than zero."),
+    installments: z.coerce.number().int().positive().optional(),
+    salary: z.coerce.number().nonnegative().optional()
+  })
+});
+
+export const letterSchema = z.object({
+  body: z.object({
+    employeeId: z.string().min(1, "Employee is required."),
+    type: z.string().min(1, "Letter type is required."),
+    notes: z.string().optional()
+  })
+});

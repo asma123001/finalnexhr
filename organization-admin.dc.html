@@ -874,20 +874,20 @@
             <div style="width:64px;height:64px;flex-shrink:0;">
               <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="org-settings-logo" shape="rounded" radius="14" placeholder="Logo" hint-size="64px,64px"></x-import>
             </div>
-            <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Organization name</div><input value="{{ orgProfile.name }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Organization name</div><input value="{{ orgProfile.name }}" onChange="{{ updateOrgProfileField('name') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Contact email</div><input value="{{ orgProfile.email }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Phone</div><input value="{{ orgProfile.phone }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Contact email</div><input value="{{ orgProfile.email }}" onChange="{{ updateOrgProfileField('email') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Phone</div><input value="{{ orgProfile.phone }}" onChange="{{ updateOrgProfileField('phone') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Website</div><input value="{{ orgProfile.website }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Address</div><input value="{{ orgProfile.address }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Website</div><input value="{{ orgProfile.website }}" onChange="{{ updateOrgProfileField('website') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Address</div><input value="{{ orgProfile.address }}" onChange="{{ updateOrgProfileField('address') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px;">
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Currency</div><input value="{{ orgProfile.currency }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Pay frequency</div><input value="{{ orgProfile.payFrequency }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
-            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Work week starts</div><input value="{{ orgProfile.workWeekStart }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Currency</div><input value="{{ orgProfile.currency }}" onChange="{{ updateOrgProfileField('currency') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Pay frequency</div><input value="{{ orgProfile.payFrequency }}" onChange="{{ updateOrgProfileField('payFrequency') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Work week starts</div><input value="{{ orgProfile.workWeekStart }}" onChange="{{ updateOrgProfileField('workWeekStart') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
           </div>
           <button onClick="{{ saveOrgProfile }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Save profile</button>
         </div>
@@ -1432,7 +1432,13 @@ class Component extends DCLogic {
     try {
       const [mod, api] = await Promise.all([import('./data.js'), import('./api-client.js')]);
       this.api = api;
-      this.setState({ data: { ...mod } });
+      const tenantOnly = {
+        employees: [], departments: [], attendanceToday: [], leaveRequests: [], payroll: [],
+        attendancePolicies: [], shifts: [], rosterEntries: [], shiftSwapRequests: [], shiftAssignments: [],
+        exitRequests: [], loanRequests: [], letterTemplates: [], generatedLetters: [], branches: [], holidays: [], roles: [],
+        biometricDevices: [], biometricSyncLogs: [], attendanceAuditLog: [], employeeBiometricMap: []
+      };
+      this.setState({ data: { ...mod, ...tenantOnly } });
       try {
         const dashboard = await this.api.api('/org/dashboard');
         const employees = dashboard.employees.map(e => ({ id: e.id, name: e.firstName + ' ' + e.lastName, initials: (e.firstName[0] + e.lastName[0]).toUpperCase(), dept: e.department ? e.department.name : 'Unassigned', title: e.title, joined: new Date(e.joinedAt).toLocaleDateString(), status: e.status === 'ACTIVE' ? 'Active' : 'Inactive', email: e.email, phone: e.phone || '', employmentType: e.employmentType }));
@@ -1440,9 +1446,28 @@ class Component extends DCLogic {
         const attendanceToday = (dashboard.attendance || []).map(a => this.mapApiAttendance(a));
         const attendanceAuditLog = (dashboard.biometricSyncLogs || []).map(l => ({ id: l.id, actor: l.device ? l.device.name : 'Biometric device', action: `${l.status === 'SUCCESS' ? 'Synced' : 'Failed to sync'} ${l.records} attendance records`, time: new Date(l.createdAt).toLocaleString() }));
         const biometricDevices = dashboard.biometricDevices || [];
-        this.setState(st => ({ data: { ...st.data, employees, departments, attendanceToday, attendanceAuditLog, biometricDevices, employeeBiometricMap: [] } }));
+        const attendancePolicies = (dashboard.attendancePolicies || []).map(p => this.mapApiPolicy(p));
+        const shifts = (dashboard.shifts || []).map(sh => this.mapApiShift(sh));
+        const shiftAssignments = (dashboard.shifts || []).flatMap(sh => (sh.assignments || []).map(a => this.mapApiShiftAssignment(a, sh, departments)));
+        const rosterEntries = shiftAssignments.filter(a => a.targetType === 'Employee').map(a => this.rosterFromAssignment(a, employees));
+        const leaveRequests = (dashboard.leaveRequests || []).map(l => this.mapApiLeaveRequest(l));
+        const payroll = (dashboard.payrollRuns || []).flatMap(run => (run.items || []).map(item => this.mapApiPayrollItem(item, run)));
+        const roles = (dashboard.roles || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', permissions: r.permissions || [], assignedCount: r.usersCount || 0 }));
+        const settings = dashboard.settings || {};
+        const org = dashboard.organization || {};
+        const orgProfile = { name: org.name || '', industry: org.industry || '', email: org.email || '', phone: org.phone || '', website: org.website || '', address: org.address || '',
+          currency: settings.currency || 'USD', timezone: settings.timezone || 'UTC', dateFormat: settings.dateFormat || 'MM/DD/YYYY', payFrequency: settings.payFrequency || 'Monthly', workWeekStart: settings.workWeekStart || 'Monday' };
+        const branches = (dashboard.branches || []).map(b => ({ id: b.id, name: b.name, location: b.location || '', employees: 0, status: b.isActive ? 'Active' : 'Inactive' }));
+        const holidays = (dashboard.holidays || []).map(h => ({ id: h.id, name: h.name, date: this.formatDate(h.date), type: h.type }));
+        const loanRequests = (dashboard.loanRequests || []).map(l => this.mapApiLoan(l));
+        const exitRequests = (dashboard.exitRequests || []).map(ex => this.mapApiExit(ex));
+        const letterTemplates = (dashboard.letterTemplates || []).map(t => ({ id: t.id, type: t.type, description: (t.body || '').slice(0, 110) || 'Database template' }));
+        const generatedLetters = (dashboard.letters || []).map(l => this.mapApiLetter(l));
+        this.setState(st => ({ data: { ...st.data, employees, departments, attendanceToday, attendanceAuditLog, biometricDevices, employeeBiometricMap: [],
+          attendancePolicies, shifts, shiftAssignments, rosterEntries, shiftSwapRequests: [], leaveRequests, payroll, roles, orgProfile, branches, holidays,
+          loanRequests, exitRequests, letterTemplates, generatedLetters } }));
       } catch (err) {
-        console.warn('Using local demo data because org dashboard failed:', err);
+        console.warn('Org dashboard failed; tenant-owned modules remain empty instead of showing demo data:', err);
       }
     } catch (err) { console.error('organization-admin: failed to load data.js', err); }
     this._onResize = () => this.setState({ viewportWidth: window.innerWidth });
@@ -1470,6 +1495,83 @@ class Component extends DCLogic {
       hours: a.hours || '—',
       date: a.date ? new Date(a.date).toISOString().slice(0, 10) : ''
     };
+  }
+  humanStatus(value) {
+    return String(value || '').replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  }
+  formatDate(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString();
+  }
+  cents(value) { return Math.round((value || 0) / 100); }
+  splitEmployeeName(employee) {
+    const first = employee ? employee.firstName || '' : '';
+    const last = employee ? employee.lastName || '' : '';
+    const name = `${first} ${last}`.trim() || 'Employee';
+    return { name, initials: `${first[0] || ''}${last[0] || ''}`.toUpperCase() || 'NA' };
+  }
+  mapApiPolicy(p) {
+    const packedRules = p.rules || {};
+    const rules = packedRules.rules || packedRules;
+    const priority = p.priority >= 80 ? 'High' : p.priority <= 20 ? 'Low' : 'Medium';
+    return {
+      id: p.id, name: p.name, status: p.isActive ? 'Active' : 'Inactive', priority,
+      effectiveDate: p.effectiveFrom ? new Date(p.effectiveFrom).toISOString().slice(0, 10) : '',
+      assignments: p.assignments || { branches: [], departments: [], designations: [], employees: [] },
+      rules, exceptions: packedRules.exceptions || [],
+      history: packedRules.history || [{ id: 'h' + p.id, date: this.formatDate(p.updatedAt || p.createdAt), actor: 'Org Admin', change: 'Policy loaded from database' }]
+    };
+  }
+  mapApiShift(sh) {
+    return {
+      id: sh.id, name: sh.name, start: sh.startTime, end: sh.endTime, days: sh.workingDays,
+      breakMins: sh.breakMinutes || 0, graceMins: sh.graceMinutes || 0,
+      overtimeEnabled: !!sh.overtimeAfter, overtimeAfter: sh.overtimeAfter || sh.endTime, color: '#4f46e5',
+      employeeCount: (sh.assignments || []).filter(a => a.employeeId).length
+    };
+  }
+  mapApiShiftAssignment(a, sh, departments) {
+    const emp = a.employee ? this.splitEmployeeName(a.employee) : null;
+    const dept = departments.find(d => d.id === a.targetId);
+    return {
+      id: a.id,
+      target: emp ? emp.name : (dept ? dept.name : a.targetId || 'Department'),
+      targetType: a.employeeId ? 'Employee' : 'Department',
+      shiftName: sh.name,
+      effectiveFrom: this.formatDate(a.effectiveFrom) || 'Ongoing',
+      effectiveTo: this.formatDate(a.effectiveTo) || 'Ongoing',
+      status: 'Active'
+    };
+  }
+  rosterFromAssignment(a, employees) {
+    const emp = employees.find(e => e.name === a.target) || {};
+    const code = a.shiftName && a.shiftName[0] ? a.shiftName[0].toUpperCase() : 'S';
+    return { id: 'ro-' + a.id, name: a.target, initials: emp.initials || 'NA', shift: a.shiftName, mon: code, tue: code, wed: code, thu: code, fri: code, sat: 'Off', sun: 'Off' };
+  }
+  mapApiLeaveRequest(l) {
+    const emp = this.splitEmployeeName(l.employee);
+    return { id: l.id, name: emp.name, initials: emp.initials, type: l.type, from: this.formatDate(l.fromDate), to: this.formatDate(l.toDate), days: l.days, status: this.humanStatus(l.status), reason: l.reason || '' };
+  }
+  mapApiPayrollItem(item, run) {
+    const emp = this.splitEmployeeName(item.employee);
+    return { id: item.id, name: emp.name, initials: emp.initials, dept: item.employee && item.employee.department ? item.employee.department.name : 'Unassigned',
+      base: this.cents(item.baseCents), bonus: this.cents((item.bonusCents || 0) + (item.overtimeCents || 0)), deductions: this.cents(item.deductionCents), net: this.cents(item.netCents),
+      status: this.humanStatus(item.status || run.status) };
+  }
+  mapApiLoan(l) {
+    const emp = this.splitEmployeeName(l.employee);
+    return { id: l.id, employee: emp.name, initials: emp.initials, type: l.type, amount: this.cents(l.amountCents), salary: this.cents(l.salaryCents),
+      status: this.humanStatus(l.status), requested: this.formatDate(l.requestedAt), installments: l.installments, monthly: l.monthlyCents ? this.cents(l.monthlyCents) : undefined, paid: this.cents(l.paidCents) };
+  }
+  mapApiExit(ex) {
+    const emp = this.splitEmployeeName(ex.employee);
+    return { id: ex.id, employee: emp.name, initials: emp.initials, dept: ex.employee && ex.employee.department ? ex.employee.department.name : 'Unassigned',
+      lastWorkingDay: this.formatDate(ex.lastWorkingDay), stage: ex.stage, reason: ex.reason, clearance: { it: false, finance: false, hr: false, assets: false, ...(ex.clearance || {}) } };
+  }
+  mapApiLetter(l) {
+    const emp = this.splitEmployeeName(l.employee);
+    return { id: l.id, employee: emp.name, type: l.type, generatedOn: this.formatDate(l.createdAt), generatedBy: 'Admin User' };
   }
   apiAttendanceStatus(status) {
     return String(status || 'Present').toUpperCase().replaceAll(' ', '_');
@@ -1617,39 +1719,70 @@ class Component extends DCLogic {
   onRuleSearchChange(e) { this.setState({ ruleSearch: e.target.value }); }
   onPolicySearchChange(e) { this.setState({ policySearch: e.target.value }); }
   setPolicyStatusFilter(f) { this.setState({ policyStatusFilter: f }); }
-  savePolicy() {
+  async savePolicy() {
     const s = this.state;
     const historyEntry = { id: 'h' + Date.now(), date: 'Jul 19, 2026', actor: 'Org Admin', change: s.selectedPolicyId ? 'Policy updated' : 'Policy created' };
     const finalPolicy = { ...s.draftPolicy, history: [historyEntry, ...s.draftPolicy.history] };
+    let savedPolicy = finalPolicy;
+    try {
+      const saved = await this.api.api('/org/attendance-policies', { method: 'POST', body: JSON.stringify(finalPolicy) });
+      savedPolicy = this.mapApiPolicy(saved);
+    } catch (err) {
+      this.showToast(err.message || 'Policy could not be saved', '#dc2626');
+      return;
+    }
     this.setState(st => {
-      const exists = st.data.attendancePolicies.some(p => p.id === finalPolicy.id);
-      const attendancePolicies = exists ? st.data.attendancePolicies.map(p => p.id === finalPolicy.id ? finalPolicy : p) : [finalPolicy, ...st.data.attendancePolicies];
-      return { data: { ...st.data, attendancePolicies }, draftPolicy: finalPolicy, selectedPolicyId: finalPolicy.id };
+      const exists = st.data.attendancePolicies.some(p => p.id === savedPolicy.id || p.id === finalPolicy.id);
+      const attendancePolicies = exists ? st.data.attendancePolicies.map(p => (p.id === savedPolicy.id || p.id === finalPolicy.id) ? savedPolicy : p) : [savedPolicy, ...st.data.attendancePolicies];
+      return { data: { ...st.data, attendancePolicies }, draftPolicy: savedPolicy, selectedPolicyId: savedPolicy.id };
     });
     this.showToast('Policy saved', '#0f9d58');
   }
-  duplicatePolicyFromBuilder() {
+  async duplicatePolicyFromBuilder() {
     const s = this.state;
     const dup = { ...s.draftPolicy, id: 'ap' + Date.now(), name: s.draftPolicy.name + ' (Copy)', status: 'Draft', history: [{ id: 'h' + Date.now(), date: 'Jul 19, 2026', actor: 'Org Admin', change: 'Duplicated from ' + s.draftPolicy.name }] };
-    this.setState(st => ({ data: { ...st.data, attendancePolicies: [dup, ...st.data.attendancePolicies] }, draftPolicy: dup, selectedPolicyId: dup.id }));
+    let savedPolicy = dup;
+    try {
+      savedPolicy = this.mapApiPolicy(await this.api.api('/org/attendance-policies', { method: 'POST', body: JSON.stringify(dup) }));
+    } catch (err) {
+      this.showToast(err.message || 'Policy could not be duplicated', '#dc2626');
+      return;
+    }
+    this.setState(st => ({ data: { ...st.data, attendancePolicies: [savedPolicy, ...st.data.attendancePolicies] }, draftPolicy: savedPolicy, selectedPolicyId: savedPolicy.id }));
     this.showToast('Policy duplicated', '#0f9d58');
   }
   deletePolicyFromBuilder() {
     const s = this.state;
+    if (s.draftPolicy.id && s.draftPolicy.id.startsWith('ap')) {
+      this.setState({ screen: 'oa-attendance-policies', draftPolicy: null });
+      this.showToast('Draft discarded', '#dc2626');
+      return;
+    }
     this.askConfirm('Delete policy', `This permanently deletes ${s.draftPolicy.name}.`, 'Delete', () => {
-      this.setState(st => ({ data: { ...st.data, attendancePolicies: st.data.attendancePolicies.filter(p => p.id !== s.draftPolicy.id) }, screen: 'oa-attendance-policies', draftPolicy: null }));
-      this.showToast('Policy deleted', '#dc2626');
+      this.api.api('/org/attendance-policies/' + encodeURIComponent(s.draftPolicy.id), { method: 'DELETE' }).then(() => {
+        this.setState(st => ({ data: { ...st.data, attendancePolicies: st.data.attendancePolicies.filter(p => p.id !== s.draftPolicy.id) }, screen: 'oa-attendance-policies', draftPolicy: null }));
+        this.showToast('Policy deleted', '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Policy could not be deleted', '#dc2626'));
     });
   }
-  duplicatePolicyFromList(p) {
+  async duplicatePolicyFromList(p) {
     const dup = { ...p, id: 'ap' + Date.now(), name: p.name + ' (Copy)', status: 'Draft', history: [{ id: 'h' + Date.now(), date: 'Jul 19, 2026', actor: 'Org Admin', change: 'Duplicated from ' + p.name }] };
-    this.setState(st => ({ data: { ...st.data, attendancePolicies: [dup, ...st.data.attendancePolicies] } }));
+    let savedPolicy = dup;
+    try {
+      savedPolicy = this.mapApiPolicy(await this.api.api('/org/attendance-policies', { method: 'POST', body: JSON.stringify(dup) }));
+    } catch (err) {
+      this.showToast(err.message || 'Policy could not be duplicated', '#dc2626');
+      return;
+    }
+    this.setState(st => ({ data: { ...st.data, attendancePolicies: [savedPolicy, ...st.data.attendancePolicies] } }));
     this.showToast('Policy duplicated', '#0f9d58');
   }
   deletePolicyFromListRow(p) {
     this.askConfirm('Delete policy', `This permanently deletes ${p.name}.`, 'Delete', () => {
-      this.setState(s2 => ({ data: { ...s2.data, attendancePolicies: s2.data.attendancePolicies.filter(x => x.id !== p.id) } }));
-      this.showToast('Policy deleted', '#dc2626');
+      this.api.api('/org/attendance-policies/' + encodeURIComponent(p.id), { method: 'DELETE' }).then(() => {
+        this.setState(s2 => ({ data: { ...s2.data, attendancePolicies: s2.data.attendancePolicies.filter(x => x.id !== p.id) } }));
+        this.showToast('Policy deleted', '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Policy could not be deleted', '#dc2626'));
     });
   }
 
@@ -1657,10 +1790,17 @@ class Component extends DCLogic {
   onFormGenLetterEmployeeChange(e) { this.setState({ formGenLetterEmployeeId: e.target.value }); }
   onFormGenLetterTypeChange(e) { this.setState({ formGenLetterType: e.target.value }); }
   onFormGenLetterNotesChange(e) { this.setState({ formGenLetterNotes: e.target.value }); }
-  submitGenerateLetter() {
+  async submitGenerateLetter() {
     const s = this.state;
     const emp = s.data.employees.find(e => e.id === s.formGenLetterEmployeeId);
-    const newLetter = { id: 'gl' + Date.now(), employee: emp ? emp.name : 'Employee', type: s.formGenLetterType, generatedOn: 'Jul 19, 2026', generatedBy: 'Admin User' };
+    let newLetter = { id: 'gl' + Date.now(), employee: emp ? emp.name : 'Employee', type: s.formGenLetterType, generatedOn: new Date().toLocaleDateString(), generatedBy: 'Admin User' };
+    try {
+      const saved = await this.api.api('/org/letters', { method: 'POST', body: JSON.stringify({ employeeId: s.formGenLetterEmployeeId, type: s.formGenLetterType, notes: s.formGenLetterNotes || undefined }) });
+      newLetter = this.mapApiLetter(saved);
+    } catch (err) {
+      this.showToast(err.message || 'Letter could not be generated', '#dc2626');
+      return;
+    }
     this.setState(st => ({ data: { ...st.data, generatedLetters: [newLetter, ...st.data.generatedLetters] } }));
     this.closeModal();
     this.showToast('Letter generated', '#0f9d58');
@@ -1705,21 +1845,38 @@ class Component extends DCLogic {
   updateOrgProfileField(key, value) {
     this.setState(s => ({ data: { ...s.data, orgProfile: { ...s.data.orgProfile, [key]: value } } }));
   }
-  saveOrgProfile() { this.showToast('Organization profile saved', '#0f9d58'); }
+  async saveOrgProfile() {
+    try {
+      await this.api.api('/org/settings', { method: 'PATCH', body: JSON.stringify(this.state.data.orgProfile) });
+      this.showToast('Organization profile saved', '#0f9d58');
+    } catch (err) {
+      this.showToast(err.message || 'Organization profile could not be saved', '#dc2626');
+    }
+  }
 
   openAddHoliday() { this.setState({ modal: 'holiday', editingHolidayId: null, formHolidayName: '', formHolidayDate: '', formHolidayType: 'Public' }); }
   onFormHolidayNameChange(e) { this.setState({ formHolidayName: e.target.value }); }
   onFormHolidayDateChange(e) { this.setState({ formHolidayDate: e.target.value }); }
   onFormHolidayTypeChange(e) { this.setState({ formHolidayType: e.target.value }); }
-  submitHoliday() {
+  async submitHoliday() {
     const s = this.state;
-    this.setState(st => ({ data: { ...st.data, holidays: [...st.data.holidays, { id: 'hd' + Date.now(), name: s.formHolidayName || 'New Holiday', date: s.formHolidayDate || 'TBD', type: s.formHolidayType }] } }));
+    let holiday = { id: 'hd' + Date.now(), name: s.formHolidayName || 'New Holiday', date: s.formHolidayDate || 'TBD', type: s.formHolidayType };
+    try {
+      const saved = await this.api.api('/org/holidays', { method: 'POST', body: JSON.stringify({ name: holiday.name, date: new Date(s.formHolidayDate || new Date()).toISOString(), type: holiday.type }) });
+      holiday = { id: saved.id, name: saved.name, date: this.formatDate(saved.date), type: saved.type };
+    } catch (err) {
+      this.showToast(err.message || 'Holiday could not be added', '#dc2626');
+      return;
+    }
+    this.setState(st => ({ data: { ...st.data, holidays: [...st.data.holidays, holiday] } }));
     this.closeModal();
     this.showToast('Holiday added', '#0f9d58');
   }
   deleteHoliday(h) {
-    this.setState(s2 => ({ data: { ...s2.data, holidays: s2.data.holidays.filter(x => x.id !== h.id) } }));
-    this.showToast('Holiday removed', '#dc2626');
+    this.api.api('/org/holidays/' + encodeURIComponent(h.id), { method: 'DELETE' }).then(() => {
+      this.setState(s2 => ({ data: { ...s2.data, holidays: s2.data.holidays.filter(x => x.id !== h.id) } }));
+      this.showToast('Holiday removed', '#dc2626');
+    }).catch(err => this.showToast(err.message || 'Holiday could not be removed', '#dc2626'));
   }
 
   openAddRole() { this.setState({ modal: 'role', editingRoleId: null, formRoleName: '', formRoleDescription: '', formRolePermissions: [] }); }
@@ -1729,22 +1886,32 @@ class Component extends DCLogic {
   toggleFormRolePermission(mod) {
     this.setState(s => ({ formRolePermissions: s.formRolePermissions.includes(mod) ? s.formRolePermissions.filter(m => m !== mod) : [...s.formRolePermissions, mod] }));
   }
-  submitRole() {
+  async submitRole() {
     const s = this.state;
     const fields = { name: s.formRoleName.trim() || 'New Role', description: s.formRoleDescription.trim(), permissions: s.formRolePermissions };
+    let savedRole = null;
+    try {
+      savedRole = await this.api.api('/org/roles', { method: 'POST', body: JSON.stringify({ id: s.editingRoleId || undefined, ...fields }) });
+    } catch (err) {
+      this.showToast(err.message || 'Role could not be saved', '#dc2626');
+      return;
+    }
+    const roleRow = { id: savedRole.id, name: savedRole.name, description: savedRole.description || '', permissions: savedRole.permissions || [], assignedCount: savedRole.usersCount || 0 };
     if (s.editingRoleId) {
-      this.setState(st => ({ data: { ...st.data, roles: st.data.roles.map(r => r.id === s.editingRoleId ? { ...r, ...fields } : r) } }));
+      this.setState(st => ({ data: { ...st.data, roles: st.data.roles.map(r => r.id === s.editingRoleId ? roleRow : r) } }));
       this.showToast('Role updated', '#0f9d58');
     } else {
-      this.setState(st => ({ data: { ...st.data, roles: [...st.data.roles, { id: 'r' + Date.now(), ...fields, assignedCount: 0 }] } }));
+      this.setState(st => ({ data: { ...st.data, roles: [...st.data.roles, roleRow] } }));
       this.showToast('Role created', '#0f9d58');
     }
     this.closeModal();
   }
   deleteRole(r) {
     this.askConfirm('Delete role', `This permanently deletes the ${r.name} role.`, 'Delete', () => {
-      this.setState(s2 => ({ data: { ...s2.data, roles: s2.data.roles.filter(x => x.id !== r.id) } }));
-      this.showToast('Role deleted', '#dc2626');
+      this.api.api('/org/roles/' + encodeURIComponent(r.id), { method: 'DELETE' }).then(() => {
+        this.setState(s2 => ({ data: { ...s2.data, roles: s2.data.roles.filter(x => x.id !== r.id) } }));
+        this.showToast('Role deleted', '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Role could not be deleted', '#dc2626'));
     });
   }
   submitAnnounce() {
@@ -1867,15 +2034,37 @@ class Component extends DCLogic {
     this.closeModal();
     this.showToast('Attendance recorded', '#0f9d58');
   }
-  approveLeave(id) {
-    this.setState(s => ({ data: { ...s.data, leaveRequests: s.data.leaveRequests.map(l => l.id === id ? { ...l, status: 'Approved' } : l) } }));
-    this.showToast('Leave request approved', '#0f9d58');
+  async approveLeave(id) {
+    try {
+      const saved = await this.api.api('/org/leave/' + encodeURIComponent(id) + '/decision', { method: 'PATCH', body: JSON.stringify({ status: 'APPROVED' }) });
+      const row = this.mapApiLeaveRequest(saved);
+      this.setState(s => ({ data: { ...s.data, leaveRequests: s.data.leaveRequests.map(l => l.id === id ? row : l) } }));
+      this.showToast('Leave request approved', '#0f9d58');
+    } catch (err) {
+      this.showToast(err.message || 'Leave request could not be approved', '#dc2626');
+    }
   }
-  rejectLeave(id) {
-    this.setState(s => ({ data: { ...s.data, leaveRequests: s.data.leaveRequests.map(l => l.id === id ? { ...l, status: 'Rejected' } : l) } }));
-    this.showToast('Leave request rejected', '#dc2626');
+  async rejectLeave(id) {
+    try {
+      const saved = await this.api.api('/org/leave/' + encodeURIComponent(id) + '/decision', { method: 'PATCH', body: JSON.stringify({ status: 'REJECTED' }) });
+      const row = this.mapApiLeaveRequest(saved);
+      this.setState(s => ({ data: { ...s.data, leaveRequests: s.data.leaveRequests.map(l => l.id === id ? row : l) } }));
+      this.showToast('Leave request rejected', '#dc2626');
+    } catch (err) {
+      this.showToast(err.message || 'Leave request could not be rejected', '#dc2626');
+    }
   }
-  runPayroll() { this.showToast('Payroll run started for July 2026', '#4f46e5'); }
+  async runPayroll() {
+    try {
+      const period = new Date().toISOString().slice(0, 7);
+      const run = await this.api.api('/org/payroll/run', { method: 'POST', body: JSON.stringify({ period }) });
+      const rows = (run.items || []).map(item => this.mapApiPayrollItem(item, run));
+      this.setState(s => ({ data: { ...s.data, payroll: [...rows, ...s.data.payroll] } }));
+      this.showToast('Payroll run completed', '#0f9d58');
+    } catch (err) {
+      this.showToast(err.message || 'Payroll could not be run', '#dc2626');
+    }
+  }
   openViewSlip(p) { this.setState({ modal: 'viewSlip', viewSlipData: p }); }
   printSlip() { window.print(); }
 
@@ -1892,12 +2081,20 @@ class Component extends DCLogic {
   onFormShiftOvertimeAfterChange(e) { this.setState({ formShiftOvertimeAfter: e.target.value }); }
   onFormShiftColorChange(color) { this.setState({ formShiftColor: color }); }
   toggleFormShiftOvertime() { this.setState(s => ({ formShiftOvertimeEnabled: !s.formShiftOvertimeEnabled })); }
-  submitCreateShift() {
+  async submitCreateShift() {
     const s = this.state;
     const newShift = { id: 'sh' + Date.now(), name: s.formShiftName.trim() || 'New Shift', start: s.formShiftStart, end: s.formShiftEnd, days: s.formShiftDays,
       breakMins: parseInt(s.formShiftBreak, 10) || 0, graceMins: parseInt(s.formShiftGrace, 10) || 0, overtimeEnabled: s.formShiftOvertimeEnabled, overtimeAfter: s.formShiftOvertimeAfter,
       color: s.formShiftColor, employeeCount: 0 };
-    this.setState(st => ({ data: { ...st.data, shifts: [...st.data.shifts, newShift] } }));
+    let savedShift = newShift;
+    try {
+      const saved = await this.api.api('/org/shifts', { method: 'POST', body: JSON.stringify({ name: newShift.name, startTime: newShift.start, endTime: newShift.end, workingDays: newShift.days, breakMinutes: newShift.breakMins, graceMinutes: newShift.graceMins, overtimeAfter: s.formShiftOvertimeEnabled ? newShift.overtimeAfter : undefined }) });
+      savedShift = this.mapApiShift(saved);
+    } catch (err) {
+      this.showToast(err.message || 'Shift could not be created', '#dc2626');
+      return;
+    }
+    this.setState(st => ({ data: { ...st.data, shifts: [...st.data.shifts, savedShift] } }));
     this.closeModal();
     this.showToast('Shift created', '#0f9d58');
   }
@@ -1916,8 +2113,10 @@ class Component extends DCLogic {
   }
   deleteAssignment(a) {
     this.askConfirm('Remove shift assignment', `${a.shiftName} will no longer apply to ${a.target}.`, 'Remove', () => {
-      this.setState(s2 => ({ data: { ...s2.data, shiftAssignments: s2.data.shiftAssignments.filter(x => x.id !== a.id) } }));
-      this.showToast('Assignment removed', '#dc2626');
+      this.api.api('/org/shift-assignments/' + encodeURIComponent(a.id), { method: 'DELETE' }).then(() => {
+        this.setState(s2 => ({ data: { ...s2.data, shiftAssignments: s2.data.shiftAssignments.filter(x => x.id !== a.id), rosterEntries: s2.data.rosterEntries.filter(x => x.id !== 'ro-' + a.id) } }));
+        this.showToast('Assignment removed', '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Assignment could not be removed', '#dc2626'));
     });
   }
   setAssignTarget(t) { this.setState({ formAssignTarget: t }); }
@@ -1925,7 +2124,7 @@ class Component extends DCLogic {
   onFormAssignEmployeeChange(e) { this.setState({ formAssignEmployeeId: e.target.value }); }
   onFormAssignStartDateChange(e) { this.setState({ formAssignStartDate: e.target.value }); }
   onFormAssignEndDateChange(e) { this.setState({ formAssignEndDate: e.target.value }); }
-  submitAssignShift() {
+  async submitAssignShift() {
     const s = this.state;
     const shift = s.data.shifts.find(sh => sh.id === s.formAssignShiftId);
     if (!shift) { this.closeModal(); return; }
@@ -1933,12 +2132,29 @@ class Component extends DCLogic {
     const target = s.formAssignTarget === 'department' ? s.formAssignDept : (s.data.employees.find(e => e.id === s.formAssignEmployeeId) || {}).name || 'Employee';
     const effectiveFrom = s.formAssignStartDate || 'Jul 19, 2026';
     const effectiveTo = s.formAssignEndDate || 'Ongoing';
+    const targetDept = s.data.departments.find(d => d.name === s.formAssignDept);
+    let savedAssignment = null;
+    try {
+      savedAssignment = await this.api.api('/org/shift-assignments', { method: 'POST', body: JSON.stringify({
+        id: s.editingAssignmentId || undefined,
+        shiftId: shift.id,
+        targetType: s.formAssignTarget,
+        targetId: s.formAssignTarget === 'department' ? (targetDept ? targetDept.id : s.formAssignDept) : undefined,
+        employeeId: s.formAssignTarget === 'employee' ? s.formAssignEmployeeId : undefined,
+        effectiveFrom: new Date(s.formAssignStartDate || new Date()).toISOString(),
+        effectiveTo: s.formAssignEndDate ? new Date(s.formAssignEndDate).toISOString() : undefined
+      }) });
+    } catch (err) {
+      this.showToast(err.message || 'Assignment could not be saved', '#dc2626');
+      return;
+    }
+    const finalAssignment = { id: savedAssignment.id, target, targetType, shiftName: shift.name, effectiveFrom, effectiveTo, status: 'Active' };
     if (s.editingAssignmentId) {
-      this.setState(st => ({ data: { ...st.data, shiftAssignments: st.data.shiftAssignments.map(a => a.id === s.editingAssignmentId ? { ...a, target, targetType, shiftName: shift.name, effectiveFrom, effectiveTo } : a) } }));
+      this.setState(st => ({ data: { ...st.data, shiftAssignments: st.data.shiftAssignments.map(a => a.id === s.editingAssignmentId ? finalAssignment : a) } }));
       this.showToast('Assignment updated', '#0f9d58');
     } else {
-      const newAssignment = { id: 'sa' + Date.now(), target, targetType, shiftName: shift.name, effectiveFrom, effectiveTo, status: 'Active' };
-      this.setState(st => ({ data: { ...st.data, shiftAssignments: [...st.data.shiftAssignments, newAssignment],
+      this.setState(st => ({ data: { ...st.data, shiftAssignments: [...st.data.shiftAssignments, finalAssignment],
+        rosterEntries: s.formAssignTarget === 'employee' ? [...st.data.rosterEntries, this.rosterFromAssignment(finalAssignment, st.data.employees)] : st.data.rosterEntries,
         shifts: st.data.shifts.map(sh => sh.id === shift.id ? { ...sh, employeeCount: sh.employeeCount + (s.formAssignTarget === 'department' ? 12 : 1) } : sh) } }));
       this.showToast(`${shift.name} assigned to ${target}`, '#0f9d58');
     }
@@ -1969,16 +2185,29 @@ class Component extends DCLogic {
   }
 
 
-  advanceExit(ex) {
+  async advanceExit(ex) {
     const order = ['Notice Period', 'Clearance', 'Exit Interview', 'Settlement', 'Exited'];
     const idx = order.indexOf(ex.stage);
     if (idx === -1 || idx === order.length - 1) return;
     const nextStage = order[idx + 1];
-    this.setState(s2 => ({ data: { ...s2.data, exitRequests: s2.data.exitRequests.map(x => x.id === ex.id ? { ...x, stage: nextStage } : x) } }));
-    this.showToast(ex.employee + ' moved to ' + nextStage, '#4f46e5');
+    try {
+      const saved = await this.api.api('/org/exits/' + encodeURIComponent(ex.id), { method: 'PATCH', body: JSON.stringify({ stage: nextStage }) });
+      const row = this.mapApiExit(saved);
+      this.setState(s2 => ({ data: { ...s2.data, exitRequests: s2.data.exitRequests.map(x => x.id === ex.id ? row : x) } }));
+      this.showToast(ex.employee + ' moved to ' + nextStage, '#4f46e5');
+    } catch (err) {
+      this.showToast(err.message || 'Exit request could not be updated', '#dc2626');
+    }
   }
-  toggleClearanceItem(ex, key) {
-    this.setState(s2 => ({ data: { ...s2.data, exitRequests: s2.data.exitRequests.map(x => x.id === ex.id ? { ...x, clearance: { ...x.clearance, [key]: !x.clearance[key] } } : x) } }));
+  async toggleClearanceItem(ex, key) {
+    const clearance = { ...ex.clearance, [key]: !ex.clearance[key] };
+    try {
+      const saved = await this.api.api('/org/exits/' + encodeURIComponent(ex.id), { method: 'PATCH', body: JSON.stringify({ clearance }) });
+      const row = this.mapApiExit(saved);
+      this.setState(s2 => ({ data: { ...s2.data, exitRequests: s2.data.exitRequests.map(x => x.id === ex.id ? row : x) } }));
+    } catch (err) {
+      this.showToast(err.message || 'Clearance could not be updated', '#dc2626');
+    }
   }
 
   openRequestLoan() { this.setState({ modal: 'requestLoan', formLoanEmployeeId: (this.state.data.employees[0] || {}).id || '', formLoanType: 'Salary Advance', formLoanAmount: '', formLoanInstallments: '1' }); }
@@ -1986,34 +2215,51 @@ class Component extends DCLogic {
   onFormLoanTypeChange(e) { this.setState({ formLoanType: e.target.value }); }
   onFormLoanAmountChange(e) { this.setState({ formLoanAmount: e.target.value }); }
   onFormLoanInstallmentsChange(e) { this.setState({ formLoanInstallments: e.target.value }); }
-  submitRequestLoan() {
+  async submitRequestLoan() {
     const s = this.state;
     const emp = s.data.employees.find(e => e.id === s.formLoanEmployeeId);
     const payrollRow = s.data.payroll.find(p => p.name === (emp || {}).name);
     const amount = parseFloat(s.formLoanAmount) || 0;
     const installments = parseInt(s.formLoanInstallments, 10) || 1;
     const newLoan = { id: 'ln' + Date.now(), employee: (emp || {}).name || 'Employee', initials: (emp || {}).initials || 'NA', type: s.formLoanType,
-      amount, salary: payrollRow ? payrollRow.net : 0, status: 'Pending', requested: 'Jul 19, 2026', installments, monthly: installments > 1 ? Math.round(amount / installments) : undefined, paid: 0 };
-    this.setState(st => ({ data: { ...st.data, loanRequests: [newLoan, ...st.data.loanRequests] } }));
+      amount, salary: payrollRow ? payrollRow.net : 0, status: 'Pending', requested: new Date().toLocaleDateString(), installments, monthly: installments > 1 ? Math.round(amount / installments) : undefined, paid: 0 };
+    let savedLoan = newLoan;
+    try {
+      savedLoan = this.mapApiLoan(await this.api.api('/org/loans', { method: 'POST', body: JSON.stringify({ employeeId: s.formLoanEmployeeId, type: s.formLoanType, amount, installments, salary: newLoan.salary }) }));
+    } catch (err) {
+      this.showToast(err.message || 'Loan request could not be submitted', '#dc2626');
+      return;
+    }
+    this.setState(st => ({ data: { ...st.data, loanRequests: [savedLoan, ...st.data.loanRequests] } }));
     this.closeModal();
     this.showToast('Request submitted', '#0f9d58');
   }
   approveLoan(ln) {
     this.askConfirm('Approve request', `${ln.employee}'s ${ln.type.toLowerCase()} of $${ln.amount.toLocaleString()} will be approved and deducted from payroll.`, 'Approve', () => {
-      this.setState(s2 => ({ data: { ...s2.data, loanRequests: s2.data.loanRequests.map(x => x.id === ln.id ? { ...x, status: 'Approved' } : x) } }));
-      this.showToast('Request approved', '#0f9d58');
+      this.api.api('/org/loans/' + encodeURIComponent(ln.id), { method: 'PATCH', body: JSON.stringify({ status: 'APPROVED' }) }).then(saved => {
+        const row = this.mapApiLoan(saved);
+        this.setState(s2 => ({ data: { ...s2.data, loanRequests: s2.data.loanRequests.map(x => x.id === ln.id ? row : x) } }));
+        this.showToast('Request approved', '#0f9d58');
+      }).catch(err => this.showToast(err.message || 'Request could not be approved', '#dc2626'));
     });
   }
   rejectLoan(ln) {
     this.askConfirm('Reject request', `${ln.employee}'s request will be rejected.`, 'Reject', () => {
-      this.setState(s2 => ({ data: { ...s2.data, loanRequests: s2.data.loanRequests.map(x => x.id === ln.id ? { ...x, status: 'Rejected' } : x) } }));
-      this.showToast('Request rejected', '#dc2626');
+      this.api.api('/org/loans/' + encodeURIComponent(ln.id), { method: 'PATCH', body: JSON.stringify({ status: 'REJECTED' }) }).then(saved => {
+        const row = this.mapApiLoan(saved);
+        this.setState(s2 => ({ data: { ...s2.data, loanRequests: s2.data.loanRequests.map(x => x.id === ln.id ? row : x) } }));
+        this.showToast('Request rejected', '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Request could not be rejected', '#dc2626'));
     });
   }
   recordInstallment(ln) {
     const monthly = ln.monthly || ln.amount;
-    this.setState(s2 => ({ data: { ...s2.data, loanRequests: s2.data.loanRequests.map(x => x.id === ln.id ? { ...x, paid: Math.min(x.amount, (x.paid || 0) + monthly) } : x) } }));
-    this.showToast('Installment deducted from payroll', '#4f46e5');
+    const nextPaid = Math.min(ln.amount, (ln.paid || 0) + monthly);
+    this.api.api('/org/loans/' + encodeURIComponent(ln.id), { method: 'PATCH', body: JSON.stringify({ paidCents: Math.round(nextPaid * 100) }) }).then(saved => {
+      const row = this.mapApiLoan(saved);
+      this.setState(s2 => ({ data: { ...s2.data, loanRequests: s2.data.loanRequests.map(x => x.id === ln.id ? row : x) } }));
+      this.showToast('Installment deducted from payroll', '#4f46e5');
+    }).catch(err => this.showToast(err.message || 'Installment could not be deducted', '#dc2626'));
   }
   approveSwap(id) {
     this.setState(s => ({ data: { ...s.data, shiftSwapRequests: s.data.shiftSwapRequests.map(x => x.id === id ? { ...x, status: 'Approved' } : x) } }));
@@ -2140,7 +2386,7 @@ class Component extends DCLogic {
       row.onViewSlip = () => this.openViewSlip(row);
       return row;
     });
-    const avgSalaryLabel = money(Math.round(payrollTotal / data.payroll.length));
+    const avgSalaryLabel = data.payroll.length ? money(Math.round(payrollTotal / data.payroll.length)) : money(0);
 
 
     const shiftRows = (data.shifts || []).map(sh => ({ ...sh, timeLabel: `${sh.start} – ${sh.end}`, color: sh.color || '#4f46e5',

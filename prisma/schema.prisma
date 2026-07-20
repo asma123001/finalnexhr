@@ -86,9 +86,13 @@ model Organization {
   attendancePolicies AttendancePolicy[]
   biometricDevices BiometricDevice[]
   biometricSyncLogs BiometricSyncLog[]
+  branches       Branch[]
+  holidays       Holiday[]
   leaveTypes     LeaveType[]
   leaveRequests  LeaveRequest[]
   payrollRuns    PayrollRun[]
+  loanRequests   LoanRequest[]
+  exitRequests   ExitRequest[]
   overtimeRules  OvertimeRule[]
   letterTemplates HrLetterTemplate[]
   letters        HrLetter[]
@@ -174,6 +178,8 @@ model Employee {
   attendance     Attendance[]
   leaveRequests  LeaveRequest[]
   payrollItems   PayrollItem[]
+  loanRequests   LoanRequest[]
+  exitRequests   ExitRequest[]
   letters        HrLetter[]
   shiftAssignments ShiftAssignment[]
   portalProfile  EmployeePortal?
@@ -297,6 +303,31 @@ model BiometricSyncLog {
   @@index([deviceId, createdAt])
 }
 
+model Branch {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  location       String?
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, name])
+}
+
+model Holiday {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  date           DateTime
+  type           String       @default("Public")
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, date])
+}
+
 model LeaveType {
   id             String       @id @default(cuid())
   organizationId String
@@ -356,6 +387,42 @@ model PayrollItem {
   deductionCents Int        @default(0)
   netCents       Int
   status         PayrollStatus @default(PROCESSING)
+}
+
+model LoanRequest {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  employeeId      String
+  employee        Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  type            String
+  amountCents     Int
+  salaryCents     Int          @default(0)
+  installments    Int          @default(1)
+  monthlyCents    Int?
+  paidCents       Int          @default(0)
+  status          String       @default("PENDING")
+  requestedAt     DateTime     @default(now())
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([organizationId, status])
+}
+
+model ExitRequest {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  employeeId      String
+  employee        Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  reason          String
+  lastWorkingDay  DateTime?
+  stage           String       @default("Notice Period")
+  clearance       Json         @default("{}")
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([organizationId, stage])
 }
 
 model OvertimeRule {
