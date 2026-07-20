@@ -1410,6 +1410,7 @@ const STATUS_COLORS = {
 };
 function badge(status) { return STATUS_COLORS[status] || { bg: '#f0f1f6', color: '#6b6e88' }; }
 function money(n) { return '$' + n.toLocaleString('en-US'); }
+const ORG_MODULES = ['Employees', 'Departments', 'Attendance', 'Shift & Roster', 'Leave', 'Payroll', 'Loans & Advances', 'Exit Management', 'HR Letters', 'Reports', 'Employee Portal', 'Organization Settings'];
 
 class Component extends DCLogic {
   state = {
@@ -1442,15 +1443,18 @@ class Component extends DCLogic {
 
   async componentDidMount() {
     try {
-      const [mod, api] = await Promise.all([import('./data.js'), import('./api-client.js')]);
+      const api = await import('./api-client.js');
       this.api = api;
       const tenantOnly = {
         employees: [], departments: [], attendanceToday: [], leaveRequests: [], payroll: [],
         attendancePolicies: [], shifts: [], rosterEntries: [], shiftSwapRequests: [], shiftAssignments: [],
         exitRequests: [], loanRequests: [], letterTemplates: [], generatedLetters: [], branches: [], holidays: [], roles: [],
-        biometricDevices: [], biometricSyncLogs: [], attendanceAuditLog: [], employeeBiometricMap: []
+        biometricDevices: [], biometricSyncLogs: [], attendanceAuditLog: [], employeeBiometricMap: [],
+        announcements: [], availableModules: ORG_MODULES,
+        orgProfile: { name: 'Organization', industry: '', email: '', phone: '', website: '', address: '', logoDataUrl: '',
+          currency: 'USD', timezone: 'UTC', dateFormat: 'MM/DD/YYYY', payFrequency: 'Monthly', workWeekStart: 'Monday' }
       };
-      this.setState({ data: { ...mod, ...tenantOnly } });
+      this.setState({ data: tenantOnly });
       try {
         const dashboard = await this.api.api('/org/dashboard');
         const employees = dashboard.employees.map(e => ({ id: e.id, name: e.firstName + ' ' + e.lastName, initials: (e.firstName[0] + e.lastName[0]).toUpperCase(), dept: e.department ? e.department.name : 'Unassigned', title: e.title, joined: new Date(e.joinedAt).toLocaleDateString(), status: e.status === 'ACTIVE' ? 'Active' : 'Inactive', email: e.email, phone: e.phone || '', employmentType: e.employmentType, photoDataUrl: e.photoDataUrl || '' }));
@@ -1481,7 +1485,7 @@ class Component extends DCLogic {
       } catch (err) {
         console.warn('Org dashboard failed; tenant-owned modules remain empty instead of showing demo data:', err);
       }
-    } catch (err) { console.error('organization-admin: failed to load data.js', err); }
+    } catch (err) { console.error('organization-admin: failed to load dashboard', err); }
     this._onResize = () => this.setState({ viewportWidth: window.innerWidth });
     window.addEventListener('resize', this._onResize);
   }
