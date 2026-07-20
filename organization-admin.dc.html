@@ -1297,13 +1297,6 @@
                 <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Account / IBAN</div><input value="{{ formEmpBankAccount }}" onChange="{{ onFormEmpBankAccountChange }}" placeholder="Account number" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
               </div>
             </div>
-            <div style="background:#f8f9fc;border-radius:10px;padding:14px;">
-              <div style="font-size:11.5px;font-weight:700;color:#6b6e88;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;">Login credentials</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">User ID</div><input value="{{ formEmpUserId }}" onChange="{{ onFormEmpUserIdChange }}" placeholder="jane.cooper" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
-                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Password</div><input type="password" value="{{ formEmpPassword }}" onChange="{{ onFormEmpPasswordChange }}" placeholder="Leave blank to keep current" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
-              </div>
-            </div>
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
@@ -1462,7 +1455,7 @@ class Component extends DCLogic {
     editingRoleId: null, formRoleName: '', formRoleDescription: '', formRolePermissions: [],
     formDeptName: '', formDeptCode: '', formDeptDescription: '', formDeptHeadId: '', formDeptParentId: '', formDeptStatus: 'Active',
     formEmpName: '', formEmpEmail: '', formEmpDept: '', formEmpTitle: '', editingEmpId: null,
-    formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpUserId: '', formEmpPassword: '',
+    formEmpPhone: '', formEmpEmploymentType: 'Full-time',
     formEmpJoinedAt: '', formEmpWorkLocation: '', formEmpSalary: '', formEmpSalaryCurrency: 'USD', formEmpPayFrequency: 'Monthly',
     formEmpGender: '', formEmpDateOfBirth: '', formEmpNationalId: '', formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '',
     formEmpBankName: '', formEmpBankAccount: '',
@@ -1722,7 +1715,7 @@ class Component extends DCLogic {
 
   openModal(type) { this.setState({ modal: type }); }
   closeModal() { this.setState({ modal: null, confirmPayload: null, editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpTitle: '', formEmpDept: '',
-    formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpUserId: '', formEmpPassword: '', formEmpJoinedAt: '', formEmpWorkLocation: '',
+    formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpJoinedAt: '', formEmpWorkLocation: '',
     formEmpSalary: '', formEmpSalaryCurrency: 'USD', formEmpPayFrequency: 'Monthly', formEmpGender: '', formEmpDateOfBirth: '', formEmpNationalId: '',
     formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '', formEmpBankName: '', formEmpBankAccount: '' }); }
   askConfirm(title, message, label, onConfirm) { this.setState({ modal: 'confirm', confirmPayload: { title, message, label, onConfirm } }); }
@@ -1731,11 +1724,11 @@ class Component extends DCLogic {
   onEmpSearchChange(e) { this.setState({ empSearch: e.target.value }); }
   setDeptFilter(d) { this.setState({ deptFilter: d }); }
   openAddEmployee() { this.setState({ modal: 'addEmployee', editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpDept: (this.state.data.departments[0] || {}).name || '', formEmpTitle: '',
-    formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpUserId: '', formEmpPassword: '', formEmpJoinedAt: new Date().toISOString().slice(0, 10), formEmpWorkLocation: '',
+    formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpJoinedAt: new Date().toISOString().slice(0, 10), formEmpWorkLocation: '',
     formEmpSalary: '', formEmpSalaryCurrency: 'USD', formEmpPayFrequency: 'Monthly', formEmpGender: '', formEmpDateOfBirth: '', formEmpNationalId: '',
     formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '', formEmpBankName: '', formEmpBankAccount: '' }); }
   openEditEmployee(emp) { this.setState({ modal: 'addEmployee', editingEmpId: emp.id, formEmpName: emp.name, formEmpEmail: emp.email, formEmpDept: emp.dept, formEmpTitle: emp.title,
-    formEmpPhone: emp.phone || '', formEmpEmploymentType: emp.employmentType || 'Full-time', formEmpUserId: emp.userId || emp.email, formEmpPassword: '',
+    formEmpPhone: emp.phone || '', formEmpEmploymentType: emp.employmentType || 'Full-time',
     formEmpJoinedAt: emp.joinedAtInput || '', formEmpWorkLocation: emp.workLocation || '', formEmpSalary: emp.salary ? String(emp.salary) : '',
     formEmpSalaryCurrency: emp.salaryCurrency || 'USD', formEmpPayFrequency: emp.payFrequency || 'Monthly', formEmpGender: emp.gender || '',
     formEmpDateOfBirth: emp.dateOfBirth || '', formEmpNationalId: emp.nationalId || '', formEmpAddress: emp.address || '',
@@ -2081,8 +2074,6 @@ class Component extends DCLogic {
   onFormEmpTitleChange(e) { this.setState({ formEmpTitle: e.target.value }); }
   onFormEmpPhoneChange(e) { this.setState({ formEmpPhone: e.target.value }); }
   onFormEmpEmploymentTypeChange(e) { this.setState({ formEmpEmploymentType: e.target.value }); }
-  onFormEmpUserIdChange(e) { this.setState({ formEmpUserId: e.target.value }); }
-  onFormEmpPasswordChange(e) { this.setState({ formEmpPassword: e.target.value }); }
   onFormEmpJoinedAtChange(e) { this.setState({ formEmpJoinedAt: e.target.value }); }
   onFormEmpWorkLocationChange(e) { this.setState({ formEmpWorkLocation: e.target.value }); }
   onFormEmpSalaryChange(e) { this.setState({ formEmpSalary: e.target.value }); }
@@ -2102,7 +2093,6 @@ class Component extends DCLogic {
     return {
       ...nameParts,
       email: s.formEmpEmail || 'new@nexhr.io',
-      password: s.formEmpPassword || undefined,
       title: s.formEmpTitle || 'Employee',
       departmentName: s.formEmpDept || 'Engineering',
       phone: s.formEmpPhone || undefined,
@@ -2123,7 +2113,7 @@ class Component extends DCLogic {
     };
   }
   async submitAddEmployee() {
-    const { editingEmpId, formEmpName, formEmpEmail, formEmpDept, formEmpTitle, formEmpPhone, formEmpEmploymentType, formEmpUserId,
+    const { editingEmpId, formEmpName, formEmpEmail, formEmpDept, formEmpTitle, formEmpPhone, formEmpEmploymentType,
       formEmpWorkLocation, formEmpSalary, formEmpSalaryCurrency, formEmpPayFrequency, formEmpGender, formEmpDateOfBirth, formEmpNationalId,
       formEmpAddress, formEmpEmergencyName, formEmpEmergencyPhone, formEmpBankName, formEmpBankAccount } = this.state;
     const initials = (formEmpName.trim() || 'NA').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
@@ -2138,7 +2128,7 @@ class Component extends DCLogic {
       }
       this.showToast('Employee updated', '#0f9d58');
     } else {
-      let newEmp = { id: 'e' + Date.now(), name: formEmpName || 'New Employee', initials, dept: formEmpDept || 'Engineering', title: formEmpTitle || 'Employee', joined: new Date().toLocaleDateString(), status: 'Active', email: formEmpEmail || 'new@nexhr.io', phone: formEmpPhone || '', employmentType: formEmpEmploymentType, userId: formEmpUserId || formEmpEmail || 'new@nexhr.io', photoDataUrl: '',
+      let newEmp = { id: 'e' + Date.now(), name: formEmpName || 'New Employee', initials, dept: formEmpDept || 'Engineering', title: formEmpTitle || 'Employee', joined: new Date().toLocaleDateString(), status: 'Active', email: formEmpEmail || 'new@nexhr.io', phone: formEmpPhone || '', employmentType: formEmpEmploymentType, userId: formEmpEmail || 'new@nexhr.io', photoDataUrl: '',
         workLocation: formEmpWorkLocation, salary: Number(formEmpSalary) || 0, salaryCurrency: formEmpSalaryCurrency, payFrequency: formEmpPayFrequency,
         gender: formEmpGender, dateOfBirth: formEmpDateOfBirth, nationalId: formEmpNationalId, address: formEmpAddress, emergencyContactName: formEmpEmergencyName,
         emergencyContactPhone: formEmpEmergencyPhone, bankName: formEmpBankName, bankAccount: formEmpBankAccount };
@@ -2774,12 +2764,11 @@ class Component extends DCLogic {
       confirmAction: () => this.confirmAction(), closeModal: () => this.closeModal(),
       isAddEmployeeModal: modal === 'addEmployee', empModalTitle: s.editingEmpId ? 'Edit Employee' : 'Add Employee', empModalSubmitLabel: s.editingEmpId ? 'Save changes' : 'Add employee',
       formEmpName: s.formEmpName, formEmpEmail: s.formEmpEmail, formEmpDept: s.formEmpDept, formEmpTitle: s.formEmpTitle, departmentOptions: data.departments,
-      formEmpPhone: s.formEmpPhone, formEmpEmploymentType: s.formEmpEmploymentType, formEmpUserId: s.formEmpUserId, formEmpPassword: s.formEmpPassword,
+      formEmpPhone: s.formEmpPhone, formEmpEmploymentType: s.formEmpEmploymentType,
       formEmpJoinedAt: s.formEmpJoinedAt, formEmpWorkLocation: s.formEmpWorkLocation, formEmpSalary: s.formEmpSalary, formEmpSalaryCurrency: s.formEmpSalaryCurrency,
       formEmpPayFrequency: s.formEmpPayFrequency, formEmpGender: s.formEmpGender, formEmpDateOfBirth: s.formEmpDateOfBirth, formEmpNationalId: s.formEmpNationalId,
       formEmpAddress: s.formEmpAddress, formEmpEmergencyName: s.formEmpEmergencyName, formEmpEmergencyPhone: s.formEmpEmergencyPhone, formEmpBankName: s.formEmpBankName, formEmpBankAccount: s.formEmpBankAccount,
       onFormEmpPhoneChange: (e) => this.onFormEmpPhoneChange(e), onFormEmpEmploymentTypeChange: (e) => this.onFormEmpEmploymentTypeChange(e),
-      onFormEmpUserIdChange: (e) => this.onFormEmpUserIdChange(e), onFormEmpPasswordChange: (e) => this.onFormEmpPasswordChange(e),
       onFormEmpJoinedAtChange: (e) => this.onFormEmpJoinedAtChange(e), onFormEmpWorkLocationChange: (e) => this.onFormEmpWorkLocationChange(e),
       onFormEmpSalaryChange: (e) => this.onFormEmpSalaryChange(e), onFormEmpSalaryCurrencyChange: (e) => this.onFormEmpSalaryCurrencyChange(e),
       onFormEmpPayFrequencyChange: (e) => this.onFormEmpPayFrequencyChange(e), onFormEmpGenderChange: (e) => this.onFormEmpGenderChange(e),
