@@ -115,7 +115,7 @@
 
       <sc-if value="{{ screenIs.oaOverview }}" hint-placeholder-val="{{ true }}">
         <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Good afternoon, Admin</div>
-        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">{{ todayLabel }} · Ironwood Manufacturing</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">{{ todayLabel }} &middot; {{ headerOrgName }}</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px;">
           <sc-for list="{{ oaStats }}" as="s" hint-placeholder-count="5">
             <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;">
@@ -2354,6 +2354,7 @@ class Component extends DCLogic {
     const headerOrgName = (headerProfile.name || 'Organization').trim() || 'Organization';
     const headerLogoUrl = headerProfile.logoDataUrl || '';
     const headerOrgInitial = (headerOrgName.charAt(0) || 'O').toUpperCase();
+    const todayLabel = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
     const shellBase = {
       isMobile, showBackdrop: isMobile && s.mobileNavOpen,
       sidebarLeft: isMobile ? (s.mobileNavOpen ? '0px' : '-260px') : '0px', contentMarginLeft: isMobile ? '0px' : '260px',
@@ -2578,7 +2579,7 @@ class Component extends DCLogic {
       exitRows,
       loanRows, loanPendingCount, loanOutstandingLabel: '$' + loanOutstandingTotal.toLocaleString(), loanApprovedLabel: '$' + loanApprovedTotal.toLocaleString(), openRequestLoan: () => this.openRequestLoan(),
       shiftRows, rosterDayHeaders: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], rosterRows, swapRows, assignmentRows,
-      todayLabel: 'Sunday, July 19, 2026',
+      todayLabel,
       oaStats, attendanceWeekBars, payrollTotalLabel: money(payrollTotal), payrollPaidCount, payrollProcessingCount, oaActivityRows,
       empSearch: s.empSearch, onEmpSearchChange: (e) => this.onEmpSearchChange(e), deptChips, empRows, empCountLabel, openAddEmployee: () => this.openAddEmployee(),
       exportEmployees: () => this.exportEmployees(), syncEmployeesFromDevice: () => this.syncEmployeesFromDevice(),
@@ -2681,7 +2682,7 @@ class Component extends DCLogic {
     };
     } catch (err) {
       console.error('organization-admin renderVals() error:', err);
-      return { ...shellBase, todayLabel: 'Sunday, July 19, 2026', payrollTotalLabel: '$0', payrollPaidCount: 0, payrollProcessingCount: 0, oaStats: [], oaActivityRows: [], attendanceWeekBars: [] };
+      return { ...shellBase, todayLabel, payrollTotalLabel: '$0', payrollPaidCount: 0, payrollProcessingCount: 0, oaStats: [], oaActivityRows: [], attendanceWeekBars: [] };
     }
   }
 }
