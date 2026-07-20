@@ -703,6 +703,7 @@
                 <sc-for list="{{ adminRoleOptions }}" as="r" hint-placeholder-count="5"><option value="{{ r }}">{{ r }}</option></sc-for>
               </select>
             </div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">{{ adminPasswordLabel }}</div><input type="password" value="{{ formAdminPassword }}" onChange="{{ onFormAdminPasswordChange }}" placeholder="Minimum 8 characters" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formAdminPasswordBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formAdminPasswordError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formAdminPasswordError }}</div></sc-if></div>
           </div>
           <div style="background:#f8f9fc;border-radius:10px;padding:14px;margin-bottom:22px;">
             <div style="font-size:11.5px;font-weight:700;color:#6b6e88;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Permissions for this role</div>
@@ -782,7 +783,7 @@ class Component extends DCLogic {
     formOrgUserId: '', formOrgUserPass: '', formOrgPhone: '', formOrgWebsite: '', formOrgCountry: '', formOrgCity: '', formOrgAddress: '',
     formOrgTimezone: 'GMT-8 Pacific', formOrgCurrency: 'USD', formOrgDateFormat: 'MM/DD/YYYY', editingOrgId: null, formOrgErrors: {},
     formPlanName: '', formPlanPrice: '', formPlanSeats: '',
-    editingOrgAdminId: null, formAdminName: '', formAdminEmail: '', formAdminRole: 'HR Admin',
+    editingOrgAdminId: null, formAdminName: '', formAdminEmail: '', formAdminRole: 'HR Admin', formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'edit',
     biometricEnabled: true, auditSearch: '', auditRoleFilter: 'All', ticketStatusFilter: 'All',
     announceTarget: 'All', announceSelectedOrgs: [], announceMessage: '',
     isSubmittingOrg: false, isSubmittingPlan: false,
@@ -800,7 +801,9 @@ class Component extends DCLogic {
         const orgs = dashboard.organizations.map(o => this.mapApiOrg(o));
         const plans = dashboard.packages.map(p => this.mapApiPackage(p));
         const biometricDevices = (dashboard.biometricDevices || []).map(d => this.mapApiDevice(d));
-        this.setState(st => ({ data: { ...st.data, orgs, plans, biometricDevices }, formOrgPlan: plans[0] ? plans[0].name : st.formOrgPlan }));
+        const platformUsers = (dashboard.users || []).map(u => this.mapApiUser(u));
+        const orgAdmins = (dashboard.users || []).filter(u => u.role === 'ORG_ADMIN' && u.organizationId).map(u => this.mapApiOrgAdmin(u));
+        this.setState(st => ({ data: { ...st.data, orgs, plans, biometricDevices, platformUsers, orgAdmins }, formOrgPlan: plans[0] ? plans[0].name : st.formOrgPlan }));
       } catch (err) {
         console.warn('Using local demo data because API dashboard failed:', err);
       }
@@ -862,6 +865,18 @@ class Component extends DCLogic {
       enabled: d.enabled
     };
   }
+  mapApiUser(u) {
+    const role = u.role === 'SUPER_ADMIN' ? 'Super Admin' : u.role === 'ORG_ADMIN' ? 'Org Admin' : 'Employee';
+    const status = u.status === 'ACTIVE' ? 'Active' : u.status === 'SUSPENDED' ? 'Suspended' : 'Inactive';
+    return { id: u.id, name: u.name, initials: this.initials(u.name), org: u.organization ? u.organization.name : 'NexHR Platform', role, status, lastActive: u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : 'Never', email: u.email };
+  }
+  mapApiOrgAdmin(u) {
+    const roleLabel = u.permissions && u.permissions[0] && u.permissions[0] !== '*' ? u.permissions[0] : 'Organization Admin';
+    return { id: u.id, orgId: u.organizationId, name: u.name, initials: this.initials(u.name), email: u.email, role: roleLabel, status: u.status === 'ACTIVE' ? 'Active' : 'Inactive', lastActive: u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : 'Never' };
+  }
+  initials(name) {
+    return String(name || 'NA').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'NA';
+  }
   setScreen(key) { this.setState({ screen: key, mobileNavOpen: false, notifOpen: false, profileOpen: false }); }
   toggleMobileNav() { this.setState(s => ({ mobileNavOpen: !s.mobileNavOpen })); }
   closeMobileNav() { this.setState({ mobileNavOpen: false }); }
@@ -877,7 +892,7 @@ class Component extends DCLogic {
   onGlobalSearchChange(e) { this.setState({ globalSearch: e.target.value }); }
 
   openModal(type) { this.setState({ modal: type }); }
-  closeModal() { this.setState({ modal: null, confirmPayload: null, formOrgName: '', formOrgEmail: '', formOrgErrors: {} }); }
+  closeModal() { this.setState({ modal: null, confirmPayload: null, formOrgName: '', formOrgEmail: '', formOrgErrors: {}, formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'edit' }); }
   askConfirm(title, message, label, onConfirm) { this.setState({ modal: 'confirm', confirmPayload: { title, message, label, onConfirm } }); }
   confirmAction() { const p = this.state.confirmPayload; if (p && p.onConfirm) p.onConfirm(); this.closeModal(); }
 
@@ -963,40 +978,67 @@ class Component extends DCLogic {
     this.closeModal();
   }
   selectOrg(id) { this.setState({ selectedOrgId: id, screen: 'sa-org-detail' }); }
-  openAddOrgAdmin() { this.setState({ modal: 'orgAdmin', editingOrgAdminId: null, formAdminName: '', formAdminEmail: '', formAdminRole: 'HR Admin' }); }
-  openEditOrgAdmin(a) { this.setState({ modal: 'orgAdmin', editingOrgAdminId: a.id, formAdminName: a.name, formAdminEmail: a.email, formAdminRole: a.role }); }
+  openAddOrgAdmin() { this.setState({ modal: 'orgAdmin', editingOrgAdminId: null, formAdminName: '', formAdminEmail: '', formAdminRole: 'HR Admin', formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'add' }); }
+  openEditOrgAdmin(a) { this.setState({ modal: 'orgAdmin', editingOrgAdminId: a.id, formAdminName: a.name, formAdminEmail: a.email, formAdminRole: a.role, formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'edit' }); }
+  openResetOrgAdminPassword(a) { this.setState({ modal: 'orgAdmin', editingOrgAdminId: a.id, formAdminName: a.name, formAdminEmail: a.email, formAdminRole: a.role, formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'reset' }); }
   onFormAdminNameChange(e) { this.setState({ formAdminName: e.target.value }); }
   onFormAdminEmailChange(e) { this.setState({ formAdminEmail: e.target.value }); }
   onFormAdminRoleChange(e) { this.setState({ formAdminRole: e.target.value }); }
-  submitOrgAdmin() {
+  onFormAdminPasswordChange(e) { this.setState({ formAdminPassword: e.target.value, formAdminPasswordError: '' }); }
+  adminRowFromApi(admin) { return this.mapApiOrgAdmin(admin); }
+  async submitOrgAdmin() {
     const s = this.state;
     const orgId = s.selectedOrgId || (s.data.orgs[0] || {}).id;
+    if ((s.adminPasswordMode === 'add' || s.adminPasswordMode === 'reset') && (!s.formAdminPassword || s.formAdminPassword.length < 8)) {
+      this.setState({ formAdminPasswordError: 'Admin password must be at least 8 characters.' });
+      return;
+    }
     if (s.editingOrgAdminId) {
-      this.setState(st => ({ data: { ...st.data, orgAdmins: st.data.orgAdmins.map(a => a.id === s.editingOrgAdminId ? { ...a, name: s.formAdminName || a.name, email: s.formAdminEmail || a.email, role: s.formAdminRole } : a) } }));
-      this.showToast('Admin updated', '#0f9d58');
+      try {
+        const path = s.adminPasswordMode === 'reset' ? `/platform/organization-admins/${s.editingOrgAdminId}/password` : `/platform/organization-admins/${s.editingOrgAdminId}`;
+        const body = s.adminPasswordMode === 'reset'
+          ? { password: s.formAdminPassword }
+          : { name: s.formAdminName, email: s.formAdminEmail, roleLabel: s.formAdminRole, password: s.formAdminPassword || undefined };
+        const saved = await this.api.api(path, { method: 'PATCH', body: JSON.stringify(body) });
+        const row = this.adminRowFromApi(saved);
+        this.setState(st => ({ data: { ...st.data, orgAdmins: st.data.orgAdmins.map(a => a.id === s.editingOrgAdminId ? row : a), platformUsers: st.data.platformUsers.map(u => u.id === s.editingOrgAdminId ? this.mapApiUser(saved) : u) } }));
+        this.showToast(s.adminPasswordMode === 'reset' ? 'Admin password reset' : 'Admin updated', '#0f9d58');
+      } catch (err) {
+        this.showToast(err.message || 'Admin could not be saved', '#dc2626');
+        return;
+      }
     } else {
-      const initials = (s.formAdminName.trim() || 'NA').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-      const newAdmin = { id: 'oa' + Date.now(), orgId, name: s.formAdminName || 'New Admin', initials, email: s.formAdminEmail || 'admin@example.com', role: s.formAdminRole, status: 'Active', lastActive: 'Just now' };
-      this.setState(st => ({ data: { ...st.data, orgAdmins: [newAdmin, ...st.data.orgAdmins] } }));
-      this.showToast('Admin added', '#0f9d58');
+      try {
+        const saved = await this.api.api('/platform/organization-admins', { method: 'POST', body: JSON.stringify({ organizationId: orgId, name: s.formAdminName || 'New Admin', email: s.formAdminEmail, password: s.formAdminPassword, roleLabel: s.formAdminRole }) });
+        const newAdmin = this.adminRowFromApi(saved);
+        this.setState(st => ({ data: { ...st.data, orgAdmins: [newAdmin, ...st.data.orgAdmins], platformUsers: [this.mapApiUser(saved), ...st.data.platformUsers] } }));
+        this.showToast('Admin added', '#0f9d58');
+      } catch (err) {
+        this.showToast(err.message || 'Admin could not be added', '#dc2626');
+        return;
+      }
     }
     this.closeModal();
   }
   resetAdminPassword(a) {
-    this.askConfirm('Reset password', `${a.name} will receive an email to set a new password.`, 'Reset password', () => {
-      this.showToast('Password reset email sent to ' + a.name, '#0f9d58');
-    });
+    this.openResetOrgAdminPassword(a);
   }
   toggleOrgAdminStatus(a) {
     this.askConfirm(a.status === 'Active' ? 'Deactivate admin' : 'Activate admin', `This will ${a.status === 'Active' ? 'revoke' : 'restore'} ${a.name}'s admin access.`, a.status === 'Active' ? 'Deactivate' : 'Activate', () => {
-      this.setState(s2 => ({ data: { ...s2.data, orgAdmins: s2.data.orgAdmins.map(x => x.id === a.id ? { ...x, status: x.status === 'Active' ? 'Inactive' : 'Active' } : x) } }));
-      this.showToast('Admin status updated', '#0f9d58');
+      const nextStatus = a.status === 'Active' ? 'SUSPENDED' : 'ACTIVE';
+      this.api.api('/platform/organization-admins/' + encodeURIComponent(a.id) + '/status', { method: 'PATCH', body: JSON.stringify({ status: nextStatus }) }).then(saved => {
+        const row = this.adminRowFromApi(saved);
+        this.setState(s2 => ({ data: { ...s2.data, orgAdmins: s2.data.orgAdmins.map(x => x.id === a.id ? row : x), platformUsers: s2.data.platformUsers.map(u => u.id === a.id ? this.mapApiUser(saved) : u) } }));
+        this.showToast('Admin status updated', '#0f9d58');
+      }).catch(err => this.showToast(err.message || 'Admin status could not be updated', '#dc2626'));
     });
   }
   removeOrgAdmin(a) {
     this.askConfirm('Remove admin', `${a.name} will permanently lose access to this organization.`, 'Remove', () => {
-      this.setState(s2 => ({ data: { ...s2.data, orgAdmins: s2.data.orgAdmins.filter(x => x.id !== a.id) } }));
-      this.showToast('Admin removed', '#dc2626');
+      this.api.api('/platform/organization-admins/' + encodeURIComponent(a.id), { method: 'DELETE' }).then(() => {
+        this.setState(s2 => ({ data: { ...s2.data, orgAdmins: s2.data.orgAdmins.filter(x => x.id !== a.id), platformUsers: s2.data.platformUsers.filter(u => u.id !== a.id) } }));
+        this.showToast('Admin removed', '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Admin could not be removed', '#dc2626'));
     });
   }
   backToOrgs() { this.setState({ screen: 'sa-orgs' }); }
@@ -1341,10 +1383,12 @@ class Component extends DCLogic {
       isCreatePlanModal: modal === 'createPlan', formPlanName: s.formPlanName, formPlanPrice: s.formPlanPrice, formPlanSeats: s.formPlanSeats,
       isSubmittingPlan: s.isSubmittingPlan, submitPlanButtonBg: s.isSubmittingPlan ? '#9296b3' : '#4f46e5', createPlanSubmitLabel: s.isSubmittingPlan ? 'Creating...' : 'Create plan',
       onFormPlanNameChange: (e) => this.onFormPlanNameChange(e), onFormPlanPriceChange: (e) => this.onFormPlanPriceChange(e), onFormPlanSeatsChange: (e) => this.onFormPlanSeatsChange(e), submitCreatePlan: () => this.submitCreatePlan(),
-      isOrgAdminModal: modal === 'orgAdmin', orgAdminModalTitle: s.editingOrgAdminId ? 'Edit Admin' : 'Add Admin', orgAdminSubmitLabel: s.editingOrgAdminId ? 'Save changes' : 'Add admin',
+      isOrgAdminModal: modal === 'orgAdmin', orgAdminModalTitle: s.adminPasswordMode === 'reset' ? 'Reset Admin Password' : (s.editingOrgAdminId ? 'Edit Admin' : 'Add Admin'), orgAdminSubmitLabel: s.adminPasswordMode === 'reset' ? 'Reset password' : (s.editingOrgAdminId ? 'Save changes' : 'Add admin'),
       formAdminName: s.formAdminName, formAdminEmail: s.formAdminEmail, formAdminRole: s.formAdminRole, adminRoleOptions: Object.keys(data.adminRolePermissions),
       adminRolePermissionList: (data.adminRolePermissions[s.formAdminRole] || []).map(p => ({ text: p })),
-      onFormAdminNameChange: (e) => this.onFormAdminNameChange(e), onFormAdminEmailChange: (e) => this.onFormAdminEmailChange(e), onFormAdminRoleChange: (e) => this.onFormAdminRoleChange(e), submitOrgAdmin: () => this.submitOrgAdmin(),
+      formAdminPassword: s.formAdminPassword, formAdminPasswordError: s.formAdminPasswordError, formAdminPasswordBorder: s.formAdminPasswordError ? '#dc2626' : '#e7e9f2',
+      adminPasswordLabel: s.adminPasswordMode === 'edit' ? 'New password (optional)' : 'Admin password',
+      onFormAdminNameChange: (e) => this.onFormAdminNameChange(e), onFormAdminEmailChange: (e) => this.onFormAdminEmailChange(e), onFormAdminRoleChange: (e) => this.onFormAdminRoleChange(e), onFormAdminPasswordChange: (e) => this.onFormAdminPasswordChange(e), submitOrgAdmin: () => this.submitOrgAdmin(),
 
       toast: s.toast, toastMessage: s.toast ? s.toast.message : '', toastColor: s.toast ? s.toast.color : '#4f46e5'
     };

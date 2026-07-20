@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate, requireRole } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { createBiometricDeviceSchema, createOrgSchema, createPackageSchema } from "../schemas.js";
+import { createBiometricDeviceSchema, createOrgSchema, createPackageSchema, organizationAdminSchema, resetPasswordSchema, updateOrganizationAdminSchema } from "../schemas.js";
 import * as controller from "../controllers/platform.controller.js";
 
 export const platformRoutes = Router();
@@ -10,6 +10,11 @@ platformRoutes.get("/dashboard", controller.dashboard);
 platformRoutes.get("/audit-logs", controller.auditLogs);
 platformRoutes.post("/organizations", validate(createOrgSchema), controller.createOrganization);
 platformRoutes.patch("/organizations/:id/status", controller.updateOrganizationStatus);
+platformRoutes.post("/organization-admins", validate(organizationAdminSchema), controller.createOrganizationAdmin);
+platformRoutes.patch("/organization-admins/:id", validate(updateOrganizationAdminSchema), controller.updateOrganizationAdmin);
+platformRoutes.patch("/organization-admins/:id/password", validate(resetPasswordSchema), controller.resetOrganizationAdminPassword);
+platformRoutes.patch("/organization-admins/:id/status", controller.updateOrganizationAdminStatus);
+platformRoutes.delete("/organization-admins/:id", controller.removeOrganizationAdmin);
 platformRoutes.post("/packages", validate(createPackageSchema), controller.createPackage);
 platformRoutes.post("/biometric-devices", validate(createBiometricDeviceSchema), controller.createBiometricDevice);
 platformRoutes.patch("/biometric-devices/:id", controller.updateBiometricDevice);

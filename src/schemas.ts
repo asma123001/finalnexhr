@@ -43,6 +43,31 @@ export const createBiometricDeviceSchema = z.object({
   })
 });
 
+export const organizationAdminSchema = z.object({
+  body: z.object({
+    organizationId: z.string().min(1, "Organization is required."),
+    name: z.string().min(2, "Admin name must be at least 2 characters."),
+    email: z.string().email("Admin email must be valid."),
+    password: z.string().min(8, "Admin password must be at least 8 characters."),
+    roleLabel: z.string().min(1, "Admin role is required.")
+  })
+});
+
+export const updateOrganizationAdminSchema = z.object({
+  body: z.object({
+    name: z.string().min(2, "Admin name must be at least 2 characters.").optional(),
+    email: z.string().email("Admin email must be valid.").optional(),
+    password: z.string().min(8, "Admin password must be at least 8 characters.").optional().or(z.literal("")),
+    roleLabel: z.string().min(1, "Admin role is required.").optional()
+  })
+});
+
+export const resetPasswordSchema = z.object({
+  body: z.object({
+    password: z.string().min(8, "Admin password must be at least 8 characters.")
+  })
+});
+
 export const employeeSchema = z.object({
   body: z.object({
     firstName: z.string().min(1, "First name is required."),

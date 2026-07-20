@@ -16,6 +16,36 @@ export const updateOrganizationStatus = asyncHandler(async (req, res) => {
   res.json(organization);
 });
 
+export const createOrganizationAdmin = asyncHandler(async (req, res) => {
+  const admin = await platform.createOrganizationAdmin(req.body);
+  await audit(req, "CREATE_ORGANIZATION_ADMIN", "User", admin.id, { organizationId: admin.organizationId, email: admin.email });
+  res.status(201).json(admin);
+});
+
+export const updateOrganizationAdmin = asyncHandler(async (req, res) => {
+  const admin = await platform.updateOrganizationAdmin(req.params.id, req.body);
+  await audit(req, "UPDATE_ORGANIZATION_ADMIN", "User", admin.id, { organizationId: admin.organizationId, email: admin.email });
+  res.json(admin);
+});
+
+export const resetOrganizationAdminPassword = asyncHandler(async (req, res) => {
+  const admin = await platform.resetOrganizationAdminPassword(req.params.id, req.body.password);
+  await audit(req, "RESET_ORGANIZATION_ADMIN_PASSWORD", "User", admin.id, { organizationId: admin.organizationId });
+  res.json(admin);
+});
+
+export const updateOrganizationAdminStatus = asyncHandler(async (req, res) => {
+  const admin = await platform.updateOrganizationAdminStatus(req.params.id, req.body.status);
+  await audit(req, "UPDATE_ORGANIZATION_ADMIN_STATUS", "User", admin.id, { organizationId: admin.organizationId, status: admin.status });
+  res.json(admin);
+});
+
+export const removeOrganizationAdmin = asyncHandler(async (req, res) => {
+  const admin = await platform.removeOrganizationAdmin(req.params.id);
+  await audit(req, "REMOVE_ORGANIZATION_ADMIN", "User", admin.id, { organizationId: admin.organizationId });
+  res.status(204).send();
+});
+
 export const createPackage = asyncHandler(async (req, res) => {
   const pkg = await platform.createPackage(req.body);
   await audit(req, "CREATE_PACKAGE", "Package", pkg.id);

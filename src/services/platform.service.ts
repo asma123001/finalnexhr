@@ -8,7 +8,7 @@ const slugify = (value: string) =>
 export async function dashboard() {
   const [organizations, users, packages, auditLogs, biometricDevices] = await Promise.all([
     prisma.organization.findMany({ include: { package: true, _count: { select: { employees: true } } }, orderBy: { createdAt: "desc" } }),
-    prisma.user.findMany({ select: { id: true, name: true, email: true, role: true, status: true, organization: { select: { name: true } }, lastLoginAt: true }, orderBy: { createdAt: "desc" } }),
+    prisma.user.findMany({ select: { id: true, organizationId: true, name: true, email: true, role: true, status: true, permissions: true, organization: { select: { id: true, name: true } }, lastLoginAt: true }, orderBy: { createdAt: "desc" } }),
     prisma.package.findMany({ include: { _count: { select: { organizations: true } } }, orderBy: { createdAt: "asc" } }),
     prisma.auditLog.findMany({ take: 20, orderBy: { createdAt: "desc" }, include: { actor: { select: { name: true, role: true } }, organization: { select: { name: true } } } }),
     prisma.biometricDevice.findMany({ include: { organization: { select: { name: true } } }, orderBy: { createdAt: "desc" } })
@@ -102,6 +102,57 @@ export async function updateOrganizationStatus(id: string, status: "ACTIVE" | "S
   return prisma.organization.update({ where: { id }, data: { status } });
 }
 
+export async function createOrganizationAdmin(input: { organizationId: string; name: string; email: string; password: string; roleLabel: string }) {
+  const organization = await prisma.organization.findUnique({ where: { id: input.organizationId }, select: { id: true } });
+  if (!organization) throw new AppError(404, "Organization not found");
+  const existing = await prisma.user.findUnique({ where: { email: input.email.toLowerCase() }, select: { id: true } });
+  if (existing) throw new AppError(409, "Admin email is already used.");
+  return prisma.user.create({
+    data: {
+      organizationId: input.organizationId,
+      name: input.name,
+      email: input.email.toLowerCase(),
+      passwordHash: await hashPassword(input.password),
+      role: "ORG_ADMIN",
+      permissions: [input.roleLabel]
+    },
+    select: adminSelect
+  });
+}
+
+export async function updateOrganizationAdmin(id: string, input: { name?: string; email?: string; password?: string; roleLabel?: string }) {
+  const admin = await prisma.user.findUnique({ where: { id }, select: { id: true, role: true, organizationId: true } });
+  if (!admin || admin.role !== "ORG_ADMIN" || !admin.organizationId) throw new AppError(404, "Organization admin not found");
+  return prisma.user.update({
+    where: { id },
+    data: {
+      name: input.name,
+      email: input.email ? input.email.toLowerCase() : undefined,
+      passwordHash: input.password ? await hashPassword(input.password) : undefined,
+      permissions: input.roleLabel ? [input.roleLabel] : undefined
+    },
+    select: adminSelect
+  });
+}
+
+export async function resetOrganizationAdminPassword(id: string, password: string) {
+  const admin = await prisma.user.findUnique({ where: { id }, select: { id: true, role: true, organizationId: true } });
+  if (!admin || admin.role !== "ORG_ADMIN" || !admin.organizationId) throw new AppError(404, "Organization admin not found");
+  return prisma.user.update({ where: { id }, data: { passwordHash: await hashPassword(password), status: "ACTIVE" }, select: adminSelect });
+}
+
+export async function updateOrganizationAdminStatus(id: string, status: "ACTIVE" | "SUSPENDED") {
+  const admin = await prisma.user.findUnique({ where: { id }, select: { id: true, role: true, organizationId: true } });
+  if (!admin || admin.role !== "ORG_ADMIN" || !admin.organizationId) throw new AppError(404, "Organization admin not found");
+  return prisma.user.update({ where: { id }, data: { status }, select: adminSelect });
+}
+
+export async function removeOrganizationAdmin(id: string) {
+  const admin = await prisma.user.findUnique({ where: { id }, select: { id: true, role: true, organizationId: true } });
+  if (!admin || admin.role !== "ORG_ADMIN" || !admin.organizationId) throw new AppError(404, "Organization admin not found");
+  return prisma.user.delete({ where: { id }, select: adminSelect });
+}
+
 async function uniqueSlug(base: string) {
   let slug = base;
   let i = 2;
@@ -114,3 +165,15 @@ async function uniqueSlug(base: string) {
 export async function listAuditLogs(where: object = {}) {
   return prisma.auditLog.findMany({ where, include: { actor: true, organization: true }, orderBy: { createdAt: "desc" }, take: 100 });
 }
+
+const adminSelect = {
+  id: true,
+  organizationId: true,
+  name: true,
+  email: true,
+  role: true,
+  status: true,
+  permissions: true,
+  organization: { select: { id: true, name: true } },
+  lastLoginAt: true
+} as const;
