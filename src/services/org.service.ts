@@ -32,7 +32,51 @@ export async function createDepartment(organizationId: string, data: { name: str
   return prisma.department.create({ data: { organizationId, ...data } });
 }
 
-export async function createEmployee(organizationId: string, input: { firstName: string; lastName: string; email: string; password?: string; phone?: string; title: string; departmentId?: string; departmentName?: string; employmentType: string }) {
+type EmployeeInput = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password?: string;
+  phone?: string;
+  title: string;
+  departmentId?: string;
+  departmentName?: string;
+  employmentType: string;
+  joinedAt?: Date;
+  workLocation?: string;
+  gender?: string;
+  dateOfBirth?: Date;
+  nationalId?: string;
+  address?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  bankName?: string;
+  bankAccount?: string;
+  salary?: number;
+  salaryCurrency?: string;
+  payFrequency?: string;
+};
+
+function employeeDetailsData(input: Partial<EmployeeInput>) {
+  return {
+    phone: input.phone,
+    joinedAt: input.joinedAt,
+    workLocation: input.workLocation,
+    gender: input.gender,
+    dateOfBirth: input.dateOfBirth,
+    nationalId: input.nationalId,
+    address: input.address,
+    emergencyContactName: input.emergencyContactName,
+    emergencyContactPhone: input.emergencyContactPhone,
+    bankName: input.bankName,
+    bankAccount: input.bankAccount,
+    salaryCents: input.salary == null ? undefined : Math.round(input.salary * 100),
+    salaryCurrency: input.salaryCurrency,
+    payFrequency: input.payFrequency
+  };
+}
+
+async function resolveDepartmentId(organizationId: string, input: Pick<EmployeeInput, "departmentId" | "departmentName">) {
   let departmentId = input.departmentId;
   if (!departmentId && input.departmentName) {
     const dept = await prisma.department.upsert({
@@ -42,6 +86,11 @@ export async function createEmployee(organizationId: string, input: { firstName:
     });
     departmentId = dept.id;
   }
+  return departmentId;
+}
+
+export async function createEmployee(organizationId: string, input: EmployeeInput) {
+  const departmentId = await resolveDepartmentId(organizationId, input);
   const count = await prisma.employee.count({ where: { organizationId } });
   const email = input.email.toLowerCase();
   const passwordHash = await hashPassword(input.password ?? "Employee123!");
@@ -54,9 +103,9 @@ export async function createEmployee(organizationId: string, input: { firstName:
         firstName: input.firstName,
         lastName: input.lastName,
         email,
-        phone: input.phone,
         title: input.title,
         employmentType: input.employmentType,
+        ...employeeDetailsData(input),
         portalProfile: { create: { preferences: {} } }
       },
       include: { department: true }
@@ -74,6 +123,30 @@ export async function createEmployee(organizationId: string, input: { firstName:
     });
     return { employee, credentials: { email: user.email, defaultPassword: input.password ? undefined : "Employee123!" } };
   });
+}
+
+export async function updateEmployee(organizationId: string, id: string, input: Partial<EmployeeInput>) {
+  const departmentId = await resolveDepartmentId(organizationId, input);
+  const data: Record<string, unknown> = {
+    ...(input.firstName !== undefined ? { firstName: input.firstName } : {}),
+    ...(input.lastName !== undefined ? { lastName: input.lastName } : {}),
+    ...(input.email !== undefined ? { email: input.email.toLowerCase() } : {}),
+    ...(input.title !== undefined ? { title: input.title } : {}),
+    ...(input.employmentType !== undefined ? { employmentType: input.employmentType } : {}),
+    ...(departmentId !== undefined ? { departmentId } : {}),
+    ...employeeDetailsData(input)
+  };
+  Object.keys(data).forEach((key) => data[key] === undefined && delete data[key]);
+  const employee = await prisma.employee.update({ where: { id, organizationId }, data, include: { department: true, user: true } });
+  const userData: Record<string, unknown> = {
+    ...(input.firstName !== undefined || input.lastName !== undefined ? { name: `${employee.firstName} ${employee.lastName}` } : {}),
+    ...(input.email !== undefined ? { email: employee.email } : {}),
+    ...(input.password ? { passwordHash: await hashPassword(input.password) } : {})
+  };
+  if (Object.keys(userData).length) {
+    await prisma.user.updateMany({ where: { employeeId: employee.id, organizationId }, data: userData });
+  }
+  return employee;
 }
 
 export async function createManualAttendance(organizationId: string, createdById: string | undefined, input: { employeeId?: string; date?: Date; checkIn?: Date; checkOut?: Date; status: AttendanceStatus; notes?: string }) {
@@ -143,16 +216,23 @@ export async function decideLeave(organizationId: string, id: string, status: Le
 
 export async function runPayroll(organizationId: string, period: string) {
   const employees = await prisma.employee.findMany({ where: { organizationId, status: "ACTIVE" } });
+  const items = employees.map((employee) => {
+    const baseCents = employee.salaryCents || 0;
+    const deductionCents = Math.round(baseCents * 0.1);
+    return { employeeId: employee.id, baseCents, deductionCents, netCents: Math.max(0, baseCents - deductionCents), status: "PAID" as const };
+  });
+  const grossCents = items.reduce((sum, item) => sum + item.baseCents, 0);
+  const deductionCents = items.reduce((sum, item) => sum + item.deductionCents, 0);
   return prisma.payrollRun.create({
     data: {
       organizationId,
       period,
       status: "PAID",
-      grossCents: employees.length * 100000,
-      deductionCents: employees.length * 10000,
-      netCents: employees.length * 90000,
+      grossCents,
+      deductionCents,
+      netCents: grossCents - deductionCents,
       items: {
-        create: employees.map((employee) => ({ employeeId: employee.id, baseCents: 100000, deductionCents: 10000, netCents: 90000, status: "PAID" }))
+        create: items
       }
     },
     include: { items: { include: { employee: { include: { department: true } } } } }

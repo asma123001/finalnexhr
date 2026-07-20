@@ -198,6 +198,8 @@
               <div style="display:flex;flex-direction:column;gap:4px;padding-top:6px;border-top:1px solid #f0f1f6;">
                 <div style="display:flex;justify-content:space-between;font-size:12.5px;"><div style="color:#9296b3;">Department</div><div style="color:#3f4159;font-weight:600;">{{ e.dept }}</div></div>
                 <div style="display:flex;justify-content:space-between;font-size:12.5px;"><div style="color:#9296b3;">Designation</div><div style="color:#3f4159;font-weight:600;">{{ e.title }}</div></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;"><div style="color:#9296b3;">Salary</div><div style="color:#3f4159;font-weight:600;">{{ e.salaryLabel }}</div></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;"><div style="color:#9296b3;">Location</div><div style="color:#3f4159;font-weight:600;">{{ e.workLocationLabel }}</div></div>
                 <div style="display:flex;justify-content:space-between;font-size:12.5px;"><div style="color:#9296b3;">Joined</div><div style="color:#3f4159;font-weight:600;">{{ e.joined }}</div></div>
                 <div style="display:flex;justify-content:space-between;font-size:12.5px;"><div style="color:#9296b3;">Biometric</div><div style="color:#3f4159;font-weight:600;">{{ e.biometricLabel }}</div></div>
               </div>
@@ -1265,6 +1267,36 @@
                 <option value="Full-time">Full-time</option><option value="Part-time">Part-time</option><option value="Contract">Contract</option><option value="Intern">Intern</option>
               </select>
             </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Joining date</div><input type="date" value="{{ formEmpJoinedAt }}" onChange="{{ onFormEmpJoinedAtChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Work location</div><input value="{{ formEmpWorkLocation }}" onChange="{{ onFormEmpWorkLocationChange }}" placeholder="Head Office" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            </div>
+            <div style="background:#f8f9fc;border-radius:10px;padding:14px;">
+              <div style="font-size:11.5px;font-weight:700;color:#6b6e88;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;">Compensation</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Basic salary</div><input type="number" min="0" value="{{ formEmpSalary }}" onChange="{{ onFormEmpSalaryChange }}" placeholder="50000" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Currency</div><select value="{{ formEmpSalaryCurrency }}" onChange="{{ onFormEmpSalaryCurrencyChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"><option value="USD">USD</option><option value="PKR">PKR</option><option value="AED">AED</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></div>
+                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Pay frequency</div><select value="{{ formEmpPayFrequency }}" onChange="{{ onFormEmpPayFrequencyChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"><option value="Monthly">Monthly</option><option value="Biweekly">Biweekly</option><option value="Weekly">Weekly</option><option value="Daily">Daily</option></select></div>
+              </div>
+            </div>
+            <div style="background:#f8f9fc;border-radius:10px;padding:14px;">
+              <div style="font-size:11.5px;font-weight:700;color:#6b6e88;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;">Personal &amp; emergency</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Gender</div><select value="{{ formEmpGender }}" onChange="{{ onFormEmpGenderChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"><option value="">Not specified</option><option value="Female">Female</option><option value="Male">Male</option><option value="Other">Other</option></select></div>
+                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Date of birth</div><input type="date" value="{{ formEmpDateOfBirth }}" onChange="{{ onFormEmpDateOfBirthChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">National ID</div><input value="{{ formEmpNationalId }}" onChange="{{ onFormEmpNationalIdChange }}" placeholder="ID / CNIC / SSN" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Emergency contact</div><input value="{{ formEmpEmergencyName }}" onChange="{{ onFormEmpEmergencyNameChange }}" placeholder="Contact name" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+                <div style="grid-column:1/3;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Emergency phone</div><input value="{{ formEmpEmergencyPhone }}" onChange="{{ onFormEmpEmergencyPhoneChange }}" placeholder="+1 415 555 0101" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+                <div style="grid-column:1/3;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Address</div><input value="{{ formEmpAddress }}" onChange="{{ onFormEmpAddressChange }}" placeholder="Residential address" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+              </div>
+            </div>
+            <div style="background:#f8f9fc;border-radius:10px;padding:14px;">
+              <div style="font-size:11.5px;font-weight:700;color:#6b6e88;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;">Bank details</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Bank name</div><input value="{{ formEmpBankName }}" onChange="{{ onFormEmpBankNameChange }}" placeholder="Bank name" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+                <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Account / IBAN</div><input value="{{ formEmpBankAccount }}" onChange="{{ onFormEmpBankAccountChange }}" placeholder="Account number" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
+              </div>
+            </div>
             <div style="background:#f8f9fc;border-radius:10px;padding:14px;">
               <div style="font-size:11.5px;font-weight:700;color:#6b6e88;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;">Login credentials</div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
@@ -1431,6 +1463,9 @@ class Component extends DCLogic {
     formDeptName: '', formDeptCode: '', formDeptDescription: '', formDeptHeadId: '', formDeptParentId: '', formDeptStatus: 'Active',
     formEmpName: '', formEmpEmail: '', formEmpDept: '', formEmpTitle: '', editingEmpId: null,
     formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpUserId: '', formEmpPassword: '',
+    formEmpJoinedAt: '', formEmpWorkLocation: '', formEmpSalary: '', formEmpSalaryCurrency: 'USD', formEmpPayFrequency: 'Monthly',
+    formEmpGender: '', formEmpDateOfBirth: '', formEmpNationalId: '', formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '',
+    formEmpBankName: '', formEmpBankAccount: '',
     editingAttId: null, formAttEmployeeId: '', formAttDate: '', formAttStatus: 'Present', formAttCheckIn: '', formAttCheckOut: '', formAttReason: '',
     formShiftName: '', formShiftStart: '09:00', formShiftEnd: '18:00', formShiftDays: 'Mon–Fri',
     formShiftBreak: '60', formShiftGrace: '15', formShiftOvertimeEnabled: true, formShiftOvertimeAfter: '17:00', formShiftColor: '#4f46e5',
@@ -1457,7 +1492,7 @@ class Component extends DCLogic {
       this.setState({ data: tenantOnly });
       try {
         const dashboard = await this.api.api('/org/dashboard');
-        const employees = dashboard.employees.map(e => ({ id: e.id, name: e.firstName + ' ' + e.lastName, initials: (e.firstName[0] + e.lastName[0]).toUpperCase(), dept: e.department ? e.department.name : 'Unassigned', title: e.title, joined: new Date(e.joinedAt).toLocaleDateString(), status: e.status === 'ACTIVE' ? 'Active' : 'Inactive', email: e.email, phone: e.phone || '', employmentType: e.employmentType, photoDataUrl: e.photoDataUrl || '' }));
+        const employees = dashboard.employees.map(e => this.mapApiEmployee(e));
         const departments = dashboard.departments.map(d => ({ id: d.id, name: d.name, code: d.code, description: d.description || '', head: '—', headId: d.headId, parentId: d.parentId, status: d.isActive ? 'Active' : 'Inactive', count: employees.filter(e => e.dept === d.name).length }));
         const attendanceToday = (dashboard.attendance || []).map(a => this.mapApiAttendance(a));
         const attendanceAuditLog = (dashboard.biometricSyncLogs || []).map(l => ({ id: l.id, actor: l.device ? l.device.name : 'Biometric device', action: `${l.status === 'SUCCESS' ? 'Synced' : 'Failed to sync'} ${l.records} attendance records`, time: new Date(l.createdAt).toLocaleString() }));
@@ -1510,6 +1545,40 @@ class Component extends DCLogic {
       checkOut: a.checkOut ? new Date(a.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—',
       hours: a.hours || '—',
       date: a.date ? new Date(a.date).toISOString().slice(0, 10) : ''
+    };
+  }
+  dateInput(value) { return value ? new Date(value).toISOString().slice(0, 10) : ''; }
+  mapApiEmployee(e) {
+    const firstName = e.firstName || '';
+    const lastName = e.lastName || '';
+    const name = `${firstName} ${lastName}`.trim() || 'Employee';
+    return {
+      id: e.id,
+      employeeCode: e.employeeCode || '',
+      name,
+      initials: (firstName[0] + lastName[0]).toUpperCase() || name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase(),
+      dept: e.department ? e.department.name : 'Unassigned',
+      title: e.title || 'Employee',
+      joined: e.joinedAt ? new Date(e.joinedAt).toLocaleDateString() : '',
+      joinedAtInput: this.dateInput(e.joinedAt),
+      status: e.status === 'ACTIVE' ? 'Active' : 'Inactive',
+      email: e.email || '',
+      phone: e.phone || '',
+      employmentType: e.employmentType || 'Full-time',
+      photoDataUrl: e.photoDataUrl || '',
+      userId: e.user ? e.user.email : e.email || '',
+      workLocation: e.workLocation || '',
+      gender: e.gender || '',
+      dateOfBirth: this.dateInput(e.dateOfBirth),
+      nationalId: e.nationalId || '',
+      address: e.address || '',
+      emergencyContactName: e.emergencyContactName || '',
+      emergencyContactPhone: e.emergencyContactPhone || '',
+      bankName: e.bankName || '',
+      bankAccount: e.bankAccount || '',
+      salary: e.salaryCents ? e.salaryCents / 100 : 0,
+      salaryCurrency: e.salaryCurrency || 'USD',
+      payFrequency: e.payFrequency || 'Monthly'
     };
   }
   humanStatus(value) {
@@ -1652,16 +1721,26 @@ class Component extends DCLogic {
   onGlobalSearchChange(e) { this.setState({ globalSearch: e.target.value }); }
 
   openModal(type) { this.setState({ modal: type }); }
-  closeModal() { this.setState({ modal: null, confirmPayload: null, editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpTitle: '', formEmpDept: '' }); }
+  closeModal() { this.setState({ modal: null, confirmPayload: null, editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpTitle: '', formEmpDept: '',
+    formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpUserId: '', formEmpPassword: '', formEmpJoinedAt: '', formEmpWorkLocation: '',
+    formEmpSalary: '', formEmpSalaryCurrency: 'USD', formEmpPayFrequency: 'Monthly', formEmpGender: '', formEmpDateOfBirth: '', formEmpNationalId: '',
+    formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '', formEmpBankName: '', formEmpBankAccount: '' }); }
   askConfirm(title, message, label, onConfirm) { this.setState({ modal: 'confirm', confirmPayload: { title, message, label, onConfirm } }); }
   confirmAction() { const p = this.state.confirmPayload; if (p && p.onConfirm) p.onConfirm(); this.closeModal(); }
 
   onEmpSearchChange(e) { this.setState({ empSearch: e.target.value }); }
   setDeptFilter(d) { this.setState({ deptFilter: d }); }
   openAddEmployee() { this.setState({ modal: 'addEmployee', editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpDept: (this.state.data.departments[0] || {}).name || '', formEmpTitle: '',
-    formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpUserId: '', formEmpPassword: '' }); }
+    formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpUserId: '', formEmpPassword: '', formEmpJoinedAt: new Date().toISOString().slice(0, 10), formEmpWorkLocation: '',
+    formEmpSalary: '', formEmpSalaryCurrency: 'USD', formEmpPayFrequency: 'Monthly', formEmpGender: '', formEmpDateOfBirth: '', formEmpNationalId: '',
+    formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '', formEmpBankName: '', formEmpBankAccount: '' }); }
   openEditEmployee(emp) { this.setState({ modal: 'addEmployee', editingEmpId: emp.id, formEmpName: emp.name, formEmpEmail: emp.email, formEmpDept: emp.dept, formEmpTitle: emp.title,
-    formEmpPhone: emp.phone || '', formEmpEmploymentType: emp.employmentType || 'Full-time', formEmpUserId: emp.userId || emp.email, formEmpPassword: '' }); }
+    formEmpPhone: emp.phone || '', formEmpEmploymentType: emp.employmentType || 'Full-time', formEmpUserId: emp.userId || emp.email, formEmpPassword: '',
+    formEmpJoinedAt: emp.joinedAtInput || '', formEmpWorkLocation: emp.workLocation || '', formEmpSalary: emp.salary ? String(emp.salary) : '',
+    formEmpSalaryCurrency: emp.salaryCurrency || 'USD', formEmpPayFrequency: emp.payFrequency || 'Monthly', formEmpGender: emp.gender || '',
+    formEmpDateOfBirth: emp.dateOfBirth || '', formEmpNationalId: emp.nationalId || '', formEmpAddress: emp.address || '',
+    formEmpEmergencyName: emp.emergencyContactName || '', formEmpEmergencyPhone: emp.emergencyContactPhone || '',
+    formEmpBankName: emp.bankName || '', formEmpBankAccount: emp.bankAccount || '' }); }
   setDeptFilter(d) { this.setState({ deptFilter: d }); }
   onDeptSearchChange(e) { this.setState({ deptSearch: e.target.value }); }
   setDeptStatusFilter(f) { this.setState({ deptStatusFilter: f }); }
@@ -2004,18 +2083,68 @@ class Component extends DCLogic {
   onFormEmpEmploymentTypeChange(e) { this.setState({ formEmpEmploymentType: e.target.value }); }
   onFormEmpUserIdChange(e) { this.setState({ formEmpUserId: e.target.value }); }
   onFormEmpPasswordChange(e) { this.setState({ formEmpPassword: e.target.value }); }
+  onFormEmpJoinedAtChange(e) { this.setState({ formEmpJoinedAt: e.target.value }); }
+  onFormEmpWorkLocationChange(e) { this.setState({ formEmpWorkLocation: e.target.value }); }
+  onFormEmpSalaryChange(e) { this.setState({ formEmpSalary: e.target.value }); }
+  onFormEmpSalaryCurrencyChange(e) { this.setState({ formEmpSalaryCurrency: e.target.value }); }
+  onFormEmpPayFrequencyChange(e) { this.setState({ formEmpPayFrequency: e.target.value }); }
+  onFormEmpGenderChange(e) { this.setState({ formEmpGender: e.target.value }); }
+  onFormEmpDateOfBirthChange(e) { this.setState({ formEmpDateOfBirth: e.target.value }); }
+  onFormEmpNationalIdChange(e) { this.setState({ formEmpNationalId: e.target.value }); }
+  onFormEmpAddressChange(e) { this.setState({ formEmpAddress: e.target.value }); }
+  onFormEmpEmergencyNameChange(e) { this.setState({ formEmpEmergencyName: e.target.value }); }
+  onFormEmpEmergencyPhoneChange(e) { this.setState({ formEmpEmergencyPhone: e.target.value }); }
+  onFormEmpBankNameChange(e) { this.setState({ formEmpBankName: e.target.value }); }
+  onFormEmpBankAccountChange(e) { this.setState({ formEmpBankAccount: e.target.value }); }
+  employeePayload() {
+    const s = this.state;
+    const nameParts = this.api.splitName(s.formEmpName || 'New Employee');
+    return {
+      ...nameParts,
+      email: s.formEmpEmail || 'new@nexhr.io',
+      password: s.formEmpPassword || undefined,
+      title: s.formEmpTitle || 'Employee',
+      departmentName: s.formEmpDept || 'Engineering',
+      phone: s.formEmpPhone || undefined,
+      employmentType: s.formEmpEmploymentType,
+      joinedAt: s.formEmpJoinedAt || undefined,
+      workLocation: s.formEmpWorkLocation || undefined,
+      salary: s.formEmpSalary === '' ? undefined : Number(s.formEmpSalary),
+      salaryCurrency: s.formEmpSalaryCurrency,
+      payFrequency: s.formEmpPayFrequency,
+      gender: s.formEmpGender || undefined,
+      dateOfBirth: s.formEmpDateOfBirth || undefined,
+      nationalId: s.formEmpNationalId || undefined,
+      address: s.formEmpAddress || undefined,
+      emergencyContactName: s.formEmpEmergencyName || undefined,
+      emergencyContactPhone: s.formEmpEmergencyPhone || undefined,
+      bankName: s.formEmpBankName || undefined,
+      bankAccount: s.formEmpBankAccount || undefined
+    };
+  }
   async submitAddEmployee() {
-    const { editingEmpId, formEmpName, formEmpEmail, formEmpDept, formEmpTitle, formEmpPhone, formEmpEmploymentType, formEmpUserId } = this.state;
+    const { editingEmpId, formEmpName, formEmpEmail, formEmpDept, formEmpTitle, formEmpPhone, formEmpEmploymentType, formEmpUserId,
+      formEmpWorkLocation, formEmpSalary, formEmpSalaryCurrency, formEmpPayFrequency, formEmpGender, formEmpDateOfBirth, formEmpNationalId,
+      formEmpAddress, formEmpEmergencyName, formEmpEmergencyPhone, formEmpBankName, formEmpBankAccount } = this.state;
     const initials = (formEmpName.trim() || 'NA').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
     if (editingEmpId) {
-      this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(e => e.id === editingEmpId ? { ...e, name: formEmpName || e.name, email: formEmpEmail || e.email, dept: formEmpDept || e.dept, title: formEmpTitle || e.title, phone: formEmpPhone || e.phone, employmentType: formEmpEmploymentType, userId: formEmpUserId || e.userId } : e) } }));
+      try {
+        const saved = await this.api.api('/org/employees/' + encodeURIComponent(editingEmpId), { method: 'PATCH', body: JSON.stringify(this.employeePayload()) });
+        const row = this.mapApiEmployee(saved);
+        this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(e => e.id === editingEmpId ? row : e) } }));
+      } catch (err) {
+        this.showToast(err.message || 'Employee could not be updated', '#dc2626');
+        return;
+      }
       this.showToast('Employee updated', '#0f9d58');
     } else {
-      let newEmp = { id: 'e' + Date.now(), name: formEmpName || 'New Employee', initials, dept: formEmpDept || 'Engineering', title: formEmpTitle || 'Employee', joined: 'Jul 19, 2026', status: 'Active', email: formEmpEmail || 'new@nexhr.io', phone: formEmpPhone || '', employmentType: formEmpEmploymentType, userId: formEmpUserId || formEmpEmail || 'new@nexhr.io', photoDataUrl: '' };
+      let newEmp = { id: 'e' + Date.now(), name: formEmpName || 'New Employee', initials, dept: formEmpDept || 'Engineering', title: formEmpTitle || 'Employee', joined: new Date().toLocaleDateString(), status: 'Active', email: formEmpEmail || 'new@nexhr.io', phone: formEmpPhone || '', employmentType: formEmpEmploymentType, userId: formEmpUserId || formEmpEmail || 'new@nexhr.io', photoDataUrl: '',
+        workLocation: formEmpWorkLocation, salary: Number(formEmpSalary) || 0, salaryCurrency: formEmpSalaryCurrency, payFrequency: formEmpPayFrequency,
+        gender: formEmpGender, dateOfBirth: formEmpDateOfBirth, nationalId: formEmpNationalId, address: formEmpAddress, emergencyContactName: formEmpEmergencyName,
+        emergencyContactPhone: formEmpEmergencyPhone, bankName: formEmpBankName, bankAccount: formEmpBankAccount };
       try {
-        const nameParts = this.api.splitName(formEmpName || 'New Employee');
-        const created = await this.api.api('/org/employees', { method: 'POST', body: JSON.stringify({ ...nameParts, email: formEmpEmail || 'new@nexhr.io', password: this.state.formEmpPassword || undefined, title: formEmpTitle || 'Employee', departmentName: formEmpDept || 'Engineering', phone: formEmpPhone || undefined, employmentType: formEmpEmploymentType }) });
-        newEmp = { ...newEmp, id: created.employee.id, joined: new Date(created.employee.joinedAt).toLocaleDateString() };
+        const created = await this.api.api('/org/employees', { method: 'POST', body: JSON.stringify(this.employeePayload()) });
+        newEmp = this.mapApiEmployee(created.employee);
       } catch (err) {
         this.showToast(err.message || 'Employee could not be added', '#dc2626');
         return;
@@ -2403,7 +2532,8 @@ class Component extends DCLogic {
     const empRows = empFiltered.map(e => {
       const b = badge(e.status);
       const bioDevice = (data.biometricDevices || []).find(d => d.enabled && d.status === 'ONLINE') || (data.biometricDevices || [])[0];
-      return { ...e, badgeBg: b.bg, badgeColor: b.color, onEdit: () => this.openEditEmployee(e), onToggleStatus: () => this.toggleEmpStatus(e), toggleLabel: e.status === 'Inactive' ? 'Activate' : 'Deactivate',
+      return { ...e, badgeBg: b.bg, badgeColor: b.color, salaryLabel: e.salary ? `${e.salaryCurrency || 'USD'} ${Number(e.salary).toLocaleString()}/${e.payFrequency || 'Monthly'}` : 'Not set',
+        workLocationLabel: e.workLocation || 'Not set', onEdit: () => this.openEditEmployee(e), onToggleStatus: () => this.toggleEmpStatus(e), toggleLabel: e.status === 'Inactive' ? 'Activate' : 'Deactivate',
         biometricLabel: bioDevice ? (bioDevice.enabled ? 'Ready: ' + bioDevice.name : 'Device disabled') : 'No device', hasBiometric: !!bioDevice && !!bioDevice.enabled, empIdLabel: `EMP-${String(e.id).replace(/\D/g, '').padStart(4, '0')}`, onPrintIdCard: () => this.openPrintIdCard(e), onPhotoChange: (evt) => this.uploadEmployeePhoto(e, evt) };
     });
     const empCountLabel = `${data.employees.length} employees across ${data.departments.length} departments`;
@@ -2640,14 +2770,24 @@ class Component extends DCLogic {
       isRoleModal: modal === 'role', roleModalTitle: s.editingRoleId ? 'Edit Role' : 'Create Role', formRoleName: s.formRoleName, formRoleDescription: s.formRoleDescription, rolePermissionChoices,
       onFormRoleNameChange: (e) => this.onFormRoleNameChange(e), onFormRoleDescriptionChange: (e) => this.onFormRoleDescriptionChange(e), submitRole: () => this.submitRole(),
 
-      modal, modalMaxWidth: ['createShift', 'assignShift', 'requestLoan', 'addDept', 'manualAttendance', 'policy', 'genLetter', 'announce', 'role', 'assignPolicy'].includes(modal) ? '480px' : (modal === 'viewSlip' || modal === 'viewReport' ? '640px' : (modal === 'idCard' ? '420px' : (modal === 'overtimeRules' ? '600px' : '420px'))), isConfirmModal: modal === 'confirm', confirmTitle: cp.title, confirmMessage: cp.message, confirmLabel: cp.label,
+      modal, modalMaxWidth: modal === 'addEmployee' ? '680px' : (['createShift', 'assignShift', 'requestLoan', 'addDept', 'manualAttendance', 'policy', 'genLetter', 'announce', 'role', 'assignPolicy'].includes(modal) ? '480px' : (modal === 'viewSlip' || modal === 'viewReport' ? '640px' : (modal === 'idCard' ? '420px' : (modal === 'overtimeRules' ? '600px' : '420px')))), isConfirmModal: modal === 'confirm', confirmTitle: cp.title, confirmMessage: cp.message, confirmLabel: cp.label,
       confirmAction: () => this.confirmAction(), closeModal: () => this.closeModal(),
       isAddEmployeeModal: modal === 'addEmployee', empModalTitle: s.editingEmpId ? 'Edit Employee' : 'Add Employee', empModalSubmitLabel: s.editingEmpId ? 'Save changes' : 'Add employee',
       formEmpName: s.formEmpName, formEmpEmail: s.formEmpEmail, formEmpDept: s.formEmpDept, formEmpTitle: s.formEmpTitle, departmentOptions: data.departments,
       formEmpPhone: s.formEmpPhone, formEmpEmploymentType: s.formEmpEmploymentType, formEmpUserId: s.formEmpUserId, formEmpPassword: s.formEmpPassword,
+      formEmpJoinedAt: s.formEmpJoinedAt, formEmpWorkLocation: s.formEmpWorkLocation, formEmpSalary: s.formEmpSalary, formEmpSalaryCurrency: s.formEmpSalaryCurrency,
+      formEmpPayFrequency: s.formEmpPayFrequency, formEmpGender: s.formEmpGender, formEmpDateOfBirth: s.formEmpDateOfBirth, formEmpNationalId: s.formEmpNationalId,
+      formEmpAddress: s.formEmpAddress, formEmpEmergencyName: s.formEmpEmergencyName, formEmpEmergencyPhone: s.formEmpEmergencyPhone, formEmpBankName: s.formEmpBankName, formEmpBankAccount: s.formEmpBankAccount,
       onFormEmpPhoneChange: (e) => this.onFormEmpPhoneChange(e), onFormEmpEmploymentTypeChange: (e) => this.onFormEmpEmploymentTypeChange(e),
       onFormEmpUserIdChange: (e) => this.onFormEmpUserIdChange(e), onFormEmpPasswordChange: (e) => this.onFormEmpPasswordChange(e),
-      onFormEmpNameChange: (e) => this.onFormEmpNameChange(e), onFormEmpEmailChange: (e) => this.onFormEmpEmailChange(e), onFormEmpDeptChange: (e) => this.onFormEmpDeptChange(e), onFormEmpTitleChange: (e) => this.onFormEmpTitleChange(e), submitAddEmployee: () => this.submitAddEmployee(),
+      onFormEmpJoinedAtChange: (e) => this.onFormEmpJoinedAtChange(e), onFormEmpWorkLocationChange: (e) => this.onFormEmpWorkLocationChange(e),
+      onFormEmpSalaryChange: (e) => this.onFormEmpSalaryChange(e), onFormEmpSalaryCurrencyChange: (e) => this.onFormEmpSalaryCurrencyChange(e),
+      onFormEmpPayFrequencyChange: (e) => this.onFormEmpPayFrequencyChange(e), onFormEmpGenderChange: (e) => this.onFormEmpGenderChange(e),
+      onFormEmpDateOfBirthChange: (e) => this.onFormEmpDateOfBirthChange(e), onFormEmpNationalIdChange: (e) => this.onFormEmpNationalIdChange(e),
+      onFormEmpAddressChange: (e) => this.onFormEmpAddressChange(e), onFormEmpEmergencyNameChange: (e) => this.onFormEmpEmergencyNameChange(e),
+      onFormEmpEmergencyPhoneChange: (e) => this.onFormEmpEmergencyPhoneChange(e), onFormEmpBankNameChange: (e) => this.onFormEmpBankNameChange(e),
+      onFormEmpBankAccountChange: (e) => this.onFormEmpBankAccountChange(e), onFormEmpNameChange: (e) => this.onFormEmpNameChange(e),
+      onFormEmpEmailChange: (e) => this.onFormEmpEmailChange(e), onFormEmpDeptChange: (e) => this.onFormEmpDeptChange(e), onFormEmpTitleChange: (e) => this.onFormEmpTitleChange(e), submitAddEmployee: () => this.submitAddEmployee(),
 
       isAddDeptModal: modal === 'addDept', deptModalTitle: s.editingDeptId ? 'Edit Department' : 'Create Department', deptModalSubmitLabel: s.editingDeptId ? 'Save changes' : 'Create department',
       formDeptName: s.formDeptName, formDeptCode: s.formDeptCode, formDeptDescription: s.formDeptDescription, formDeptHeadId: s.formDeptHeadId, formDeptParentId: s.formDeptParentId,

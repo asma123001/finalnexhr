@@ -89,7 +89,26 @@ export const employeeSchema = z.object({
     title: z.string().min(1, "Designation is required."),
     departmentId: z.string().optional(),
     departmentName: z.string().optional(),
-    employmentType: z.string().default("Full-time")
+    employmentType: z.string().default("Full-time"),
+    joinedAt: z.coerce.date().optional(),
+    workLocation: z.string().optional(),
+    gender: z.string().optional(),
+    dateOfBirth: z.coerce.date().optional(),
+    nationalId: z.string().optional(),
+    address: z.string().optional(),
+    emergencyContactName: z.string().optional(),
+    emergencyContactPhone: z.string().optional(),
+    bankName: z.string().optional(),
+    bankAccount: z.string().optional(),
+    salary: z.coerce.number().nonnegative().optional(),
+    salaryCurrency: z.string().default("USD"),
+    payFrequency: z.string().default("Monthly")
+  })
+});
+
+export const employeeUpdateSchema = z.object({
+  body: employeeSchema.shape.body.partial().extend({
+    password: z.string().min(8, "Employee password must be at least 8 characters.").optional().or(z.literal(""))
   })
 });
 

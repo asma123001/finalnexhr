@@ -171,6 +171,18 @@ model Employee {
   photoDataUrl   String?      @db.Text
   title          String
   employmentType String       @default("Full-time")
+  workLocation   String?
+  gender         String?
+  dateOfBirth    DateTime?
+  nationalId     String?
+  address        String?
+  emergencyContactName String?
+  emergencyContactPhone String?
+  bankName       String?
+  bankAccount    String?
+  salaryCents    Int          @default(0)
+  salaryCurrency String       @default("USD")
+  payFrequency   String       @default("Monthly")
   status         UserStatus   @default(ACTIVE)
   joinedAt       DateTime     @default(now())
   managerId      String?
