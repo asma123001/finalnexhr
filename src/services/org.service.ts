@@ -28,8 +28,20 @@ export async function tenantDashboard(organizationId: string) {
   return { organization, departments, employees, attendance, attendancePolicies, leaveRequests, payrollRuns, shifts, roles, settings, biometricDevices, biometricSyncLogs, branches, holidays, loanRequests, exitRequests, letterTemplates, letters, reports };
 }
 
+async function uniqueDepartmentCode(organizationId: string, inputCode: string, name: string) {
+  const base = (inputCode || name || "DEPT").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12) || "DEPT";
+  let code = base;
+  let suffix = 1;
+  while (await prisma.department.findUnique({ where: { organizationId_code: { organizationId, code } }, select: { id: true } })) {
+    const tail = String(suffix++);
+    code = `${base.slice(0, Math.max(1, 12 - tail.length))}${tail}`;
+  }
+  return code;
+}
+
 export async function createDepartment(organizationId: string, data: { name: string; code: string; description?: string }) {
-  return prisma.department.create({ data: { organizationId, ...data } });
+  const code = await uniqueDepartmentCode(organizationId, data.code, data.name);
+  return prisma.department.create({ data: { organizationId, name: data.name, code, description: data.description } });
 }
 
 type EmployeeInput = {

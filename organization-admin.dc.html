@@ -1551,6 +1551,7 @@ class Component extends DCLogic {
       this.setState(st => ({ data: { ...st.data, employees, departments, attendanceToday, attendanceAuditLog, biometricDevices, employeeBiometricMap: [],
         attendancePolicies, shifts, shiftAssignments, rosterEntries, shiftSwapRequests: [], leaveRequests, payroll, roles, orgProfile, branches, holidays,
         loanRequests, exitRequests, letterTemplates, generatedLetters } }));
+      return { employees, departments, attendanceToday, biometricDevices };
     } catch (err) {
       console.warn('Org dashboard failed; tenant-owned modules remain empty instead of showing demo data:', err);
       throw err;
@@ -1795,24 +1796,25 @@ class Component extends DCLogic {
   async submitDept() {
     const s = this.state;
     const headEmp = s.data.employees.find(e => e.id === s.formDeptHeadId);
-    const fields = { name: s.formDeptName.trim() || 'New Department', code: s.formDeptCode.trim() || 'DEPT', description: s.formDeptDescription.trim(),
+    const deptName = s.formDeptName.trim() || 'New Department';
+    const generatedCode = deptName.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'DEPT';
+    const fields = { name: deptName, code: s.formDeptCode.trim() || generatedCode, description: s.formDeptDescription.trim(),
       headId: s.formDeptHeadId, head: headEmp ? headEmp.name : '—', parentId: s.formDeptParentId || null, status: s.formDeptStatus };
     if (s.editingDeptId) {
       this.setState(st => ({ data: { ...st.data, departments: st.data.departments.map(d => d.id === s.editingDeptId ? { ...d, ...fields } : d) } }));
       this.showToast('Department updated', '#0f9d58');
     } else {
-      let newDept = { id: 'd' + Date.now(), ...fields, count: 0 };
+      let newDept = null;
       try {
         const created = await this.api.api('/org/departments', { method: 'POST', body: JSON.stringify({ name: fields.name, code: fields.code, description: fields.description }) });
         newDept = this.mapApiDepartment(created, s.data.employees);
+        const refreshed = await this.refreshOrgDashboard();
+        const savedDept = refreshed && refreshed.departments ? refreshed.departments.find(d => d.id === newDept.id || d.code === newDept.code || d.name.toLowerCase() === newDept.name.toLowerCase()) : null;
+        if (!savedDept) throw new Error('Department was not found after saving. Please try again.');
       } catch (err) {
         this.showToast(err.message || 'Department could not be created', '#dc2626');
         return;
       }
-      this.setState(st => ({ data: { ...st.data, departments: [...st.data.departments, newDept] } }));
-      try {
-        await this.refreshOrgDashboard();
-      } catch (_err) {}
       this.showToast('Department created', '#0f9d58');
     }
     this.closeModal();
