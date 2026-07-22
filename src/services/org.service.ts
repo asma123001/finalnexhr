@@ -1,5 +1,4 @@
 import { prisma } from "../config/prisma.js";
-import type { Prisma } from "@prisma/client";
 import { hashPassword } from "../utils/auth.js";
 import { AppError } from "../utils/http.js";
 
@@ -65,7 +64,7 @@ export async function updateDepartment(organizationId: string, id: string, data:
 export async function deleteDepartment(organizationId: string, id: string) {
   const current = await prisma.department.findFirst({ where: { id, organizationId }, select: { id: true } });
   if (!current) throw new AppError(404, "Department not found");
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: any) => {
     await tx.department.updateMany({ where: { organizationId, parentId: id }, data: { parentId: null } });
     return tx.department.delete({ where: { id } });
   });
@@ -133,7 +132,7 @@ export async function createEmployee(organizationId: string, input: EmployeeInpu
   const count = await prisma.employee.count({ where: { organizationId } });
   const email = input.email.toLowerCase();
   const passwordHash = await hashPassword(input.password ?? "Employee123!");
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: any) => {
     const employee = await tx.employee.create({
       data: {
         organizationId,
@@ -219,7 +218,7 @@ export async function syncBiometricAttendance(organizationId: string, createdByI
   }
   const recordsPerDevice = Math.floor(attendance.length / devices.length);
   const extraRecords = attendance.length % devices.length;
-  const logs = await prisma.$transaction(devices.map((device, index) =>
+  const logs = await prisma.$transaction(devices.map((device: { id: string }, index: number) =>
     prisma.biometricSyncLog.create({
       data: {
         organizationId,
@@ -231,7 +230,7 @@ export async function syncBiometricAttendance(organizationId: string, createdByI
       include: { device: true }
     })
   ));
-  const updatedDevices = await prisma.$transaction(devices.map((device) =>
+  const updatedDevices = await prisma.$transaction(devices.map((device: { id: string }) =>
     prisma.biometricDevice.update({ where: { id: device.id }, data: { lastSyncAt: now } })
   ));
   return {
@@ -257,13 +256,13 @@ export async function decideLeave(organizationId: string, id: string, status: Le
 
 export async function runPayroll(organizationId: string, period: string) {
   const employees = await prisma.employee.findMany({ where: { organizationId, status: "ACTIVE" } });
-  const items = employees.map((employee) => {
+  const items = employees.map((employee: { id: string; salaryCents: number | null }) => {
     const baseCents = employee.salaryCents || 0;
     const deductionCents = Math.round(baseCents * 0.1);
     return { employeeId: employee.id, baseCents, deductionCents, netCents: Math.max(0, baseCents - deductionCents), status: "PAID" as const };
   });
-  const grossCents = items.reduce((sum, item) => sum + item.baseCents, 0);
-  const deductionCents = items.reduce((sum, item) => sum + item.deductionCents, 0);
+  const grossCents = items.reduce((sum: number, item: { baseCents: number }) => sum + item.baseCents, 0);
+  const deductionCents = items.reduce((sum: number, item: { deductionCents: number }) => sum + item.deductionCents, 0);
   return prisma.payrollRun.create({
     data: {
       organizationId,
@@ -340,7 +339,7 @@ export async function deleteShiftAssignment(organizationId: string, id: string) 
 
 export async function upsertOrganizationSettings(organizationId: string, input: { name?: string; industry?: string; email?: string; phone?: string; website?: string; address?: string; currency?: string; timezone?: string; dateFormat?: string; payFrequency?: string; workWeekStart?: string }) {
   const { currency, timezone, dateFormat, payFrequency, workWeekStart, ...orgData } = input;
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: any) => {
     const organization = await tx.organization.update({ where: { id: organizationId }, data: orgData });
     const settings = await tx.organizationSetting.upsert({
       where: { organizationId },
@@ -397,8 +396,8 @@ export async function updateLoanRequest(organizationId: string, id: string, inpu
   return prisma.loanRequest.update({ where: { id, organizationId }, data: input, include: { employee: { include: { department: true } } } });
 }
 
-export async function updateExitRequest(organizationId: string, id: string, input: { stage?: string; clearance?: Prisma.InputJsonValue }) {
-  return prisma.exitRequest.update({ where: { id, organizationId }, data: input, include: { employee: { include: { department: true } } } });
+export async function updateExitRequest(organizationId: string, id: string, input: { stage?: string; clearance?: unknown }) {
+  return prisma.exitRequest.update({ where: { id, organizationId }, data: input as any, include: { employee: { include: { department: true } } } });
 }
 
 export async function generateHrLetter(organizationId: string, generatedById: string | undefined, input: { employeeId: string; type: string; notes?: string }) {

@@ -77,7 +77,7 @@ export async function createOrganization(input: { name: string; adminEmail: stri
   const slug = await uniqueSlug(baseSlug);
   const passwordHash = await hashPassword(input.adminPassword ?? "OrgAdmin123!");
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: any) => {
     const organization = await tx.organization.create({
       data: {
         name: input.name,
