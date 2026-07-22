@@ -881,8 +881,8 @@
           <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">Organization profile</div>
           <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px;">
             <div style="width:64px;height:64px;border-radius:14px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:800;font-size:22px;flex-shrink:0;">
-              <sc-if value="{{ orgProfile.logoDataUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ orgProfile.logoDataUrl }}" alt="{{ orgProfile.name }}" style="width:100%;height:100%;object-fit:cover;"></sc-if>
-              <sc-if value="{{ !orgProfile.logoDataUrl }}" hint-placeholder-val="{{ true }}">N</sc-if>
+              <sc-if value="{{ orgLogoDisplayUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ orgLogoDisplayUrl }}" alt="{{ orgProfile.name }}" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+              <sc-if value="{{ !orgLogoDisplayUrl }}" hint-placeholder-val="{{ true }}">N</sc-if>
             </div>
             <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Organization name</div><input value="{{ orgProfile.name }}" onChange="{{ updateOrgProfileField('name') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
           </div>
@@ -900,7 +900,7 @@
             <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Work week starts</div><input value="{{ orgProfile.workWeekStart }}" onChange="{{ updateOrgProfileField('workWeekStart') }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;"></div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <label style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#4f46e5;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Upload logo<input type="file" accept="image/png,image/jpeg,image/webp" onChange="{{ uploadOrgLogo }}" style="display:none;"></label>
+            <label style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#4f46e5;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Upload logo<input id="org-logo-input" type="file" accept="image/png,image/jpeg,image/webp" onChange="{{ uploadOrgLogo }}" style="display:none;"></label>
             <button onClick="{{ saveOrgProfile }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Save profile</button>
           </div>
         </div>
@@ -1455,7 +1455,7 @@ class Component extends DCLogic {
     reportType: 'Attendance', reportDeptFilter: 'All', reportPeriod: 'Daily', reportFromDate: '', reportToDate: '', idCardEmployeeId: null,
     announceMessage: '', announceTarget: 'All employees', isSyncingBiometric: false,
     selectedFile: null, selectedFileDataUrl: '', empPhotoPreviewUrl: '', empPhotoPreviewOwnerId: '', formEmpPhotoDataUrl: '',
-    orgProfileEdited: null,
+    orgProfileEdited: null, orgLogoPreviewUrl: '', orgLogoSelectedFile: null,
     editingHolidayId: null, formHolidayName: '', formHolidayDate: '', formHolidayType: 'Public',
     editingRoleId: null, formRoleName: '', formRoleDescription: '', formRolePermissions: [],
     formDeptName: '', formDeptCode: '', formDeptDescription: '', formDeptHeadId: '', formDeptParentId: '', formDeptStatus: 'Active',
@@ -1544,8 +1544,9 @@ class Component extends DCLogic {
       const existingProfile = (this.state.data && this.state.data.orgProfile) || {};
       const profileFallback = sessionOrgProfile || existingProfile;
       const orgFallback = sessionOrg || {};
+      const hasDashboardOrg = !!dashboard.organization;
       const org = dashboard.organization || orgFallback || {};
-      const orgProfile = { name: org.name || profileFallback.name || 'Organization', industry: org.industry || profileFallback.industry || '', email: org.email || profileFallback.email || '', phone: org.phone || profileFallback.phone || '', website: org.website || profileFallback.website || '', address: org.address || profileFallback.address || '', logoDataUrl: org.logoDataUrl || profileFallback.logoDataUrl || '',
+      const orgProfile = { name: org.name || profileFallback.name || 'Organization', industry: org.industry || profileFallback.industry || '', email: org.email || profileFallback.email || '', phone: org.phone || profileFallback.phone || '', website: org.website || profileFallback.website || '', address: org.address || profileFallback.address || '', logoDataUrl: hasDashboardOrg ? (org.logoDataUrl || '') : (profileFallback.logoDataUrl || ''),
         currency: settings.currency || profileFallback.currency || 'USD', timezone: settings.timezone || profileFallback.timezone || 'UTC', dateFormat: settings.dateFormat || profileFallback.dateFormat || 'MM/DD/YYYY', payFrequency: settings.payFrequency || profileFallback.payFrequency || 'Monthly', workWeekStart: settings.workWeekStart || profileFallback.workWeekStart || 'Monday' };
       const branches = (dashboard.branches || []).map(b => ({ id: b.id, name: b.name, location: b.location || '', employees: 0, status: b.isActive ? 'Active' : 'Inactive' }));
       const holidays = (dashboard.holidays || []).map(h => ({ id: h.id, name: h.name, date: this.formatDate(h.date), type: h.type }));
@@ -1556,7 +1557,7 @@ class Component extends DCLogic {
       this.setState(st => ({ data: { ...st.data, employees, departments, attendanceToday, attendanceAuditLog, biometricDevices, employeeBiometricMap: [],
         attendancePolicies, shifts, shiftAssignments, rosterEntries, shiftSwapRequests: [], leaveRequests, payroll, roles, orgProfile, branches, holidays,
         loanRequests, exitRequests, letterTemplates, generatedLetters } }));
-      return { employees, departments, attendanceToday, biometricDevices, shifts };
+      return { employees, departments, attendanceToday, biometricDevices, shifts, orgProfile };
     } catch (err) {
       console.warn('Org dashboard failed; tenant-owned modules remain empty instead of showing demo data:', err);
       throw err;
@@ -1707,11 +1708,30 @@ class Component extends DCLogic {
       localStorage.setItem('nexhr_user', JSON.stringify({ ...user, organization }));
     } catch (_err) {}
   }
+  revokeOrgLogoPreview() {
+    const url = this.state.orgLogoPreviewUrl;
+    if (url && url.startsWith('blob:')) URL.revokeObjectURL(url);
+  }
+  clearOrgLogoInput() {
+    const input = document.getElementById('org-logo-input');
+    if (input) input.value = '';
+  }
+  resetOrgLogoSelection() {
+    this.revokeOrgLogoPreview();
+    this.clearOrgLogoInput();
+    this.setState({ orgLogoPreviewUrl: '', orgLogoSelectedFile: null });
+  }
   async uploadOrgLogo(e) {
+    const file = e && e.target && e.target.files ? e.target.files[0] : null;
     try {
-      const dataUrl = await this.readImageFile(e.target.files && e.target.files[0]);
+      const dataUrl = await this.readImageFile(file);
+      this.revokeOrgLogoPreview();
+      const previewUrl = URL.createObjectURL(file);
+      this.setState({ orgLogoPreviewUrl: previewUrl, orgLogoSelectedFile: file });
       const saved = await this.api.api('/org/settings/logo', { method: 'PATCH', body: JSON.stringify({ dataUrl }) });
-      const logoDataUrl = saved.logoDataUrl || dataUrl;
+      const refreshed = await this.refreshOrgDashboard();
+      const logoDataUrl = refreshed && refreshed.orgProfile ? refreshed.orgProfile.logoDataUrl : saved.logoDataUrl;
+      if (!logoDataUrl) throw new Error('Organization logo was uploaded, but was not returned by the database refresh.');
       this.updateStoredSessionOrg({ logoDataUrl });
       this.setState(s => ({ data: { ...s.data, orgProfile: { ...s.data.orgProfile, logoDataUrl } } }));
       this.showToast('Organization logo uploaded', '#0f9d58');
@@ -1719,6 +1739,7 @@ class Component extends DCLogic {
       this.showToast(err.message || 'Logo could not be uploaded', '#dc2626');
     } finally {
       if (e && e.target) e.target.value = '';
+      this.resetOrgLogoSelection();
     }
   }
   revokeEmployeePhotoPreview() {
@@ -1776,7 +1797,10 @@ class Component extends DCLogic {
     date.setHours(Number(match[1]), Number(match[2]), 0, 0);
     return date.toISOString();
   }
-  setScreen(key) { this.setState({ screen: key, mobileNavOpen: false, notifOpen: false, profileOpen: false }); }
+  setScreen(key) {
+    if (this.state.screen === 'oa-org-settings' && key !== 'oa-org-settings') this.resetOrgLogoSelection();
+    this.setState({ screen: key, mobileNavOpen: false, notifOpen: false, profileOpen: false });
+  }
   toggleMobileNav() { this.setState(s => ({ mobileNavOpen: !s.mobileNavOpen })); }
   closeMobileNav() { this.setState({ mobileNavOpen: false }); }
   toggleNotif() { this.setState(s => ({ notifOpen: !s.notifOpen, profileOpen: false })); }
@@ -2856,7 +2880,7 @@ class Component extends DCLogic {
       openAnnounce: () => this.openAnnounce(), isAnnounceModal: modal === 'announce', announceMessage: s.announceMessage, announceTarget: s.announceTarget,
       onAnnounceMessageChange: (e) => this.onAnnounceMessageChange(e), onAnnounceTargetChange: (e) => this.onAnnounceTargetChange(e), submitAnnounce: () => this.submitAnnounce(),
 
-      orgProfile: data.orgProfile, updateOrgProfileField: (key) => (e) => this.updateOrgProfileField(key, e.target.value), saveOrgProfile: () => this.saveOrgProfile(),
+      orgProfile: data.orgProfile, orgLogoDisplayUrl: s.orgLogoPreviewUrl || (data.orgProfile && data.orgProfile.logoDataUrl) || '', updateOrgProfileField: (key) => (e) => this.updateOrgProfileField(key, e.target.value), saveOrgProfile: () => this.saveOrgProfile(),
       branchRows,
       holidayRows, openAddHoliday: () => this.openAddHoliday(),
       isHolidayModal: modal === 'holiday', formHolidayName: s.formHolidayName, formHolidayDate: s.formHolidayDate, formHolidayType: s.formHolidayType,
