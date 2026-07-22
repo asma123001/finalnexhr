@@ -168,7 +168,7 @@
             <div style="font-size:14px;color:#6b6e88;">{{ empCountLabel }}</div>
           </div>
           <div style="display:flex;gap:10px;">
-            <button onClick="{{ syncEmployeesFromDevice }}" style="padding:11px 16px;border-radius:10px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Get data from Device</button>
+            <button onClick="{{ syncEmployeesFromDevice }}" disabled="{{ isSyncingBiometric }}" style="padding:11px 16px;border-radius:10px;border:1px solid #e7e9f2;background:{{ syncButtonBg }};color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ syncButtonCursor }};">{{ syncButtonLabel }}</button>
             <button onClick="{{ exportEmployees }}" style="padding:11px 16px;border-radius:10px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Export</button>
             <button onClick="{{ openAddEmployee }}" style="padding:11px 18px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">+ Add Employee</button>
           </div>
@@ -1449,7 +1449,7 @@ class Component extends DCLogic {
     newExceptionLabel: '', newExceptionNote: '',
     formGenLetterEmployeeId: '', formGenLetterType: 'Appointment Letter', formGenLetterNotes: '',
     reportType: 'Attendance', reportDeptFilter: 'All', reportPeriod: 'Daily', reportFromDate: '', reportToDate: '', idCardEmployeeId: null,
-    announceMessage: '', announceTarget: 'All employees',
+    announceMessage: '', announceTarget: 'All employees', isSyncingBiometric: false,
     orgProfileEdited: null,
     editingHolidayId: null, formHolidayName: '', formHolidayDate: '', formHolidayType: 'Public',
     editingRoleId: null, formRoleName: '', formRoleDescription: '', formRolePermissions: [],
@@ -2099,14 +2099,19 @@ class Component extends DCLogic {
     this.showToast('Employee list exported', '#0f9d58');
   }
   async syncEmployeesFromDevice() {
+    if (this.state.isSyncingBiometric) return;
+    this.setState({ isSyncingBiometric: true });
     try {
       const result = await this.api.api('/org/biometric/sync', { method: 'POST', body: JSON.stringify({}) });
       const attendanceToday = (result.attendance || []).map(a => this.mapApiAttendance(a));
       const attendanceAuditLog = (result.logs || []).map(l => ({ id: l.id, actor: l.device ? l.device.name : 'Biometric device', action: `${l.status === 'SUCCESS' ? 'Synced' : 'Failed to sync'} ${l.records} attendance records`, time: new Date(l.createdAt).toLocaleString() }));
-      this.setState(st => ({ data: { ...st.data, attendanceToday: attendanceToday.length ? attendanceToday : st.data.attendanceToday, attendanceAuditLog: [...attendanceAuditLog, ...st.data.attendanceAuditLog] } }));
-      this.showToast(result.message || `Synced ${result.records || 0} attendance records from biometric devices`, '#4f46e5');
+      this.setState(st => ({ data: { ...st.data, attendanceToday: attendanceToday.length ? attendanceToday : st.data.attendanceToday, biometricDevices: result.devices || st.data.biometricDevices, attendanceAuditLog: [...attendanceAuditLog, ...st.data.attendanceAuditLog] } }));
+      try { await this.refreshOrgDashboard(); } catch (_err) {}
+      this.showToast(result.message || `Fetched ${result.records || 0} attendance records from biometric devices`, result.records ? '#0f9d58' : '#b45309');
     } catch (err) {
       this.showToast(err.message || 'Biometric devices could not be synced', '#dc2626');
+    } finally {
+      this.setState({ isSyncingBiometric: false });
     }
   }
   onFormEmpNameChange(e) { this.setState({ formEmpName: e.target.value }); }
@@ -2747,6 +2752,8 @@ class Component extends DCLogic {
       todayLabel,
       oaStats, attendanceWeekBars, payrollTotalLabel: money(payrollTotal), payrollPaidCount, payrollProcessingCount, oaActivityRows,
       empSearch: s.empSearch, onEmpSearchChange: (e) => this.onEmpSearchChange(e), deptChips, empRows, empCountLabel, openAddEmployee: () => this.openAddEmployee(),
+      isSyncingBiometric: s.isSyncingBiometric, syncButtonLabel: s.isSyncingBiometric ? 'Fetching...' : 'Get data from Device',
+      syncButtonBg: s.isSyncingBiometric ? '#f5f6fa' : '#fff', syncButtonCursor: s.isSyncingBiometric ? 'not-allowed' : 'pointer',
       exportEmployees: () => this.exportEmployees(), syncEmployeesFromDevice: () => this.syncEmployeesFromDevice(),
       deptSearch: s.deptSearch, deptStatusChips, deptRows, deptCountLabel, deptParentOptions, openAddDept: () => this.openAddDept(),
       onDeptSearchChange: (e) => this.onDeptSearchChange(e),

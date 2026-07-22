@@ -192,15 +192,17 @@ export async function syncBiometricAttendance(organizationId: string, createdByI
       include: { device: true }
     })
   ));
-  await prisma.$transaction(devices.map((device) =>
+  const updatedDevices = await prisma.$transaction(devices.map((device) =>
     prisma.biometricDevice.update({ where: { id: device.id }, data: { lastSyncAt: now } })
   ));
   return {
     records: attendance.length,
-    devices,
+    devices: updatedDevices,
     attendance,
     logs,
-    message: `Synced ${attendance.length} attendance records from ${devices.length} device${devices.length === 1 ? "" : "s"}.`
+    message: attendance.length
+      ? `Fetched ${attendance.length} attendance records from ${devices.length} device${devices.length === 1 ? "" : "s"}.`
+      : `Connected to ${devices.length} device${devices.length === 1 ? "" : "s"}, but no active employees were available to fetch attendance for.`
   };
 }
 
