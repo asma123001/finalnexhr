@@ -1381,7 +1381,7 @@ class Component extends DCLogic {
 
     const deviceRows = data.biometricDevices.map(d => {
       const b = badge(d.status === 'Online' ? 'Active' : 'Inactive');
-      return { ...d, portLabel: 'Port ' + d.port, badgeBg: b.bg, badgeColor: b.color, onDisconnect: () => this.disconnectDevice(d), onToggleEnabled: () => this.toggleDeviceEnabled(d), enabledLabel: d.enabled ? 'Enabled' : 'Disabled', enabledColor: d.enabled ? '#0f9d58' : '#9296b3' };
+      return { ...d, portLabel: 'Port ' + d.port, badgeBg: b.bg, badgeColor: b.color, onDisconnect: () => this.disconnectDevice(d), onToggleEnabled: () => this.toggleDeviceEnabled(d), enabledLabel: d.enabled ? 'Disable device' : 'Enable device', enabledColor: d.enabled ? '#9296b3' : '#0f9d58' };
     });
     const onlineDeviceCount = data.biometricDevices.filter(d => d.status === 'Online').length;
     const offlineDeviceCount = data.biometricDevices.length - onlineDeviceCount;

@@ -208,9 +208,19 @@ export async function createManualAttendance(organizationId: string, createdById
 }
 
 export async function syncBiometricAttendance(organizationId: string, createdById?: string) {
-  const devices = await prisma.biometricDevice.findMany({ where: { organizationId, enabled: true, status: "ONLINE" } });
+  const allDevices = await prisma.biometricDevice.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" } });
+  const devices = allDevices.filter((device) => device.enabled && device.status === "ONLINE");
   if (!devices.length) {
-    return { records: 0, devices: [], attendance: [], logs: [], message: "No online biometric devices are enabled for this organization." };
+    const disabledCount = allDevices.filter((device) => !device.enabled).length;
+    const offlineCount = allDevices.filter((device) => device.enabled && device.status !== "ONLINE").length;
+    const message = !allDevices.length
+      ? "No biometric device is assigned to this organization. Add one from Super Admin > Biometric Devices."
+      : disabledCount && disabledCount === allDevices.length
+        ? `${disabledCount} biometric device${disabledCount === 1 ? " is" : "s are"} assigned but disabled. Enable the device from Super Admin > Biometric Devices.`
+        : offlineCount && offlineCount === allDevices.length
+          ? `${offlineCount} biometric device${offlineCount === 1 ? " is" : "s are"} assigned but offline. Connect the device before fetching attendance.`
+          : "Biometric devices are assigned, but none are both enabled and online.";
+    return { records: 0, devices: allDevices, attendance: [], logs: [], message };
   }
   const employees = await prisma.employee.findMany({ where: { organizationId, status: "ACTIVE" }, orderBy: { createdAt: "asc" } });
   const date = normalizeDate(new Date());
