@@ -797,6 +797,29 @@ const STATUS_COLORS = {
 function badge(status) { return STATUS_COLORS[status] || { bg: '#f0f1f6', color: '#6b6e88' }; }
 function money(n) { return '$' + n.toLocaleString('en-US'); }
 
+function emptyPlatformData() {
+  return {
+    orgs: [],
+    plans: [],
+    orgAdmins: [],
+    biometricDevices: [],
+    platformUsers: [],
+    auditLogs: [],
+    saRecentActivity: [],
+    expiredSubscriptions: [],
+    supportTickets: [],
+    platformAnnouncements: [],
+    announcements: [],
+    adminRolePermissions: {},
+    systemErrors: [],
+    systemServices: [
+      { name: 'API', status: 'Operational' },
+      { name: 'Database', status: 'Operational' },
+      { name: 'Biometric sync', status: 'Operational' }
+    ]
+  };
+}
+
 class Component extends DCLogic {
   state = {
     screen: 'sa-overview', data: null,
@@ -818,9 +841,9 @@ class Component extends DCLogic {
 
   async componentDidMount() {
     try {
-      const [mod, api] = await Promise.all([import('./data.js'), import('./api-client.js')]);
+      const api = await import('./api-client.js');
       this.api = api;
-      this.setState({ data: { ...mod } });
+      this.setState({ data: emptyPlatformData() });
       try {
         const dashboard = await this.api.api('/platform/dashboard');
         const orgs = dashboard.organizations.map(o => this.mapApiOrg(o));
@@ -830,10 +853,10 @@ class Component extends DCLogic {
         const orgAdmins = (dashboard.users || []).filter(u => u.role === 'ORG_ADMIN' && u.organizationId).map(u => this.mapApiOrgAdmin(u));
         this.setState(st => ({ data: { ...st.data, orgs, plans, biometricDevices, platformUsers, orgAdmins }, formOrgPlan: plans[0] ? plans[0].name : st.formOrgPlan }));
       } catch (err) {
-        console.warn('Using local demo data because API dashboard failed:', err);
+        console.warn('Platform dashboard failed; keeping real-system empty state instead of demo data:', err);
       }
     } catch (err) {
-      console.error('Canvas: failed to load data.js', err);
+      console.error('Canvas: failed to load API client', err);
     }
     this._onResize = () => this.setState({ viewportWidth: window.innerWidth });
     window.addEventListener('resize', this._onResize);
