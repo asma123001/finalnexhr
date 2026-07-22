@@ -1293,11 +1293,27 @@ class Component extends DCLogic {
     });
     const orgCountLabel = `${data.orgs.length} organizations · ${activeOrgs} active`;
 
-    const selOrgRaw = data.orgs.find(o => o.id === s.selectedOrgId) || data.orgs[0];
+    const emptyOrg = {
+      id: '',
+      name: 'No organization selected',
+      industry: '',
+      plan: '',
+      status: 'Inactive',
+      employees: 0,
+      activeEmployees: 0,
+      joined: '',
+      email: '',
+      mrr: 0,
+      expiry: '',
+      storageUsedGb: 0,
+      storageLimitGb: 1,
+      lastActivity: ''
+    };
+    const selOrgRaw = data.orgs.find(o => o.id === s.selectedOrgId) || data.orgs[0] || emptyOrg;
     const selBadge = badge(selOrgRaw.status);
     const selectedOrg = { ...selOrgRaw, initial: selOrgRaw.name[0], badgeBg: selBadge.bg, badgeColor: selBadge.color, mrrLabel: money(selOrgRaw.mrr), onEdit: () => this.openEditOrg(selOrgRaw) };
 
-    const orgAdminRows = data.orgAdmins.filter(a => a.orgId === selOrgRaw.id).map(a => {
+    const orgAdminRows = data.orgAdmins.filter(a => selOrgRaw.id && a.orgId === selOrgRaw.id).map(a => {
       const b = badge(a.status);
       return { ...a, badgeBg: b.bg, badgeColor: b.color, toggleLabel: a.status === 'Active' ? 'Deactivate' : 'Activate', toggleColor: a.status === 'Active' ? '#dc2626' : '#0f9d58',
         onEdit: () => this.openEditOrgAdmin(a), onResetPassword: () => this.resetAdminPassword(a), onToggleStatus: () => this.toggleOrgAdminStatus(a), onRemove: () => this.removeOrgAdmin(a) };
