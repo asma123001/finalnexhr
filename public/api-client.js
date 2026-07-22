@@ -16,13 +16,27 @@ export function clearSession() {
   localStorage.removeItem('nexhr_user');
 }
 
-export async function api(path, options = {}) {
+export function requireSession() {
   const token = getToken();
+  if (!token) throw new Error('Your session expired. Please sign in again.');
+  return token;
+}
+
+export async function api(path, options = {}) {
+  const isLogin = path === '/auth/login';
+  const token = isLogin ? getToken() : requireSession();
   const headers = { 'content-type': 'application/json', ...(options.headers || {}) };
   if (token) headers.authorization = `Bearer ${token}`;
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(readApiError(data, res.status));
+  if (!res.ok) {
+    const message = readApiError(data, res.status);
+    if (res.status === 401) {
+      clearSession();
+      throw new Error(message === 'Missing bearer token' ? 'Your session expired. Please sign in again.' : message);
+    }
+    throw new Error(message);
+  }
   return data;
 }
 

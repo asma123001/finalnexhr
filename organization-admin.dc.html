@@ -1473,6 +1473,10 @@ class Component extends DCLogic {
     try {
       const api = await import('./api-client.js');
       this.api = api;
+      if (!this.api.getToken || !this.api.getToken()) {
+        window.location.href = 'NexHR.dc.html';
+        return;
+      }
       const sessionUser = (() => {
         try { return JSON.parse(localStorage.getItem('nexhr_user') || '{}'); }
         catch (_err) { return {}; }
