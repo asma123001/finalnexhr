@@ -108,7 +108,8 @@ export const employeeSchema = z.object({
 
 export const employeeUpdateSchema = z.object({
   body: employeeSchema.shape.body.partial().extend({
-    password: z.string().min(8, "Employee password must be at least 8 characters.").optional().or(z.literal(""))
+    password: z.string().min(8, "Employee password must be at least 8 characters.").optional().or(z.literal("")),
+    status: z.enum(["ACTIVE", "INACTIVE", "SUSPENDED"]).optional()
   })
 });
 

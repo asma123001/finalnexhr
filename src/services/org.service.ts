@@ -103,6 +103,7 @@ type EmployeeInput = {
   salary?: number;
   salaryCurrency?: string;
   payFrequency?: string;
+  status?: "ACTIVE" | "INACTIVE" | "SUSPENDED";
 };
 
 function employeeDetailsData(input: Partial<EmployeeInput>) {
@@ -181,6 +182,7 @@ export async function updateEmployee(organizationId: string, id: string, input: 
     ...(input.email !== undefined ? { email: input.email.toLowerCase() } : {}),
     ...(input.title !== undefined ? { title: input.title } : {}),
     ...(input.employmentType !== undefined ? { employmentType: input.employmentType } : {}),
+    ...(input.status !== undefined ? { status: input.status } : {}),
     ...(departmentId !== undefined ? { departmentId } : {}),
     ...employeeDetailsData(input)
   };

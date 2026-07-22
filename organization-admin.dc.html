@@ -2180,35 +2180,41 @@ class Component extends DCLogic {
     if (editingEmpId) {
       try {
         const saved = await this.api.api('/org/employees/' + encodeURIComponent(editingEmpId), { method: 'PATCH', body: JSON.stringify(this.employeePayload()) });
-        const row = this.mapApiEmployee(saved);
-        this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(e => e.id === editingEmpId ? row : e) } }));
+        const latest = await this.refreshOrgDashboard();
+        if (!latest.employees.some(e => e.id === saved.id)) throw new Error('Employee was saved, but was not returned by the database refresh.');
       } catch (err) {
         this.showToast(err.message || 'Employee could not be updated', '#dc2626');
         return;
       }
       this.showToast('Employee updated', '#0f9d58');
     } else {
-      let newEmp = { id: 'e' + Date.now(), name: formEmpName || 'New Employee', initials, dept: formEmpDept || 'Engineering', title: formEmpTitle || 'Employee', joined: new Date().toLocaleDateString(), status: 'Active', email: formEmpEmail || 'new@nexhr.io', phone: formEmpPhone || '', employmentType: formEmpEmploymentType, userId: formEmpEmail || 'new@nexhr.io', photoDataUrl: '',
-        workLocation: formEmpWorkLocation, salary: Number(formEmpSalary) || 0, salaryCurrency: formEmpSalaryCurrency, payFrequency: formEmpPayFrequency,
-        gender: formEmpGender, dateOfBirth: formEmpDateOfBirth, nationalId: formEmpNationalId, address: formEmpAddress, emergencyContactName: formEmpEmergencyName,
-        emergencyContactPhone: formEmpEmergencyPhone, bankName: formEmpBankName, bankAccount: formEmpBankAccount };
       try {
         const created = await this.api.api('/org/employees', { method: 'POST', body: JSON.stringify(this.employeePayload()) });
-        newEmp = this.mapApiEmployee(created.employee);
+        const latest = await this.refreshOrgDashboard();
+        if (!latest.employees.some(e => e.id === created.employee.id)) throw new Error('Employee was saved, but was not returned by the database refresh.');
       } catch (err) {
         this.showToast(err.message || 'Employee could not be added', '#dc2626');
         return;
       }
-      this.setState(s => ({ data: { ...s.data, employees: [newEmp, ...s.data.employees] } }));
       this.showToast('Employee added', '#0f9d58');
     }
     this.closeModal();
   }
-  toggleEmpStatus(emp) {
+  async toggleEmpStatus(emp) {
     this.askConfirm(emp.status === 'Inactive' ? 'Reactivate employee' : 'Deactivate employee', `This will ${emp.status === 'Inactive' ? 're-enable' : 'revoke'} platform access for ${emp.name}.`, emp.status === 'Inactive' ? 'Reactivate' : 'Deactivate', () => {
-      this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(e => e.id === emp.id ? { ...e, status: e.status === 'Inactive' ? 'Active' : 'Inactive' } : e) } }));
-      this.showToast('Employee status updated', '#0f9d58');
+      this.saveEmployeeStatus(emp);
     });
+  }
+  async saveEmployeeStatus(emp) {
+    const nextStatus = emp.status === 'Inactive' ? 'ACTIVE' : 'INACTIVE';
+    try {
+      const saved = await this.api.api('/org/employees/' + encodeURIComponent(emp.id), { method: 'PATCH', body: JSON.stringify({ status: nextStatus }) });
+      const latest = await this.refreshOrgDashboard();
+      if (!latest.employees.some(e => e.id === saved.id && e.status === (nextStatus === 'ACTIVE' ? 'Active' : 'Inactive'))) throw new Error('Employee status was saved, but was not returned by the database refresh.');
+      this.showToast('Employee status updated', '#0f9d58');
+    } catch (err) {
+      this.showToast(err.message || 'Employee status could not be updated', '#dc2626');
+    }
   }
   setDailyView() { this.setState({ attendanceView: 'daily' }); }
   setMonthlyView() { this.setState({ attendanceView: 'monthly' }); }
