@@ -10,7 +10,7 @@ const baseRuntimeDatabaseUrl = isProduction
   : process.env.DIRECT_URL || process.env.DATABASE_URL;
 
 const runtimeDatabaseUrl = isProduction
-  ? baseRuntimeDatabaseUrl
+  ? withProductionPoolDefaults(baseRuntimeDatabaseUrl)
   : withLocalSslFallback(baseRuntimeDatabaseUrl);
 
 export const prisma = isProduction
@@ -28,5 +28,13 @@ function withLocalSslFallback(url: string | undefined) {
   const parsed = new URL(url);
   parsed.searchParams.set("sslmode", "no-verify");
   parsed.searchParams.delete("sslaccept");
+  return parsed.toString();
+}
+
+function withProductionPoolDefaults(url: string | undefined) {
+  if (!url) return url;
+  const parsed = new URL(url);
+  parsed.searchParams.set("connection_limit", "3");
+  parsed.searchParams.set("pool_timeout", "30");
   return parsed.toString();
 }

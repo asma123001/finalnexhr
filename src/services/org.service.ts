@@ -3,25 +3,37 @@ import { hashPassword } from "../utils/auth.js";
 import { AppError } from "../utils/http.js";
 
 export async function tenantDashboard(organizationId: string) {
-  const organization = await prisma.organization.findUnique({ where: { id: organizationId }, include: { package: true } });
-  const departments = await prisma.department.findMany({ where: { organizationId }, orderBy: { name: "asc" } });
-  const employees = await prisma.employee.findMany({ where: { organizationId }, include: { department: true, user: { select: { id: true, email: true, status: true, role: true } } }, orderBy: { createdAt: "desc" } });
-  const attendance = await prisma.attendance.findMany({ where: { organizationId }, include: { employee: true }, orderBy: { date: "desc" }, take: 100 });
-  const attendancePolicies = await prisma.attendancePolicy.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" } });
-  const leaveRequests = await prisma.leaveRequest.findMany({ where: { organizationId }, include: { employee: true }, orderBy: { createdAt: "desc" } });
-  const payrollRuns = await prisma.payrollRun.findMany({ where: { organizationId }, include: { items: { include: { employee: { include: { department: true } } } } }, orderBy: { createdAt: "desc" } });
-  const shifts = await prisma.shift.findMany({ where: { organizationId }, include: { assignments: { include: { employee: { include: { department: true } } } } }, orderBy: { createdAt: "desc" } });
-  const roles = await prisma.role.findMany({ where: { organizationId } });
-  const settings = await prisma.organizationSetting.findUnique({ where: { organizationId } });
-  const biometricDevices = await prisma.biometricDevice.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" } });
-  const biometricSyncLogs = await prisma.biometricSyncLog.findMany({ where: { organizationId }, include: { device: true }, orderBy: { createdAt: "desc" }, take: 20 });
-  const branches = await prisma.branch.findMany({ where: { organizationId }, orderBy: { name: "asc" } });
-  const holidays = await prisma.holiday.findMany({ where: { organizationId }, orderBy: { date: "asc" } });
-  const loanRequests = await prisma.loanRequest.findMany({ where: { organizationId }, include: { employee: { include: { department: true } } }, orderBy: { createdAt: "desc" } });
-  const exitRequests = await prisma.exitRequest.findMany({ where: { organizationId }, include: { employee: { include: { department: true } } }, orderBy: { createdAt: "desc" } });
-  const letterTemplates = await prisma.hrLetterTemplate.findMany({ where: { organizationId }, orderBy: { type: "asc" } });
-  const letters = await prisma.hrLetter.findMany({ where: { organizationId }, include: { employee: true }, orderBy: { createdAt: "desc" } });
-  const reports = await prisma.report.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" }, take: 20 });
+  const [organization, departments, employees] = await Promise.all([
+    prisma.organization.findUnique({ where: { id: organizationId }, include: { package: true } }),
+    prisma.department.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.employee.findMany({ where: { organizationId }, include: { department: true, user: { select: { id: true, email: true, status: true, role: true } } }, orderBy: { createdAt: "desc" } })
+  ]);
+  const [attendance, attendancePolicies, leaveRequests] = await Promise.all([
+    prisma.attendance.findMany({ where: { organizationId }, include: { employee: true }, orderBy: { date: "desc" }, take: 100 }),
+    prisma.attendancePolicy.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" } }),
+    prisma.leaveRequest.findMany({ where: { organizationId }, include: { employee: true }, orderBy: { createdAt: "desc" } })
+  ]);
+  const [payrollRuns, shifts, roles] = await Promise.all([
+    prisma.payrollRun.findMany({ where: { organizationId }, include: { items: { include: { employee: { include: { department: true } } } } }, orderBy: { createdAt: "desc" } }),
+    prisma.shift.findMany({ where: { organizationId }, include: { assignments: { include: { employee: { include: { department: true } } } } }, orderBy: { createdAt: "desc" } }),
+    prisma.role.findMany({ where: { organizationId } })
+  ]);
+  const [settings, biometricDevices, biometricSyncLogs] = await Promise.all([
+    prisma.organizationSetting.findUnique({ where: { organizationId } }),
+    prisma.biometricDevice.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" } }),
+    prisma.biometricSyncLog.findMany({ where: { organizationId }, include: { device: true }, orderBy: { createdAt: "desc" }, take: 20 })
+  ]);
+  const [branches, holidays, loanRequests] = await Promise.all([
+    prisma.branch.findMany({ where: { organizationId }, orderBy: { name: "asc" } }),
+    prisma.holiday.findMany({ where: { organizationId }, orderBy: { date: "asc" } }),
+    prisma.loanRequest.findMany({ where: { organizationId }, include: { employee: { include: { department: true } } }, orderBy: { createdAt: "desc" } })
+  ]);
+  const [exitRequests, letterTemplates, letters, reports] = await Promise.all([
+    prisma.exitRequest.findMany({ where: { organizationId }, include: { employee: { include: { department: true } } }, orderBy: { createdAt: "desc" } }),
+    prisma.hrLetterTemplate.findMany({ where: { organizationId }, orderBy: { type: "asc" } }),
+    prisma.hrLetter.findMany({ where: { organizationId }, include: { employee: true }, orderBy: { createdAt: "desc" } }),
+    prisma.report.findMany({ where: { organizationId }, orderBy: { createdAt: "desc" }, take: 20 })
+  ]);
   return { organization, departments, employees, attendance, attendancePolicies, leaveRequests, payrollRuns, shifts, roles, settings, biometricDevices, biometricSyncLogs, branches, holidays, loanRequests, exitRequests, letterTemplates, letters, reports };
 }
 
