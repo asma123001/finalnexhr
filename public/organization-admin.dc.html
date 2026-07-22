@@ -1680,11 +1680,20 @@ class Component extends DCLogic {
       reader.readAsDataURL(file);
     });
   }
+  updateStoredSessionOrg(updates) {
+    try {
+      const user = JSON.parse(localStorage.getItem('nexhr_user') || '{}');
+      const organization = { ...(user.organization || {}), ...updates };
+      localStorage.setItem('nexhr_user', JSON.stringify({ ...user, organization }));
+    } catch (_err) {}
+  }
   async uploadOrgLogo(e) {
     try {
       const dataUrl = await this.readImageFile(e.target.files && e.target.files[0]);
       const saved = await this.api.api('/org/settings/logo', { method: 'PATCH', body: JSON.stringify({ dataUrl }) });
-      this.setState(s => ({ data: { ...s.data, orgProfile: { ...s.data.orgProfile, logoDataUrl: saved.logoDataUrl || dataUrl } } }));
+      const logoDataUrl = saved.logoDataUrl || dataUrl;
+      this.updateStoredSessionOrg({ logoDataUrl });
+      this.setState(s => ({ data: { ...s.data, orgProfile: { ...s.data.orgProfile, logoDataUrl } } }));
       this.showToast('Organization logo uploaded', '#0f9d58');
     } catch (err) {
       this.showToast(err.message || 'Logo could not be uploaded', '#dc2626');
@@ -1990,6 +1999,7 @@ class Component extends DCLogic {
   async saveOrgProfile() {
     try {
       await this.api.api('/org/settings', { method: 'PATCH', body: JSON.stringify(this.state.data.orgProfile) });
+      this.updateStoredSessionOrg(this.state.data.orgProfile);
       this.showToast('Organization profile saved', '#0f9d58');
     } catch (err) {
       this.showToast(err.message || 'Organization profile could not be saved', '#dc2626');

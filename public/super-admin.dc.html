@@ -188,7 +188,10 @@
               <sc-for list="{{ topOrgs }}" as="o" hint-placeholder-count="5">
                 <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #f0f1f6;">
                   <div style="width:26px;height:26px;border-radius:8px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;">{{ o.rank }}</div>
-                  <div style="width:36px;height:36px;border-radius:9px;background:#f5f6fa;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">{{ o.initial }}</div>
+                  <div style="width:36px;height:36px;border-radius:9px;background:#f5f6fa;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;overflow:hidden;">
+                    <sc-if value="{{ o.logoDataUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ o.logoDataUrl }}" alt="{{ o.name }}" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+                    <sc-if value="{{ !o.logoDataUrl }}" hint-placeholder-val="{{ true }}">{{ o.initial }}</sc-if>
+                  </div>
                   <div style="flex:1;">
                     <div style="font-size:13.5px;font-weight:700;">{{ o.name }}</div>
                     <div style="font-size:12px;color:#9296b3;">{{ o.employees }} employees</div>
@@ -233,7 +236,10 @@
             <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div style="display:flex;gap:12px;align-items:center;">
-                  <div style="width:42px;height:42px;border-radius:10px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;">{{ o.initial }}</div>
+                  <div style="width:42px;height:42px;border-radius:10px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;overflow:hidden;">
+                    <sc-if value="{{ o.logoDataUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ o.logoDataUrl }}" alt="{{ o.name }}" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+                    <sc-if value="{{ !o.logoDataUrl }}" hint-placeholder-val="{{ true }}">{{ o.initial }}</sc-if>
+                  </div>
                   <div>
                     <div style="font-weight:800;font-size:15px;">{{ o.name }}</div>
                     <div style="font-size:12px;color:#9296b3;">{{ o.industry }}</div>
@@ -275,7 +281,10 @@
         <a href="#" onClick="{{ backToOrgs }}" style="color:#4f46e5;font-size:13.5px;font-weight:700;text-decoration:none;display:inline-block;margin-bottom:16px;">&larr; Back to organizations</a>
         <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:24px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
           <div style="display:flex;gap:16px;align-items:center;">
-            <div style="width:56px;height:56px;border-radius:14px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;">{{ selectedOrg.initial }}</div>
+            <div style="width:56px;height:56px;border-radius:14px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;overflow:hidden;">
+              <sc-if value="{{ selectedOrg.logoDataUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ selectedOrg.logoDataUrl }}" alt="{{ selectedOrg.name }}" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+              <sc-if value="{{ !selectedOrg.logoDataUrl }}" hint-placeholder-val="{{ true }}">{{ selectedOrg.initial }}</sc-if>
+            </div>
             <div>
               <div style="font-size:20px;font-weight:800;">{{ selectedOrg.name }}</div>
               <div style="font-size:13.5px;color:#6b6e88;margin-top:2px;">{{ selectedOrg.industry }} &middot; {{ selectedOrg.email }}</div>
@@ -844,6 +853,7 @@ class Component extends DCLogic {
       industry: o.industry || 'General',
       plan: o.package ? o.package.name : 'Starter',
       status: o.status === 'ACTIVE' ? 'Active' : o.status === 'SUSPENDED' ? 'Suspended' : 'Pending',
+      logoDataUrl: o.logoDataUrl || '',
       employees: employeeCount,
       activeEmployees: employeeCount,
       joined: o.createdAt ? new Date(o.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
@@ -1268,7 +1278,7 @@ class Component extends DCLogic {
     const saActivityRows = data.saRecentActivity.map(a => ({ text: a.text, time: a.time, dot: a.type === 'alert' ? '#dc2626' : a.type === 'billing' ? '#0f9d58' : '#4f46e5' }));
 
     const isAltLayout = s.saOverviewLayout === 'alt';
-    const topOrgs = [...data.orgs].sort((a, b) => b.mrr - a.mrr).slice(0, 5).map((o, i) => ({ rank: i + 1, name: o.name, initial: o.name[0], mrrLabel: money(o.mrr), employees: o.employees }));
+    const topOrgs = [...data.orgs].sort((a, b) => b.mrr - a.mrr).slice(0, 5).map((o, i) => ({ rank: i + 1, name: o.name, initial: o.name[0], logoDataUrl: o.logoDataUrl || '', mrrLabel: money(o.mrr), employees: o.employees }));
     const planTotal = data.plans.reduce((a, p) => a + (p.activeSubs || 0), 0) || 1;
     let acc = 0;
     const planDonutColors = ['#4f46e5', '#818cf8', '#c7d2fe'];
@@ -1287,7 +1297,7 @@ class Component extends DCLogic {
       return { name: o.name, industry: o.industry, plan: o.plan, employees: o.employees, activeEmployees: o.activeEmployees, empPct: empPct + '%',
         status: o.status, joined: o.joined, email: o.email, expiry: o.expiry, lastActivity: o.lastActivity,
         storageLabel: `${o.storageUsedGb} GB / ${o.storageLimitGb} GB`, storagePct: storagePct + '%', deviceCount,
-        initial: o.name[0], badgeBg: b.bg, badgeColor: b.color,
+        initial: o.name[0], logoDataUrl: o.logoDataUrl || '', badgeBg: b.bg, badgeColor: b.color,
         onView: () => this.selectOrg(o.id), onEdit: () => this.openEditOrg(o), onManage: () => this.selectOrg(o.id), onDelete: () => this.deleteOrgById(o.id),
         onDeactivate: () => this.toggleOrgStatus(o.id), deactivateLabel: o.status === 'Suspended' ? 'Reactivate' : 'Suspend' };
     });
@@ -1311,7 +1321,7 @@ class Component extends DCLogic {
     };
     const selOrgRaw = data.orgs.find(o => o.id === s.selectedOrgId) || data.orgs[0] || emptyOrg;
     const selBadge = badge(selOrgRaw.status);
-    const selectedOrg = { ...selOrgRaw, initial: selOrgRaw.name[0], badgeBg: selBadge.bg, badgeColor: selBadge.color, mrrLabel: money(selOrgRaw.mrr), onEdit: () => this.openEditOrg(selOrgRaw) };
+    const selectedOrg = { ...selOrgRaw, initial: selOrgRaw.name[0], logoDataUrl: selOrgRaw.logoDataUrl || '', badgeBg: selBadge.bg, badgeColor: selBadge.color, mrrLabel: money(selOrgRaw.mrr), onEdit: () => this.openEditOrg(selOrgRaw) };
 
     const orgAdminRows = data.orgAdmins.filter(a => selOrgRaw.id && a.orgId === selOrgRaw.id).map(a => {
       const b = badge(a.status);
