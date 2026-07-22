@@ -1473,14 +1473,32 @@ class Component extends DCLogic {
     try {
       const api = await import('./api-client.js');
       this.api = api;
+      const sessionUser = (() => {
+        try { return JSON.parse(localStorage.getItem('nexhr_user') || '{}'); }
+        catch (_err) { return {}; }
+      })();
+      const sessionOrg = sessionUser.organization || {};
+      const sessionOrgProfile = {
+        name: sessionOrg.name || 'Organization',
+        industry: sessionOrg.industry || '',
+        email: sessionOrg.email || '',
+        phone: sessionOrg.phone || '',
+        website: sessionOrg.website || '',
+        address: sessionOrg.address || '',
+        logoDataUrl: sessionOrg.logoDataUrl || '',
+        currency: 'USD',
+        timezone: 'UTC',
+        dateFormat: 'MM/DD/YYYY',
+        payFrequency: 'Monthly',
+        workWeekStart: 'Monday'
+      };
       const tenantOnly = {
         employees: [], departments: [], attendanceToday: [], leaveRequests: [], payroll: [],
         attendancePolicies: [], shifts: [], rosterEntries: [], shiftSwapRequests: [], shiftAssignments: [],
         exitRequests: [], loanRequests: [], letterTemplates: [], generatedLetters: [], branches: [], holidays: [], roles: [],
         biometricDevices: [], biometricSyncLogs: [], attendanceAuditLog: [], employeeBiometricMap: [],
         announcements: [], availableModules: ORG_MODULES,
-        orgProfile: { name: 'Organization', industry: '', email: '', phone: '', website: '', address: '', logoDataUrl: '',
-          currency: 'USD', timezone: 'UTC', dateFormat: 'MM/DD/YYYY', payFrequency: 'Monthly', workWeekStart: 'Monday' }
+        orgProfile: sessionOrgProfile
       };
       this.setState({ data: tenantOnly });
       try {
@@ -1498,8 +1516,8 @@ class Component extends DCLogic {
         const payroll = (dashboard.payrollRuns || []).flatMap(run => (run.items || []).map(item => this.mapApiPayrollItem(item, run)));
         const roles = (dashboard.roles || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', permissions: r.permissions || [], assignedCount: r.usersCount || 0 }));
         const settings = dashboard.settings || {};
-        const org = dashboard.organization || {};
-        const orgProfile = { name: org.name || '', industry: org.industry || '', email: org.email || '', phone: org.phone || '', website: org.website || '', address: org.address || '', logoDataUrl: org.logoDataUrl || '',
+        const org = dashboard.organization || sessionOrg || {};
+        const orgProfile = { name: org.name || sessionOrgProfile.name, industry: org.industry || sessionOrgProfile.industry, email: org.email || sessionOrgProfile.email, phone: org.phone || sessionOrgProfile.phone, website: org.website || sessionOrgProfile.website, address: org.address || sessionOrgProfile.address, logoDataUrl: org.logoDataUrl || sessionOrgProfile.logoDataUrl,
           currency: settings.currency || 'USD', timezone: settings.timezone || 'UTC', dateFormat: settings.dateFormat || 'MM/DD/YYYY', payFrequency: settings.payFrequency || 'Monthly', workWeekStart: settings.workWeekStart || 'Monday' };
         const branches = (dashboard.branches || []).map(b => ({ id: b.id, name: b.name, location: b.location || '', employees: 0, status: b.isActive ? 'Active' : 'Inactive' }));
         const holidays = (dashboard.holidays || []).map(h => ({ id: h.id, name: h.name, date: this.formatDate(h.date), type: h.type }));
