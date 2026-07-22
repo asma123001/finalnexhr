@@ -1,6 +1,19 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.ts" }
-  ]
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "finalnexhr-api"
+      }
+    }
+  ],
+  "services": {
+    "finalnexhr-api": {
+      "root": ".",
+      "framework": "express",
+      "entrypoint": "api/index.ts",
+      "buildCommand": "npm install && npm run build"
+    }
+  }
 }
