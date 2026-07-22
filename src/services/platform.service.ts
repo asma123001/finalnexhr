@@ -6,13 +6,11 @@ const slugify = (value: string) =>
   value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || `org-${Date.now()}`;
 
 export async function dashboard() {
-  const [organizations, users, packages, auditLogs, biometricDevices] = await Promise.all([
-    prisma.organization.findMany({ include: { package: true, _count: { select: { employees: true } } }, orderBy: { createdAt: "desc" } }),
-    prisma.user.findMany({ select: { id: true, organizationId: true, name: true, email: true, role: true, status: true, permissions: true, organization: { select: { id: true, name: true } }, lastLoginAt: true }, orderBy: { createdAt: "desc" } }),
-    prisma.package.findMany({ include: { _count: { select: { organizations: true } } }, orderBy: { createdAt: "asc" } }),
-    prisma.auditLog.findMany({ take: 20, orderBy: { createdAt: "desc" }, include: { actor: { select: { name: true, role: true } }, organization: { select: { name: true } } } }),
-    prisma.biometricDevice.findMany({ include: { organization: { select: { name: true } } }, orderBy: { createdAt: "desc" } })
-  ]);
+  const organizations = await prisma.organization.findMany({ include: { package: true, _count: { select: { employees: true } } }, orderBy: { createdAt: "desc" } });
+  const users = await prisma.user.findMany({ select: { id: true, organizationId: true, name: true, email: true, role: true, status: true, permissions: true, organization: { select: { id: true, name: true } }, lastLoginAt: true }, orderBy: { createdAt: "desc" } });
+  const packages = await prisma.package.findMany({ include: { _count: { select: { organizations: true } } }, orderBy: { createdAt: "asc" } });
+  const auditLogs = await prisma.auditLog.findMany({ take: 20, orderBy: { createdAt: "desc" }, include: { actor: { select: { name: true, role: true } }, organization: { select: { name: true } } } });
+  const biometricDevices = await prisma.biometricDevice.findMany({ include: { organization: { select: { name: true } } }, orderBy: { createdAt: "desc" } });
   return { organizations, users, packages, auditLogs, biometricDevices };
 }
 
