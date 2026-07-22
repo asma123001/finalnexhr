@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #f5f6fa; }
+    * { box-sizing: border-box; }
+    ::placeholder { color: #a3a6c2; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes modalIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes floatSlow { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-22px) scale(1.04); } }
+    @keyframes floatSlow2 { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(18px) scale(1.06); } }
+    @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes logoPop { 0% { opacity: 0; transform: scale(0.7) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes pulseGlow { 0%,100% { box-shadow: 0 4px 14px rgba(79,70,229,0.25); } 50% { box-shadow: 0 6px 22px rgba(79,70,229,0.45); } }
+    @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+    @keyframes numberPop { 0% { opacity: 0; transform: translateY(8px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;font-family:'Manrope',sans-serif;color:#14152e;background:#f5f6fa;">
+
+  <!-- ============ LOGIN ============ -->
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height:100vh;display:flex;">
+      <sc-if value="{{ showBrandPanel }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;background:linear-gradient(120deg,#1c1a4a,#2c1f6b,#1c1a4a);background-size:200% 200%;animation:gradientShift 14s ease infinite;color:#fff;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;min-width:0;">
+          <div style="position:absolute;width:360px;height:360px;border-radius:50%;background:rgba(129,140,248,0.18);top:-100px;right:-120px;animation:floatSlow 9s ease-in-out infinite;"></div>
+          <div style="position:absolute;width:260px;height:260px;border-radius:50%;background:rgba(99,102,241,0.16);bottom:-100px;left:-80px;animation:floatSlow2 11s ease-in-out infinite;"></div>
+          <div style="position:absolute;width:130px;height:130px;border:1px solid rgba(255,255,255,0.14);border-radius:36px;top:18%;left:12%;animation:spinSlow 22s linear infinite;"></div>
+          <div style="position:absolute;width:90px;height:90px;border:1px solid rgba(255,255,255,0.14);border-radius:50%;bottom:16%;right:14%;animation:floatSlow 7s ease-in-out infinite;"></div>
+          <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.08) 1.5px,transparent 1.5px);background-size:28px 28px;opacity:0.5;"></div>
+          <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;">
+            <div style="position:relative;width:112px;height:112px;display:flex;align-items:center;justify-content:center;">
+              <div style="position:absolute;inset:-14px;border-radius:36px;border:1px solid rgba(129,140,248,0.35);animation:spinSlow 16s linear infinite;"></div>
+              <div style="width:112px;height:112px;border-radius:28px;background:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:52px;box-shadow:0 20px 60px rgba(79,70,229,0.5);animation:logoPop 0.7s cubic-bezier(0.34,1.56,0.64,1);">N</div>
+            </div>
+            <div style="font-size:34px;font-weight:800;letter-spacing:-0.03em;animation:slideUp 0.7s ease 0.15s both;">NexHR</div>
+            <div style="font-size:15px;color:rgba(255,255,255,0.6);animation:slideUp 0.7s ease 0.25s both;">Manage People With Confidence</div>
+            <div style="display:flex;gap:28px;margin-top:6px;">
+              <div style="text-align:center;animation:numberPop 0.5s ease 0.35s both;">
+                <div style="font-size:20px;font-weight:800;">500+</div>
+                <div style="font-size:11.5px;color:rgba(255,255,255,0.5);">Organizations</div>
+              </div>
+              <div style="width:1px;background:rgba(255,255,255,0.15);"></div>
+              <div style="text-align:center;animation:numberPop 0.5s ease 0.45s both;">
+                <div style="font-size:20px;font-weight:800;">50K+</div>
+                <div style="font-size:11.5px;color:rgba(255,255,255,0.5);">Employees</div>
+              </div>
+              <div style="width:1px;background:rgba(255,255,255,0.15);"></div>
+              <div style="text-align:center;animation:numberPop 0.5s ease 0.55s both;">
+                <div style="font-size:20px;font-weight:800;">99.9%</div>
+                <div style="font-size:11.5px;color:rgba(255,255,255,0.5);">Uptime</div>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;bottom:32px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.55);animation:slideUp 0.7s ease 0.32s both;">
+            <span>Powered by</span>
+            <span style="font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:0.02em;">EVER<span style="font-weight:800;color:#fff;">TECH</span></span>
+            <span>© 2026 NexHR. All rights reserved.</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:24px;background:#fff;min-width:0;">
+        <div style="width:100%;max-width:380px;animation:slideUp 0.5s ease both;">
+          <div style="display:flex;flex-direction:row;align-items:center;gap:12px;margin-bottom:28px;">
+            <div style="width:52px;height:52px;border-radius:14px;background:#4f46e5;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:22px;box-shadow:0 10px 26px rgba(79,70,229,0.3);animation:logoPop 0.6s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0;">N</div>
+            <div style="font-size:22px;font-weight:800;color:#14152e;">NexHR</div>
+          </div>
+
+          <div style="font-size:25px;font-weight:800;letter-spacing:-0.02em;margin-bottom:24px;animation:slideUp 0.5s ease 0.05s both;">Sign in</div>
+
+          <form onSubmit="{{ submitLogin }}">
+            <div style="margin-bottom:16px;animation:slideUp 0.5s ease 0.1s both;">
+              <div style="font-size:13px;font-weight:600;color:#3f4159;margin-bottom:6px;">User ID</div>
+              <input type="email" value="{{ loginEmail }}" onChange="{{ onEmailChange }}" placeholder="{{ emailPlaceholder }}" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid {{ fieldBorder }};font-size:14.5px;font-family:inherit;outline:none;transition:border-color 0.15s ease, box-shadow 0.15s ease;" style-focus="border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,0.12);">
+            </div>
+            <div style="margin-bottom:8px;animation:slideUp 0.5s ease 0.16s both;">
+              <div style="font-size:13px;font-weight:600;color:#3f4159;margin-bottom:6px;">Password</div>
+              <div style="position:relative;">
+                <input type="{{ passwordFieldType }}" value="{{ loginPassword }}" onChange="{{ onPasswordChange }}" placeholder="••••••••" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid {{ fieldBorder }};font-size:14.5px;font-family:inherit;outline:none;transition:border-color 0.15s ease, box-shadow 0.15s ease;" style-focus="border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,0.12);">
+                <button type="button" onClick="{{ togglePassword }}" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:#4f46e5;font-weight:600;font-size:12.5px;cursor:pointer;font-family:inherit;">{{ showHideLabel }}</button>
+              </div>
+            </div>
+            <sc-if value="{{ loginError }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:8px;background:#fdeaea;border:1px solid #fbdada;border-radius:9px;padding:10px 12px;margin-bottom:14px;animation:shake 0.4s ease both;">
+                <div style="width:16px;height:16px;border-radius:50%;background:#dc2626;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">!</div>
+                <div style="color:#b91c1c;font-size:13px;">{{ loginError }}</div>
+              </div>
+            </sc-if>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:18px 0 22px;animation:slideUp 0.5s ease 0.22s both;">
+              <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:#3f4159;cursor:pointer;">
+                <input type="checkbox" checked="{{ rememberMe }}" onChange="{{ toggleRemember }}" style="width:16px;height:16px;accent-color:#4f46e5;">
+                Remember me
+              </label>
+              <a href="#" onClick="{{ forgotPassword }}" style="font-size:13.5px;color:#4f46e5;text-decoration:none;font-weight:600;">Forgot password?</a>
+            </div>
+            <button type="submit" style="width:100%;padding:14px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:background 0.15s ease, transform 0.1s ease;animation:slideUp 0.5s ease 0.28s both, pulseGlow 2.4s ease-in-out 1.2s infinite;" style-hover="background:#4338ca;" style-active="transform:scale(0.99);">Sign in</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ APP SHELL ============ -->
+  <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ showBackdrop }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeMobileNav }}" style="position:fixed;inset:0;background:rgba(10,10,30,0.45);z-index:55;"></div>
+    </sc-if>
+
+    <div style="position:fixed;top:0;left:{{ sidebarLeft }};height:100vh;width:260px;background:#1c1a4a;z-index:60;transition:left 0.22s ease;overflow-y:auto;display:flex;flex-direction:column;">
+      <div style="padding:22px 20px;display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:9px;background:#4f46e5;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;flex-shrink:0;">N</div>
+        <div style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.02em;">NexHR</div>
+      </div>
+      <div style="padding:0 14px;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#6f6da0;text-transform:uppercase;padding-left:20px;margin-bottom:6px;">{{ roleSectionLabel }}</div>
+      <div style="display:flex;flex-direction:column;gap:2px;padding:0 12px;flex:1;">
+        <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+          <div onClick="{{ item.onClick }}" style="padding:10px 12px;border-radius:9px;cursor:pointer;font-size:14px;background:{{ item.bg }};color:{{ item.color }};font-weight:{{ item.weight }};transition:all 0.15s ease;">{{ item.label }}</div>
+        </sc-for>
+      </div>
+      <div style="padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);">
+        <div onClick="{{ logout }}" style="font-size:13.5px;color:#b7b6d9;cursor:pointer;font-weight:600;">Log out</div>
+      </div>
+    </div>
+
+    <div style="margin-left:{{ contentMarginLeft }};min-height:100vh;display:flex;flex-direction:column;transition:margin-left 0.22s ease;">
+      <div style="height:64px;flex-shrink:0;background:#fff;border-bottom:1px solid #e7e9f2;display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:40;">
+        <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ toggleMobileNav }}" style="border:1px solid #e7e9f2;background:#fff;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;flex-shrink:0;">
+            <div style="width:16px;height:2px;background:#3f4159;border-radius:1px;"></div>
+            <div style="width:16px;height:2px;background:#3f4159;border-radius:1px;"></div>
+            <div style="width:16px;height:2px;background:#3f4159;border-radius:1px;"></div>
+          </button>
+        </sc-if>
+        <div style="font-size:16px;font-weight:700;flex-shrink:0;">{{ currentScreenLabel }}</div>
+        <sc-if value="{{ showSearch }}" hint-placeholder-val="{{ true }}">
+          <input placeholder="Search..." value="{{ globalSearch }}" onChange="{{ onGlobalSearchChange }}" style="flex:1;max-width:340px;padding:9px 14px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#f8f9fc;">
+        </sc-if>
+        <div style="flex:1;"></div>
+        <div style="position:relative;">
+          <button onClick="{{ toggleNotif }}" style="width:38px;height:38px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;cursor:pointer;position:relative;color:#3f4159;font-weight:700;font-size:13px;">
+            🔔
+            <div style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#dc2626;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:800;">3</div>
+          </button>
+          <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:46px;right:0;width:300px;background:#fff;border:1px solid #e7e9f2;border-radius:12px;box-shadow:0 12px 32px rgba(20,21,46,0.14);padding:8px;z-index:70;animation:modalIn 0.15s ease;">
+              <div style="font-size:12.5px;font-weight:700;color:#6b6e88;padding:8px 10px;">Notifications</div>
+              <sc-for list="{{ notifItems }}" as="n" hint-placeholder-count="3">
+                <div style="padding:9px 10px;border-radius:8px;font-size:13px;">
+                  <div style="color:#14152e;font-weight:600;margin-bottom:2px;">{{ n.text }}</div>
+                  <div style="color:#9296b3;font-size:11.5px;">{{ n.time }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <div style="position:relative;">
+          <div onClick="{{ toggleProfile }}" style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:5px 8px;border-radius:9px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">{{ profileInitials }}</div>
+            <sc-if value="{{ !isMobile }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#14152e;">{{ profileName }}</div>
+                <div style="font-size:11px;color:#9296b3;">{{ profileRoleLabel }}</div>
+              </div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ profileOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:52px;right:0;width:200px;background:#fff;border:1px solid #e7e9f2;border-radius:12px;box-shadow:0 12px 32px rgba(20,21,46,0.14);padding:6px;z-index:70;animation:modalIn 0.15s ease;">
+              <div style="padding:9px 12px;font-size:13px;color:#3f4159;font-weight:600;cursor:pointer;border-radius:8px;">My Profile</div>
+              <div style="padding:9px 12px;font-size:13px;color:#3f4159;font-weight:600;cursor:pointer;border-radius:8px;">Account Settings</div>
+              <div style="height:1px;background:#e7e9f2;margin:4px 0;"></div>
+              <div onClick="{{ logout }}" style="padding:9px 12px;font-size:13px;color:#dc2626;font-weight:600;cursor:pointer;border-radius:8px;">Log out</div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="flex:1;padding:28px;max-width:1400px;width:100%;">
+
+        <sc-if value="{{ isPlaceholderScreen }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:80px 40px;text-align:center;">
+            <div style="width:64px;height:64px;border-radius:16px;background:repeating-linear-gradient(45deg,#eef1fd,#eef1fd 6px,#e4e8fb 6px,#e4e8fb 12px);margin:0 auto 20px;"></div>
+            <div style="font-size:19px;font-weight:800;margin-bottom:8px;">{{ currentScreenLabel }} is coming soon</div>
+            <div style="font-size:14px;color:#6b6e88;max-width:380px;margin:0 auto;">This section of the platform is being finalized. It's included in the sidebar to show the complete information architecture.</div>
+          </div>
+        </sc-if>
+
+        <!-- SA OVERVIEW -->
+        <sc-if value="{{ screenIs.saOverview }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+              <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Platform Overview</div>
+              <div style="font-size:14px;color:#6b6e88;">All organizations at a glance</div>
+            </div>
+            <div style="display:flex;background:#f0f1f6;border-radius:10px;padding:4px;gap:4px;">
+              <button onClick="{{ setClassicLayout }}" style="padding:9px 16px;border-radius:8px;border:none;font-family:inherit;font-size:13px;cursor:pointer;background:{{ classicTabBg }};color:{{ classicTabColor }};font-weight:700;">Classic</button>
+              <button onClick="{{ setAltLayout }}" style="padding:9px 16px;border-radius:8px;border:none;font-family:inherit;font-size:13px;cursor:pointer;background:{{ altTabBg }};color:{{ altTabColor }};font-weight:700;">Spotlight</button>
+            </div>
+          </div>
+
+          <sc-if value="{{ !isAltLayout }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px;">
+            <sc-for list="{{ saStats }}" as="s" hint-placeholder-count="4">
+              <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                  <div style="width:8px;height:8px;border-radius:2px;background:{{ s.dot }};"></div>
+                  <div style="font-size:12.5px;color:#6b6e88;font-weight:600;">{{ s.label }}</div>
+                </div>
+                <div style="font-size:28px;font-weight:800;letter-spacing:-0.02em;">{{ s.value }}</div>
+                <div style="font-size:12px;color:{{ s.deltaColor }};margin-top:6px;font-weight:600;">{{ s.delta }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:20px;">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:18px;">Recurring revenue — last 6 months</div>
+              <div style="display:flex;align-items:flex-end;gap:14px;height:140px;">
+                <sc-for list="{{ mrrBars }}" as="b" hint-placeholder-count="6">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;">
+                    <div style="width:100%;max-width:36px;background:#4f46e5;border-radius:6px 6px 0 0;height:{{ b.pct }};"></div>
+                    <div style="font-size:11.5px;color:#9296b3;font-weight:600;">{{ b.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">Subscription plans</div>
+              <sc-for list="{{ plansList }}" as="p" hint-placeholder-count="3">
+                <div style="margin-bottom:14px;">
+                  <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                    <div style="font-weight:700;">{{ p.name }}</div>
+                    <div style="color:#6b6e88;">{{ p.activeSubs }} orgs</div>
+                  </div>
+                  <div style="height:8px;background:#f0f1f6;border-radius:4px;overflow:hidden;">
+                    <div style="height:100%;width:{{ p.pct }};background:#4f46e5;border-radius:4px;"></div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+            <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Recent activity</div>
+            <sc-for list="{{ saActivityRows }}" as="a" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f1f6;">
+                <div style="width:8px;height:8px;border-radius:50%;background:{{ a.dot }};flex-shrink:0;"></div>
+                <div style="font-size:13.5px;color:#14152e;flex:1;">{{ a.text }}</div>
+                <div style="font-size:12px;color:#9296b3;">{{ a.time }}</div>
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ isAltLayout }}" hint-placeholder-val="{{ false }}">
+            <div style="background:linear-gradient(120deg,#1c1a4a,#2c1f6b,#1c1a4a);background-size:200% 200%;animation:gradientShift 16s ease infinite;border-radius:20px;padding:28px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;margin-bottom:20px;">
+              <div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600;margin-bottom:8px;">Total recurring revenue</div>
+                <div style="font-size:38px;font-weight:800;letter-spacing:-0.02em;">{{ totalRevenueLabel }}</div>
+              </div>
+              <div style="width:1px;height:48px;background:rgba(255,255,255,0.15);"></div>
+              <div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600;margin-bottom:8px;">Employees managed</div>
+                <div style="font-size:38px;font-weight:800;letter-spacing:-0.02em;">{{ totalEmployeesLabel }}</div>
+              </div>
+              <div style="display:flex;align-items:flex-end;gap:8px;height:64px;">
+                <sc-for list="{{ mrrBars }}" as="b" hint-placeholder-count="6">
+                  <div style="width:14px;background:rgba(255,255,255,0.35);border-radius:4px 4px 0 0;height:{{ b.pct }};"></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;">
+              <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+                <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">Top organizations by revenue</div>
+                <sc-for list="{{ topOrgs }}" as="o" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #f0f1f6;">
+                    <div style="width:26px;height:26px;border-radius:8px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;">{{ o.rank }}</div>
+                    <div style="width:36px;height:36px;border-radius:9px;background:#f5f6fa;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">{{ o.initial }}</div>
+                    <div style="flex:1;">
+                      <div style="font-size:13.5px;font-weight:700;">{{ o.name }}</div>
+                      <div style="font-size:12px;color:#9296b3;">{{ o.employees }} employees</div>
+                    </div>
+                    <div style="font-size:14px;font-weight:800;color:#0f9d58;">{{ o.mrrLabel }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;display:flex;flex-direction:column;align-items:center;">
+                <div style="font-size:14.5px;font-weight:700;margin-bottom:18px;align-self:flex-start;">Plan distribution</div>
+                <div style="width:140px;height:140px;border-radius:50%;background:conic-gradient({{ donutSegments }});margin-bottom:20px;"></div>
+                <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
+                  <sc-for list="{{ donutLegend }}" as="d" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <div style="width:10px;height:10px;border-radius:3px;background:{{ d.color }};flex-shrink:0;"></div>
+                      <div style="font-size:13px;color:#3f4159;flex:1;">{{ d.name }}</div>
+                      <div style="font-size:13px;font-weight:700;">{{ d.activeSubs }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <!-- SA ORGS -->
+        <sc-if value="{{ screenIs.saOrgs }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;">
+            <div>
+              <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Organizations</div>
+              <div style="font-size:14px;color:#6b6e88;">{{ orgCountLabel }}</div>
+            </div>
+            <button onClick="{{ openAddOrg }}" style="padding:11px 18px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">+ Add Organization</button>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+            <input placeholder="Search organizations..." value="{{ orgSearch }}" onChange="{{ onOrgSearchChange }}" style="flex:1;min-width:220px;padding:10px 14px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;">
+            <sc-for list="{{ orgFilterChips }}" as="c" hint-placeholder-count="4">
+              <button onClick="{{ c.onClick }}" style="padding:10px 16px;border-radius:9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">{{ c.label }}</button>
+            </sc-for>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:2.2fr 1fr 0.9fr 1fr 1fr 1fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+              <div>Organization</div><div>Plan</div><div>Employees</div><div>Status</div><div>Joined</div><div>Actions</div>
+            </div>
+            <sc-for list="{{ orgRows }}" as="o" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:2.2fr 1fr 0.9fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div style="width:36px;height:36px;border-radius:9px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">{{ o.initial }}</div>
+                  <div>
+                    <div style="font-weight:700;">{{ o.name }}</div>
+                    <div style="font-size:12px;color:#9296b3;">{{ o.industry }}</div>
+                  </div>
+                </div>
+                <div style="color:#3f4159;">{{ o.plan }}</div>
+                <div style="color:#3f4159;">{{ o.employees }}</div>
+                <div><span style="padding:4px 10px;border-radius:999px;background:{{ o.badgeBg }};color:{{ o.badgeColor }};font-size:12px;font-weight:700;">{{ o.status }}</span></div>
+                <div style="color:#6b6e88;font-size:13px;">{{ o.joined }}</div>
+                <div style="display:flex;gap:14px;">
+                  <a href="#" onClick="{{ o.onView }}" style="color:#4f46e5;font-weight:700;font-size:13px;text-decoration:none;">View</a>
+                  <a href="#" onClick="{{ o.onDeactivate }}" style="color:#dc2626;font-weight:700;font-size:13px;text-decoration:none;">{{ o.deactivateLabel }}</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- SA ORG DETAIL -->
+        <sc-if value="{{ screenIs.saOrgDetail }}" hint-placeholder-val="{{ false }}">
+          <a href="#" onClick="{{ backToOrgs }}" style="color:#4f46e5;font-size:13.5px;font-weight:700;text-decoration:none;display:inline-block;margin-bottom:16px;">← Back to organizations</a>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:24px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
+            <div style="display:flex;gap:16px;align-items:center;">
+              <div style="width:56px;height:56px;border-radius:14px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;">{{ selectedOrg.initial }}</div>
+              <div>
+                <div style="font-size:20px;font-weight:800;">{{ selectedOrg.name }}</div>
+                <div style="font-size:13.5px;color:#6b6e88;margin-top:2px;">{{ selectedOrg.industry }} · {{ selectedOrg.email }}</div>
+              </div>
+            </div>
+            <span style="padding:6px 14px;border-radius:999px;background:{{ selectedOrg.badgeBg }};color:{{ selectedOrg.badgeColor }};font-size:13px;font-weight:700;">{{ selectedOrg.status }}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px;">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Employees</div><div style="font-size:22px;font-weight:800;">{{ selectedOrg.employees }}</div></div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Plan</div><div style="font-size:22px;font-weight:800;">{{ selectedOrg.plan }}</div></div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">MRR</div><div style="font-size:22px;font-weight:800;">{{ selectedOrg.mrrLabel }}</div></div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Joined</div><div style="font-size:22px;font-weight:800;">{{ selectedOrg.joined }}</div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;margin-bottom:20px;">
+            <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Organization admin</div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:38px;height:38px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">{{ selectedOrg.adminInitial }}</div>
+              <div>
+                <div style="font-weight:700;font-size:13.5px;">{{ selectedOrg.adminName }}</div>
+                <div style="font-size:12.5px;color:#9296b3;">{{ selectedOrg.email }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #fbdada;border-radius:16px;padding:22px;">
+            <div style="font-size:14.5px;font-weight:700;margin-bottom:4px;color:#dc2626;">Danger zone</div>
+            <div style="font-size:13px;color:#6b6e88;margin-bottom:14px;">Suspending or deleting an organization revokes access for all of its employees.</div>
+            <div style="display:flex;gap:10px;">
+              <button onClick="{{ suspendSelectedOrg }}" style="padding:10px 16px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Suspend organization</button>
+              <button onClick="{{ deleteSelectedOrg }}" style="padding:10px 16px;border-radius:9px;border:none;background:#dc2626;color:#fff;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Delete organization</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- SA USERS -->
+        <sc-if value="{{ screenIs.saUsers }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Platform Users</div>
+          <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">{{ platformUserCountLabel }}</div>
+          <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+            <input placeholder="Search users..." value="{{ userSearch }}" onChange="{{ onUserSearchChange }}" style="flex:1;min-width:220px;padding:10px 14px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;">
+            <sc-for list="{{ userRoleChips }}" as="c" hint-placeholder-count="4">
+              <button onClick="{{ c.onClick }}" style="padding:10px 16px;border-radius:9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">{{ c.label }}</button>
+            </sc-for>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr 1fr 1fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+              <div>User</div><div>Organization</div><div>Role</div><div>Status</div><div>Last Active</div><div>Actions</div>
+            </div>
+            <sc-for list="{{ userRows }}" as="u" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div style="width:34px;height:34px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;">{{ u.initials }}</div>
+                  <div style="font-weight:700;">{{ u.name }}</div>
+                </div>
+                <div style="color:#3f4159;">{{ u.org }}</div>
+                <div style="color:#3f4159;">{{ u.role }}</div>
+                <div><span style="padding:4px 10px;border-radius:999px;background:{{ u.badgeBg }};color:{{ u.badgeColor }};font-size:12px;font-weight:700;">{{ u.status }}</span></div>
+                <div style="color:#9296b3;font-size:13px;">{{ u.lastActive }}</div>
+                <div>
+                  <a href="#" onClick="{{ u.onToggle }}" style="color:{{ u.toggleColor }};font-weight:700;font-size:13px;text-decoration:none;">{{ u.toggleLabel }}</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- SA PLANS -->
+        <sc-if value="{{ screenIs.saPlans }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;">
+            <div>
+              <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Subscriptions &amp; Plans</div>
+              <div style="font-size:14px;color:#6b6e88;">Manage pricing tiers and monitor subscription health</div>
+            </div>
+            <button onClick="{{ openCreatePlan }}" style="padding:11px 18px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">+ Create Plan</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:24px;">
+            <sc-for list="{{ planCards }}" as="p" hint-placeholder-count="3">
+              <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+                  <div style="font-size:16px;font-weight:800;">{{ p.name }}</div>
+                  <div style="font-size:12px;color:#9296b3;font-weight:700;">{{ p.activeSubs }} orgs</div>
+                </div>
+                <div style="font-size:22px;font-weight:800;color:#4f46e5;margin-bottom:2px;">{{ p.price }}</div>
+                <div style="font-size:12.5px;color:#9296b3;margin-bottom:16px;">{{ p.seats }}</div>
+                <sc-for list="{{ p.featureRows }}" as="f" hint-placeholder-count="3">
+                  <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                    <div style="width:6px;height:6px;border-radius:2px;background:#818cf8;flex-shrink:0;"></div>
+                    <div style="font-size:12.5px;color:#3f4159;">{{ f.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:14.5px;font-weight:700;margin-bottom:12px;">Active subscriptions</div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;margin-bottom:24px;">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+              <div>Organization</div><div>Plan</div><div>MRR</div><div>Renews</div>
+            </div>
+            <sc-for list="{{ activeSubRows }}" as="a" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+                <div style="font-weight:700;">{{ a.name }}</div>
+                <div style="color:#3f4159;">{{ a.plan }}</div>
+                <div style="color:#0f9d58;font-weight:700;">{{ a.mrrLabel }}</div>
+                <div style="color:#9296b3;">{{ a.joined }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:14.5px;font-weight:700;margin-bottom:12px;">Expired subscriptions</div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+              <div>Organization</div><div>Plan</div><div>Expired</div><div>Reason</div>
+            </div>
+            <sc-for list="{{ expiredSubRows }}" as="x" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+                <div style="font-weight:700;">{{ x.org }}</div>
+                <div style="color:#3f4159;">{{ x.plan }}</div>
+                <div style="color:#9296b3;">{{ x.expired }}</div>
+                <div style="color:#dc2626;">{{ x.reason }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- SA SETTINGS -->
+        <sc-if value="{{ screenIs.saSettings }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;">System Settings</div>
+          <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">Platform-wide configuration for every organization</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
+            <sc-for list="{{ settingsGroups }}" as="g" hint-placeholder-count="4">
+              <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+                <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">{{ g.title }}</div>
+                <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f0f1f6;">
+                    <div>
+                      <div style="font-size:13.5px;font-weight:600;color:#14152e;">{{ it.label }}</div>
+                      <div style="font-size:12px;color:#9296b3;">{{ it.desc }}</div>
+                    </div>
+                    <div onClick="{{ it.onToggle }}" style="width:40px;height:22px;border-radius:999px;background:{{ it.trackBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background 0.15s ease;">
+                      <div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:3px;left:{{ it.knobLeft }};transition:left 0.15s ease;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <button onClick="{{ saveSettings }}" style="margin-top:20px;padding:11px 20px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Save changes</button>
+        </sc-if>
+
+        <!-- OA OVERVIEW -->
+        <sc-if value="{{ screenIs.oaOverview }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Good afternoon, Admin</div>
+          <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">{{ todayLabel }} · Ironwood Manufacturing</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px;">
+            <sc-for list="{{ oaStats }}" as="s" hint-placeholder-count="5">
+              <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                  <div style="width:8px;height:8px;border-radius:2px;background:{{ s.dot }};"></div>
+                  <div style="font-size:12px;color:#6b6e88;font-weight:600;">{{ s.label }}</div>
+                </div>
+                <div style="font-size:24px;font-weight:800;">{{ s.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:20px;">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:18px;">Attendance — last 7 days</div>
+              <div style="display:flex;align-items:flex-end;gap:12px;height:130px;">
+                <sc-for list="{{ attendanceWeekBars }}" as="b" hint-placeholder-count="7">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;">
+                    <div style="width:100%;max-width:28px;background:#4f46e5;border-radius:6px 6px 0 0;height:{{ b.pct }};"></div>
+                    <div style="font-size:11px;color:#9296b3;font-weight:600;">{{ b.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">Payroll summary</div>
+              <div style="font-size:26px;font-weight:800;margin-bottom:4px;">{{ payrollTotalLabel }}</div>
+              <div style="font-size:12.5px;color:#6b6e88;margin-bottom:16px;">Total this month</div>
+              <div style="display:flex;gap:10px;">
+                <div style="flex:1;background:#f8f9fc;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#0f9d58;">{{ payrollPaidCount }}</div><div style="font-size:11.5px;color:#6b6e88;">Paid</div></div>
+                <div style="flex:1;background:#f8f9fc;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#b45309;">{{ payrollProcessingCount }}</div><div style="font-size:11.5px;color:#6b6e88;">Processing</div></div>
+              </div>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+            <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Recent activity</div>
+            <sc-for list="{{ oaActivityRows }}" as="a" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f1f6;">
+                <div style="width:8px;height:8px;border-radius:50%;background:{{ a.dot }};flex-shrink:0;"></div>
+                <div style="font-size:13.5px;flex:1;">{{ a.text }}</div>
+                <div style="font-size:12px;color:#9296b3;">{{ a.time }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- OA EMPLOYEES -->
+        <sc-if value="{{ screenIs.oaEmployees }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;">
+            <div>
+              <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Employees</div>
+              <div style="font-size:14px;color:#6b6e88;">{{ empCountLabel }}</div>
+            </div>
+            <button onClick="{{ openAddEmployee }}" style="padding:11px 18px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">+ Add Employee</button>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+            <input placeholder="Search employees..." value="{{ empSearch }}" onChange="{{ onEmpSearchChange }}" style="flex:1;min-width:220px;padding:10px 14px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;">
+            <sc-for list="{{ deptChips }}" as="c" hint-placeholder-count="4">
+              <button onClick="{{ c.onClick }}" style="padding:10px 16px;border-radius:9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">{{ c.label }}</button>
+            </sc-for>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:2fr 1.2fr 1.2fr 1fr 1fr 1fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+              <div>Employee</div><div>Department</div><div>Designation</div><div>Joined</div><div>Status</div><div>Actions</div>
+            </div>
+            <sc-for list="{{ empRows }}" as="e" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:2fr 1.2fr 1.2fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div style="width:34px;height:34px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;">{{ e.initials }}</div>
+                  <div>
+                    <div style="font-weight:700;">{{ e.name }}</div>
+                    <div style="font-size:12px;color:#9296b3;">{{ e.email }}</div>
+                  </div>
+                </div>
+                <div style="color:#3f4159;">{{ e.dept }}</div>
+                <div style="color:#3f4159;">{{ e.title }}</div>
+                <div style="color:#6b6e88;font-size:13px;">{{ e.joined }}</div>
+                <div><span style="padding:4px 10px;border-radius:999px;background:{{ e.badgeBg }};color:{{ e.badgeColor }};font-size:12px;font-weight:700;">{{ e.status }}</span></div>
+                <div style="display:flex;gap:14px;">
+                  <a href="#" onClick="{{ e.onEdit }}" style="color:#4f46e5;font-weight:700;font-size:13px;text-decoration:none;">Edit</a>
+                  <a href="#" onClick="{{ e.onToggleStatus }}" style="color:#dc2626;font-weight:700;font-size:13px;text-decoration:none;">{{ e.toggleLabel }}</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- OA ATTENDANCE -->
+        <sc-if value="{{ screenIs.oaAttendance }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+              <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Attendance</div>
+              <div style="font-size:14px;color:#6b6e88;">{{ todayLabel }}</div>
+            </div>
+            <div style="display:flex;background:#f0f1f6;border-radius:10px;padding:4px;gap:4px;">
+              <button onClick="{{ setDailyView }}" style="padding:9px 16px;border-radius:8px;border:none;font-family:inherit;font-size:13px;cursor:pointer;background:{{ dailyTabBg }};color:{{ dailyTabColor }};font-weight:700;">Daily</button>
+              <button onClick="{{ setMonthlyView }}" style="padding:9px 16px;border-radius:8px;border:none;font-family:inherit;font-size:13px;cursor:pointer;background:{{ monthlyTabBg }};color:{{ monthlyTabColor }};font-weight:700;">Monthly</button>
+            </div>
+          </div>
+
+          <sc-if value="{{ isDailyView }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+                <div>Employee</div><div>Check-in</div><div>Check-out</div><div>Status</div><div>Hours</div>
+              </div>
+              <sc-for list="{{ attendanceRows }}" as="a" hint-placeholder-count="6">
+                <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+                  <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px;">{{ a.initials }}</div>
+                    <div style="font-weight:700;">{{ a.name }}</div>
+                  </div>
+                  <div style="color:#3f4159;">{{ a.checkIn }}</div>
+                  <div style="color:#3f4159;">{{ a.checkOut }}</div>
+                  <div><span style="padding:4px 10px;border-radius:999px;background:{{ a.badgeBg }};color:{{ a.badgeColor }};font-size:12px;font-weight:700;">{{ a.status }}</span></div>
+                  <div style="color:#6b6e88;">{{ a.hours }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ !isDailyView }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:20px;">
+              <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Attendance rate</div><div style="font-size:22px;font-weight:800;">94.2%</div></div>
+              <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Late arrivals</div><div style="font-size:22px;font-weight:800;">18</div></div>
+              <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Absences</div><div style="font-size:22px;font-weight:800;">7</div></div>
+            </div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+              <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+                <div>Employee</div><div>Present</div><div>Late</div><div>Absent</div><div>Rate</div>
+              </div>
+              <sc-for list="{{ monthlyRows }}" as="m" hint-placeholder-count="6">
+                <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+                  <div style="font-weight:700;">{{ m.name }}</div>
+                  <div style="color:#0f9d58;">{{ m.present }}</div>
+                  <div style="color:#b45309;">{{ m.late }}</div>
+                  <div style="color:#dc2626;">{{ m.absent }}</div>
+                  <div style="color:#3f4159;font-weight:700;">{{ m.rate }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <!-- OA LEAVE -->
+        <sc-if value="{{ screenIs.oaLeave }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Leave Management</div>
+          <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">Review and approve employee leave requests</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:20px;">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Pending</div><div style="font-size:22px;font-weight:800;color:#b45309;">{{ leavePendingCount }}</div></div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Approved</div><div style="font-size:22px;font-weight:800;color:#0f9d58;">{{ leaveApprovedCount }}</div></div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Rejected</div><div style="font-size:22px;font-weight:800;color:#dc2626;">{{ leaveRejectedCount }}</div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1.4fr 0.6fr 1fr 1fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+              <div>Employee</div><div>Type</div><div>Dates</div><div>Days</div><div>Status</div><div>Actions</div>
+            </div>
+            <sc-for list="{{ leaveRows }}" as="l" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:1.6fr 1fr 1.4fr 0.6fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div style="width:32px;height:32px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px;">{{ l.initials }}</div>
+                  <div style="font-weight:700;">{{ l.name }}</div>
+                </div>
+                <div style="color:#3f4159;">{{ l.type }}</div>
+                <div style="color:#6b6e88;font-size:12.5px;">{{ l.from }} → {{ l.to }}</div>
+                <div style="color:#3f4159;">{{ l.days }}</div>
+                <div><span style="padding:4px 10px;border-radius:999px;background:{{ l.badgeBg }};color:{{ l.badgeColor }};font-size:12px;font-weight:700;">{{ l.status }}</span></div>
+                <sc-if value="{{ l.isPending }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:10px;">
+                    <a href="#" onClick="{{ l.onApprove }}" style="color:#0f9d58;font-weight:700;font-size:13px;text-decoration:none;">Approve</a>
+                    <a href="#" onClick="{{ l.onReject }}" style="color:#dc2626;font-weight:700;font-size:13px;text-decoration:none;">Reject</a>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- OA PAYROLL -->
+        <sc-if value="{{ screenIs.oaPayroll }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;">
+            <div>
+              <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Payroll</div>
+              <div style="font-size:14px;color:#6b6e88;">July 2026 payroll cycle</div>
+            </div>
+            <button onClick="{{ runPayroll }}" style="padding:11px 18px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Run Payroll</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:20px;">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Total payroll</div><div style="font-size:22px;font-weight:800;">{{ payrollTotalLabel }}</div></div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Paid</div><div style="font-size:22px;font-weight:800;color:#0f9d58;">{{ payrollPaidCount }}</div></div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Processing</div><div style="font-size:22px;font-weight:800;color:#b45309;">{{ payrollProcessingCount }}</div></div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Avg. salary</div><div style="font-size:22px;font-weight:800;">{{ avgSalaryLabel }}</div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr 1fr 1fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+              <div>Employee</div><div>Dept</div><div>Base</div><div>Bonus</div><div>Deductions</div><div>Net</div><div>Status</div>
+            </div>
+            <sc-for list="{{ payrollRows }}" as="p" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+                <div style="font-weight:700;">{{ p.name }}</div>
+                <div style="color:#6b6e88;">{{ p.dept }}</div>
+                <div style="color:#3f4159;">{{ p.baseLabel }}</div>
+                <div style="color:#0f9d58;">{{ p.bonusLabel }}</div>
+                <div style="color:#dc2626;">{{ p.deductLabel }}</div>
+                <div style="font-weight:700;">{{ p.netLabel }}</div>
+                <div><span style="padding:4px 10px;border-radius:999px;background:{{ p.badgeBg }};color:{{ p.badgeColor }};font-size:12px;font-weight:700;">{{ p.status }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- EMPLOYEE DASHBOARD -->
+        <sc-if value="{{ screenIs.empDashboard }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Welcome back, {{ empFirstName }}</div>
+          <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">{{ empTitleDept }}</div>
+
+          <div style="display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;">
+              <div style="font-size:12.5px;color:#6b6e88;font-weight:600;margin-bottom:10px;">Today's attendance</div>
+              <div style="font-size:20px;font-weight:800;margin-bottom:4px;color:{{ attendanceStatusColor }};">{{ attendanceStatusLabel }}</div>
+              <div style="font-size:12.5px;color:#9296b3;margin-bottom:14px;">{{ checkInTimeLabel }}</div>
+              <sc-if value="{{ showCheckInBtn }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ doCheckIn }}" style="width:100%;padding:11px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Check in</button>
+              </sc-if>
+              <sc-if value="{{ showCheckOutBtn }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ doCheckOut }}" style="width:100%;padding:11px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Check out</button>
+              </sc-if>
+            </div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;">
+              <div style="font-size:12.5px;color:#6b6e88;font-weight:600;margin-bottom:12px;">Leave balance</div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="font-size:13px;color:#3f4159;">Annual</div><div style="font-weight:700;font-size:13px;">{{ leaveBalance.annual }} days</div></div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="font-size:13px;color:#3f4159;">Sick</div><div style="font-weight:700;font-size:13px;">{{ leaveBalance.sick }} days</div></div>
+              <div style="display:flex;justify-content:space-between;"><div style="font-size:13px;color:#3f4159;">Casual</div><div style="font-weight:700;font-size:13px;">{{ leaveBalance.casual }} days</div></div>
+            </div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="font-size:12.5px;color:#6b6e88;font-weight:600;margin-bottom:10px;">Need time off?</div>
+                <div style="font-size:13.5px;color:#3f4159;line-height:1.5;">Submit a leave request and track approval status right here.</div>
+              </div>
+              <button onClick="{{ openApplyLeave }}" style="margin-top:14px;width:100%;padding:11px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Apply for leave</button>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:20px;">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Leave history</div>
+              <sc-for list="{{ empLeaveRows }}" as="l" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f0f1f6;">
+                  <div>
+                    <div style="font-size:13.5px;font-weight:700;">{{ l.type }}</div>
+                    <div style="font-size:12px;color:#9296b3;">{{ l.from }} → {{ l.to }} · {{ l.days }} days</div>
+                  </div>
+                  <span style="padding:4px 10px;border-radius:999px;background:{{ l.badgeBg }};color:{{ l.badgeColor }};font-size:12px;font-weight:700;">{{ l.status }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Payslips</div>
+              <sc-for list="{{ empPayslipRows }}" as="p" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f0f1f6;">
+                  <div>
+                    <div style="font-size:13.5px;font-weight:700;">{{ p.month }}</div>
+                    <div style="font-size:12px;color:#9296b3;">{{ p.netLabel }}</div>
+                  </div>
+                  <a href="#" onClick="{{ p.onDownload }}" style="color:#4f46e5;font-weight:700;font-size:12.5px;text-decoration:none;">Download</a>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+              <div style="padding:16px 22px 4px;font-size:14.5px;font-weight:700;">Attendance history</div>
+              <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;padding:10px 22px;font-size:11px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+                <div>Date</div><div>In</div><div>Out</div><div>Status</div><div>Hours</div>
+              </div>
+              <sc-for list="{{ empAttendanceRows }}" as="a" hint-placeholder-count="5">
+                <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;padding:12px 22px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13px;">
+                  <div style="font-weight:700;">{{ a.date }}</div>
+                  <div style="color:#6b6e88;">{{ a.checkIn }}</div>
+                  <div style="color:#6b6e88;">{{ a.checkOut }}</div>
+                  <div><span style="padding:3px 9px;border-radius:999px;background:{{ a.badgeBg }};color:{{ a.badgeColor }};font-size:11.5px;font-weight:700;">{{ a.status }}</span></div>
+                  <div style="color:#6b6e88;">{{ a.hours }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Company announcements</div>
+              <sc-for list="{{ announcementRows }}" as="a" hint-placeholder-count="3">
+                <div style="padding:11px 0;border-bottom:1px solid #f0f1f6;">
+                  <div style="font-size:13.5px;font-weight:700;margin-bottom:3px;">{{ a.title }}</div>
+                  <div style="font-size:12px;color:#9296b3;">{{ a.time }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ MODALS ============ -->
+  <sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(10,10,30,0.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.15s ease;">
+      <div style="background:#fff;border-radius:16px;padding:26px;width:100%;max-width:{{ modalMaxWidth }};animation:modalIn 0.18s ease;max-height:88vh;overflow-y:auto;position:relative;">
+        <button onClick="{{ closeModal }}" style="position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:8px;border:none;background:#f5f6fa;color:#6b6e88;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
+
+        <sc-if value="{{ isConfirmModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:8px;">{{ confirmTitle }}</div>
+          <div style="font-size:13.5px;color:#6b6e88;margin-bottom:22px;line-height:1.5;">{{ confirmMessage }}</div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ confirmAction }}" style="padding:10px 18px;border-radius:9px;border:none;background:#dc2626;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">{{ confirmLabel }}</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAddOrgModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">Add Organization</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Organization name</div><input value="{{ formOrgName }}" onChange="{{ onFormOrgNameChange }}" placeholder="Acme Corp" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Admin email</div><input value="{{ formOrgEmail }}" onChange="{{ onFormOrgEmailChange }}" placeholder="admin@acme.com" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Plan</div>
+              <select value="{{ formOrgPlan }}" onChange="{{ onFormOrgPlanChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <option value="Starter">Starter</option><option value="Growth">Growth</option><option value="Enterprise">Enterprise</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ submitAddOrg }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Create organization</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAddEmployeeModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">{{ empModalTitle }}</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Full name</div><input value="{{ formEmpName }}" onChange="{{ onFormEmpNameChange }}" placeholder="Jane Cooper" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Email</div><input value="{{ formEmpEmail }}" onChange="{{ onFormEmpEmailChange }}" placeholder="jane@company.com" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Department</div>
+                <select value="{{ formEmpDept }}" onChange="{{ onFormEmpDeptChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                  <sc-for list="{{ departmentOptions }}" as="d" hint-placeholder-count="5"><option value="{{ d.name }}">{{ d.name }}</option></sc-for>
+                </select>
+              </div>
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Designation</div><input value="{{ formEmpTitle }}" onChange="{{ onFormEmpTitleChange }}" placeholder="Software Engineer" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ submitAddEmployee }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">{{ empModalSubmitLabel }}</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCreatePlanModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">Create Plan</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Plan name</div><input value="{{ formPlanName }}" onChange="{{ onFormPlanNameChange }}" placeholder="Pro" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Price</div><input value="{{ formPlanPrice }}" onChange="{{ onFormPlanPriceChange }}" placeholder="$49/mo" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Seat limit</div><input value="{{ formPlanSeats }}" onChange="{{ onFormPlanSeatsChange }}" placeholder="Up to 200 employees" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ submitCreatePlan }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Create plan</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isApplyLeaveModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">Apply for leave</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Leave type</div>
+              <select value="{{ formLeaveType }}" onChange="{{ onFormLeaveTypeChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <option value="Annual Leave">Annual Leave</option><option value="Sick Leave">Sick Leave</option><option value="Casual Leave">Casual Leave</option>
+              </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">From</div><input type="date" value="{{ formLeaveFrom }}" onChange="{{ onFormLeaveFromChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">To</div><input type="date" value="{{ formLeaveTo }}" onChange="{{ onFormLeaveToChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
+            </div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Reason</div><textarea value="{{ formLeaveReason }}" onChange="{{ onFormLeaveReasonChange }}" placeholder="Brief reason for leave" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;min-height:70px;resize:vertical;"></textarea></div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ submitApplyLeave }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Submit request</button>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ TOAST ============ -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:24px;right:24px;background:#fff;border-radius:12px;box-shadow:0 12px 32px rgba(20,21,46,0.16);padding:14px 18px;display:flex;align-items:center;gap:10px;z-index:200;animation:toastIn 0.2s ease;border-left:4px solid {{ toastColor }};">
+    <div style="font-size:13.5px;font-weight:600;color:#14152e;">{{ toastMessage }}</div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+
+const STATUS_COLORS = {
+  Active: { bg: '#e7f8ee', color: '#0f9d58' },
+  Pending: { bg: '#fef3e0', color: '#b45309' },
+  Suspended: { bg: '#fdeaea', color: '#dc2626' },
+  Present: { bg: '#e7f8ee', color: '#0f9d58' },
+  Absent: { bg: '#fdeaea', color: '#dc2626' },
+  Late: { bg: '#fef3e0', color: '#b45309' },
+  'On Leave': { bg: '#eef1fd', color: '#4f46e5' },
+  Weekend: { bg: '#f0f1f6', color: '#6b6e88' },
+  Approved: { bg: '#e7f8ee', color: '#0f9d58' },
+  Rejected: { bg: '#fdeaea', color: '#dc2626' },
+  Paid: { bg: '#e7f8ee', color: '#0f9d58' },
+  Processing: { bg: '#fef3e0', color: '#b45309' },
+  Inactive: { bg: '#f0f1f6', color: '#6b6e88' }
+};
+function badge(status) { return STATUS_COLORS[status] || { bg: '#f0f1f6', color: '#6b6e88' }; }
+function money(n) { return '$' + n.toLocaleString('en-US'); }
+
+class Component extends DCLogic {
+  state = {
+    screen: 'login', role: null, data: null,
+    viewportWidth: typeof window !== 'undefined' ? window.innerWidth : 1440,
+    mobileNavOpen: false, notifOpen: false, profileOpen: false, modal: null, confirmPayload: null, toast: null,
+    loginRole: 'super_admin', loginEmail: '', loginPassword: '', showPassword: false, rememberMe: true, loginError: null,
+    globalSearch: '', orgSearch: '', orgFilter: 'All', empSearch: '', deptFilter: 'All', attendanceView: 'daily',
+    selectedOrgId: null, checkedIn: false, checkInTime: null, checkedOut: false,
+    formOrgName: '', formOrgEmail: '', formOrgPlan: 'Starter',
+    formEmpName: '', formEmpEmail: '', formEmpDept: '', formEmpTitle: '', editingEmpId: null,
+    formLeaveType: 'Annual Leave', formLeaveFrom: '', formLeaveTo: '', formLeaveReason: '',
+    saOverviewLayout: 'classic',
+    userSearch: '', userRoleFilter: 'All',
+    formPlanName: '', formPlanPrice: '', formPlanSeats: '',
+    settings: { maintenanceMode: false, emailNotifications: true, smsNotifications: false, twoFactorRequired: true, autoDeactivateInactive: true, weeklyDigest: true, publicSignup: false }
+  };
+
+  async componentDidMount() {
+    const [mod, api] = await Promise.all([import('./data.js'), import('./api-client.js')]);
+    this.api = api;
+    this.setState({ data: { ...mod } });
+    this._onResize = () => this.setState({ viewportWidth: window.innerWidth });
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { if (this._onResize) window.removeEventListener('resize', this._onResize); if (this._toastTimer) clearTimeout(this._toastTimer); }
+
+  showToast(message, color) {
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this.setState({ toast: { message, color: color || '#4f46e5' } });
+    this._toastTimer = setTimeout(() => this.setState({ toast: null }), 2600);
+  }
+
+  setScreen(key) { this.setState({ screen: key, mobileNavOpen: false, notifOpen: false, profileOpen: false }); }
+  quickLoginRole(role) { this.setState({ loginRole: role }); }
+  onEmailChange(e) { this.setState({ loginEmail: e.target.value, loginError: null }); }
+  onPasswordChange(e) { this.setState({ loginPassword: e.target.value, loginError: null }); }
+  togglePassword() { this.setState(s => ({ showPassword: !s.showPassword })); }
+  toggleRemember() { this.setState(s => ({ rememberMe: !s.rememberMe })); }
+  forgotPassword(e) { e.preventDefault(); this.showToast('Password reset link sent to your email', '#4f46e5'); }
+
+  async submitLogin(e) {
+    e.preventDefault();
+    if (!this.state.loginEmail.trim() || !this.state.loginPassword.trim()) {
+      this.setState({ loginError: 'Please enter both email and password to continue.' });
+      return;
+    }
+    try {
+      const rolePages = { super_admin: 'super-admin.dc.html', org_admin: 'organization-admin.dc.html', employee: 'employee.dc.html' };
+      if (!this.api || !this.api.login) this.api = await import('./api-client.js');
+      const session = await this.api.login(this.state.loginEmail.trim(), this.state.loginPassword);
+      const userRole = (session.user && session.user.role ? session.user.role : '').toLowerCase();
+      const pageRole = userRole === 'super_admin' ? 'super_admin' : userRole === 'org_admin' ? 'org_admin' : userRole === 'employee' ? 'employee' : this.state.loginRole;
+      window.location.href = rolePages[pageRole];
+      return;
+    } catch (err) {
+      this.setState({ loginError: err.message || 'Unable to sign in.' });
+      return;
+    }
+    const rolePages = { super_admin: 'super-admin.dc.html', org_admin: 'organization-admin.dc.html', employee: 'employee.dc.html' };
+    const target = rolePages[this.state.loginRole];
+    if (target) { window.location.href = target; return; }
+    const roleScreens = { super_admin: 'sa-overview', org_admin: 'oa-overview', employee: 'emp-dashboard' };
+    this.setState({ role: this.state.loginRole, screen: roleScreens[this.state.loginRole], loginError: null });
+  }
+  logout() {
+    if (this.api && this.api.clearSession) this.api.clearSession();
+    else { localStorage.removeItem('nexhr_token'); localStorage.removeItem('nexhr_user'); }
+    this.setState({ role: null, screen: 'login', loginEmail: '', loginPassword: '', mobileNavOpen: false, profileOpen: false, notifOpen: false });
+  }
+
+  toggleMobileNav() { this.setState(s => ({ mobileNavOpen: !s.mobileNavOpen })); }
+  closeMobileNav() { this.setState({ mobileNavOpen: false }); }
+  toggleNotif() { this.setState(s => ({ notifOpen: !s.notifOpen, profileOpen: false })); }
+  toggleProfile() { this.setState(s => ({ profileOpen: !s.profileOpen, notifOpen: false })); }
+
+  openModal(type) { this.setState({ modal: type }); }
+  closeModal() { this.setState({ modal: null, confirmPayload: null, editingEmpId: null, formOrgName: '', formOrgEmail: '', formEmpName: '', formEmpEmail: '', formEmpTitle: '', formEmpDept: '', formLeaveReason: '' }); }
+  askConfirm(title, message, label, onConfirm) { this.setState({ modal: 'confirm', confirmPayload: { title, message, label, onConfirm } }); }
+  confirmAction() { const p = this.state.confirmPayload; if (p && p.onConfirm) p.onConfirm(); this.closeModal(); }
+
+  onGlobalSearchChange(e) { this.setState({ globalSearch: e.target.value }); }
+  onOrgSearchChange(e) { this.setState({ orgSearch: e.target.value }); }
+  setOrgFilter(f) { this.setState({ orgFilter: f }); }
+  openAddOrg() { this.setState({ modal: 'addOrg', formOrgName: '', formOrgEmail: '', formOrgPlan: 'Starter' }); }
+  onFormOrgNameChange(e) { this.setState({ formOrgName: e.target.value }); }
+  onFormOrgEmailChange(e) { this.setState({ formOrgEmail: e.target.value }); }
+  onFormOrgPlanChange(e) { this.setState({ formOrgPlan: e.target.value }); }
+  submitAddOrg() {
+    const name = this.state.formOrgName.trim() || 'New Organization';
+    const newOrg = { id: 'org' + Date.now(), name, industry: 'General', plan: this.state.formOrgPlan, status: 'Pending', employees: 0, joined: 'Jul 19, 2026', email: this.state.formOrgEmail.trim() || 'admin@example.com', mrr: 0 };
+    this.setState(s => ({ data: { ...s.data, orgs: [newOrg, ...s.data.orgs] } }));
+    this.closeModal();
+    this.showToast('Organization created', '#0f9d58');
+  }
+  selectOrg(id) { this.setState({ selectedOrgId: id, screen: 'sa-org-detail' }); }
+  backToOrgs() { this.setState({ screen: 'sa-orgs' }); }
+  toggleOrgStatus(id) {
+    this.setState(s => ({ data: { ...s.data, orgs: s.data.orgs.map(o => o.id === id ? { ...o, status: o.status === 'Suspended' ? 'Active' : 'Suspended' } : o) } }));
+    this.showToast('Organization status updated', '#0f9d58');
+  }
+  suspendSelectedOrg() {
+    this.askConfirm('Suspend organization', 'This organization will lose access immediately. You can reactivate it later.', 'Suspend', () => {
+      this.toggleOrgStatus(this.state.selectedOrgId);
+    });
+  }
+  deleteSelectedOrg() {
+    this.askConfirm('Delete organization', 'This permanently deletes the organization and all of its data. This cannot be undone.', 'Delete', () => {
+      const id = this.state.selectedOrgId;
+      this.setState(s => ({ data: { ...s.data, orgs: s.data.orgs.filter(o => o.id !== id) }, screen: 'sa-orgs' }));
+      this.showToast('Organization deleted', '#dc2626');
+    });
+  }
+
+  onEmpSearchChange(e) { this.setState({ empSearch: e.target.value }); }
+  setDeptFilter(d) { this.setState({ deptFilter: d }); }
+  openAddEmployee() { this.setState({ modal: 'addEmployee', editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpDept: (this.state.data.departments[0] || {}).name || '', formEmpTitle: '' }); }
+  openEditEmployee(emp) { this.setState({ modal: 'addEmployee', editingEmpId: emp.id, formEmpName: emp.name, formEmpEmail: emp.email, formEmpDept: emp.dept, formEmpTitle: emp.title }); }
+  onFormEmpNameChange(e) { this.setState({ formEmpName: e.target.value }); }
+  onFormEmpEmailChange(e) { this.setState({ formEmpEmail: e.target.value }); }
+  onFormEmpDeptChange(e) { this.setState({ formEmpDept: e.target.value }); }
+  onFormEmpTitleChange(e) { this.setState({ formEmpTitle: e.target.value }); }
+  submitAddEmployee() {
+    const { editingEmpId, formEmpName, formEmpEmail, formEmpDept, formEmpTitle } = this.state;
+    const initials = (formEmpName.trim() || 'NA').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    if (editingEmpId) {
+      this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(e => e.id === editingEmpId ? { ...e, name: formEmpName || e.name, email: formEmpEmail || e.email, dept: formEmpDept || e.dept, title: formEmpTitle || e.title } : e) } }));
+      this.showToast('Employee updated', '#0f9d58');
+    } else {
+      const newEmp = { id: 'e' + Date.now(), name: formEmpName || 'New Employee', initials, dept: formEmpDept || 'Engineering', title: formEmpTitle || 'Employee', joined: 'Jul 19, 2026', status: 'Active', email: formEmpEmail || 'new@nexhr.io', phone: '' };
+      this.setState(s => ({ data: { ...s.data, employees: [newEmp, ...s.data.employees] } }));
+      this.showToast('Employee added', '#0f9d58');
+    }
+    this.closeModal();
+  }
+  toggleEmpStatus(emp) {
+    this.askConfirm(emp.status === 'Inactive' ? 'Reactivate employee' : 'Deactivate employee', `This will ${emp.status === 'Inactive' ? 're-enable' : 'revoke'} platform access for ${emp.name}.`, emp.status === 'Inactive' ? 'Reactivate' : 'Deactivate', () => {
+      this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(e => e.id === emp.id ? { ...e, status: e.status === 'Inactive' ? 'Active' : 'Inactive' } : e) } }));
+      this.showToast('Employee status updated', '#0f9d58');
+    });
+  }
+
+  setDailyView() { this.setState({ attendanceView: 'daily' }); }
+  setMonthlyView() { this.setState({ attendanceView: 'monthly' }); }
+
+  approveLeave(id) {
+    this.setState(s => ({ data: { ...s.data, leaveRequests: s.data.leaveRequests.map(l => l.id === id ? { ...l, status: 'Approved' } : l) } }));
+    this.showToast('Leave request approved', '#0f9d58');
+  }
+  rejectLeave(id) {
+    this.setState(s => ({ data: { ...s.data, leaveRequests: s.data.leaveRequests.map(l => l.id === id ? { ...l, status: 'Rejected' } : l) } }));
+    this.showToast('Leave request rejected', '#dc2626');
+  }
+  runPayroll() { this.showToast('Payroll run started for July 2026', '#4f46e5'); }
+  downloadSlip(label) { this.showToast('Downloading ' + label, '#4f46e5'); }
+
+  doCheckIn() {
+    const now = new Date(); const t = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    this.setState({ checkedIn: true, checkedOut: false, checkInTime: t });
+    this.showToast('Checked in at ' + t, '#0f9d58');
+  }
+  doCheckOut() { this.setState({ checkedOut: true }); this.showToast('Checked out — have a great evening!', '#4f46e5'); }
+  openApplyLeave() { this.setState({ modal: 'applyLeave', formLeaveType: 'Annual Leave', formLeaveFrom: '', formLeaveTo: '', formLeaveReason: '' }); }
+  onFormLeaveTypeChange(e) { this.setState({ formLeaveType: e.target.value }); }
+  onFormLeaveFromChange(e) { this.setState({ formLeaveFrom: e.target.value }); }
+  onFormLeaveToChange(e) { this.setState({ formLeaveTo: e.target.value }); }
+  onFormLeaveReasonChange(e) { this.setState({ formLeaveReason: e.target.value }); }
+  submitApplyLeave() {
+    this.setState(s => ({ data: { ...s.data, currentEmployee: { ...s.data.currentEmployee, leaveHistory: [{ id: 'le' + Date.now(), type: s.formLeaveType, from: s.formLeaveFrom || 'TBD', to: s.formLeaveTo || 'TBD', days: 1, status: 'Pending' }, ...s.data.currentEmployee.leaveHistory] } } }));
+    this.closeModal();
+    this.showToast('Leave request submitted', '#0f9d58');
+  }
+
+  setSaOverviewLayout(v) { this.setState({ saOverviewLayout: v }); }
+  onUserSearchChange(e) { this.setState({ userSearch: e.target.value }); }
+  setUserRoleFilter(r) { this.setState({ userRoleFilter: r }); }
+  toggleUserStatus(u) {
+    this.askConfirm(u.status === 'Active' ? 'Suspend user' : 'Reactivate user', `This will ${u.status === 'Active' ? 'revoke' : 'restore'} platform access for ${u.name}.`, u.status === 'Active' ? 'Suspend' : 'Reactivate', () => {
+      this.setState(s => ({ data: { ...s.data, platformUsers: s.data.platformUsers.map(x => x.id === u.id ? { ...x, status: x.status === 'Active' ? 'Suspended' : 'Active' } : x) } }));
+      this.showToast('User status updated', '#0f9d58');
+    });
+  }
+  openCreatePlan() { this.setState({ modal: 'createPlan', formPlanName: '', formPlanPrice: '', formPlanSeats: '' }); }
+  onFormPlanNameChange(e) { this.setState({ formPlanName: e.target.value }); }
+  onFormPlanPriceChange(e) { this.setState({ formPlanPrice: e.target.value }); }
+  onFormPlanSeatsChange(e) { this.setState({ formPlanSeats: e.target.value }); }
+  submitCreatePlan() {
+    const newPlan = { name: this.state.formPlanName.trim() || 'New Plan', price: this.state.formPlanPrice.trim() || 'Custom', seats: this.state.formPlanSeats.trim() || 'Custom', activeSubs: 0, features: ['Core HR', 'Attendance'] };
+    this.setState(s => ({ data: { ...s.data, plans: [...s.data.plans, newPlan] } }));
+    this.closeModal();
+    this.showToast('Plan created', '#0f9d58');
+  }
+  toggleSetting(key) { this.setState(s => ({ settings: { ...s.settings, [key]: !s.settings[key] } })); }
+  saveSettings() { this.showToast('Settings saved', '#0f9d58'); }
+
+  getNavForRole(role) {
+    if (role === 'super_admin') return [
+      { key: 'sa-overview', label: 'Overview' }, { key: 'sa-orgs', label: 'Organizations' },
+      { key: 'sa-users', label: 'Users' }, { key: 'sa-plans', label: 'Subscriptions & Plans' }, { key: 'sa-settings', label: 'System Settings' }
+    ];
+    if (role === 'org_admin') return [
+      { key: 'oa-overview', label: 'Overview' }, { key: 'oa-employees', label: 'Employees' }, { key: 'oa-departments', label: 'Departments' },
+      { key: 'oa-attendance', label: 'Attendance' }, { key: 'oa-leave', label: 'Leave' }, { key: 'oa-payroll', label: 'Payroll' },
+      { key: 'oa-recruitment', label: 'Recruitment' }, { key: 'oa-performance', label: 'Performance' }, { key: 'oa-reports', label: 'Reports' }
+    ];
+    return [
+      { key: 'emp-dashboard', label: 'Dashboard' }, { key: 'emp-profile', label: 'My Profile' }, { key: 'emp-attendance', label: 'Attendance' },
+      { key: 'emp-leave', label: 'Leave' }, { key: 'emp-payroll', label: 'Payroll' }, { key: 'emp-announcements', label: 'Announcements' }
+    ];
+  }
+
+  renderVals() {
+    const s = this.state;
+    const data = s.data;
+    const isMobile = s.viewportWidth < 900;
+    const isLogin = s.screen === 'login';
+    const isLoggedIn = !isLogin && !!s.role && !!data;
+
+    const roleTabs = ['super_admin', 'org_admin', 'employee'].map(r => ({
+      key: r, label: r === 'super_admin' ? 'Super Admin' : r === 'org_admin' ? 'Org Admin' : 'Employee',
+      onClick: () => this.quickLoginRole(r),
+      bg: s.loginRole === r ? '#fff' : 'transparent', color: s.loginRole === r ? '#14152e' : '#6b6e88',
+      weight: s.loginRole === r ? 700 : 600, shadow: s.loginRole === r ? '0 1px 3px rgba(20,21,46,0.12)' : 'none'
+    }));
+    const emailPlaceholder = { super_admin: 'superadmin@nexhr.io', org_admin: 'admin@ironwoodmfg.com', employee: 'nadia.farouk@nexhr.io' }[s.loginRole];
+
+    if (!isLoggedIn) {
+      return {
+        isLogin, isLoggedIn: false, isMobile, showBrandPanel: !isMobile, logoAlign: isMobile ? 'center' : 'flex-start',
+        roleTabs, emailPlaceholder,
+        loginEmail: s.loginEmail, loginPassword: s.loginPassword, loginError: s.loginError,
+        onEmailChange: (e) => this.onEmailChange(e), onPasswordChange: (e) => this.onPasswordChange(e),
+        passwordFieldType: s.showPassword ? 'text' : 'password', showHideLabel: s.showPassword ? 'Hide' : 'Show',
+        togglePassword: () => this.togglePassword(), rememberMe: s.rememberMe, toggleRemember: () => this.toggleRemember(),
+        forgotPassword: (e) => this.forgotPassword(e), submitLogin: (e) => this.submitLogin(e),
+        fieldBorder: s.loginError ? '#dc2626' : '#e0e2ee'
+      };
+    }
+
+    if (!data) return { isLogin: false, isLoggedIn: false };
+
+    const roleLabels = { super_admin: 'Super Admin', org_admin: 'Organization Admin', employee: 'Employee' };
+    const roleInitials = { super_admin: 'SA', org_admin: 'IM', employee: data.currentEmployee.initials };
+    const roleNames = { super_admin: 'Alex Kade', org_admin: 'Admin User', employee: data.currentEmployee.name };
+    const navRaw = this.getNavForRole(s.role);
+    const navItems = navRaw.map(n => ({
+      key: n.key, label: n.label, onClick: () => this.setScreen(n.key),
+      bg: s.screen === n.key ? 'rgba(255,255,255,0.1)' : 'transparent',
+      color: s.screen === n.key ? '#fff' : '#b7b6d9', weight: s.screen === n.key ? 700 : 500
+    }));
+    const allLabels = {}; navRaw.forEach(n => allLabels[n.key] = n.label);
+    const builtScreens = ['sa-overview', 'sa-orgs', 'sa-org-detail', 'sa-users', 'sa-plans', 'sa-settings', 'oa-overview', 'oa-employees', 'oa-attendance', 'oa-leave', 'oa-payroll', 'emp-dashboard'];
+    const isPlaceholderScreen = !builtScreens.includes(s.screen);
+    const currentScreenLabel = allLabels[s.screen] || (s.screen === 'sa-org-detail' ? 'Organization Detail' : 'NexHR');
+
+    const screenIs = {
+      saOverview: s.screen === 'sa-overview', saOrgs: s.screen === 'sa-orgs', saOrgDetail: s.screen === 'sa-org-detail',
+      saUsers: s.screen === 'sa-users', saPlans: s.screen === 'sa-plans', saSettings: s.screen === 'sa-settings',
+      oaOverview: s.screen === 'oa-overview', oaEmployees: s.screen === 'oa-employees', oaAttendance: s.screen === 'oa-attendance',
+      oaLeave: s.screen === 'oa-leave', oaPayroll: s.screen === 'oa-payroll', empDashboard: s.screen === 'emp-dashboard'
+    };
+
+    // SA data
+    const totalEmployees = data.orgs.reduce((a, o) => a + o.employees, 0);
+    const activeOrgs = data.orgs.filter(o => o.status === 'Active').length;
+    const pendingOrgs = data.orgs.filter(o => o.status === 'Pending').length;
+    const saStats = [
+      { label: 'Total Organizations', value: data.orgs.length, delta: '+2 this month', deltaColor: '#0f9d58', dot: '#4f46e5' },
+      { label: 'Total Employees', value: totalEmployees.toLocaleString(), delta: '+184 this month', deltaColor: '#0f9d58', dot: '#818cf8' },
+      { label: 'Active Organizations', value: activeOrgs, delta: `${pendingOrgs} pending`, deltaColor: '#b45309', dot: '#0f9d58' },
+      { label: 'Monthly Revenue', value: money(data.orgs.reduce((a, o) => a + o.mrr, 0)), delta: '+6.2% MoM', deltaColor: '#0f9d58', dot: '#f59e0b' }
+    ];
+    const mrrBars = [62, 68, 71, 76, 84, 91].map((v, i) => ({ label: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'][i], pct: v + '%' }));
+    const plansList = data.plans.map(p => ({ name: p.name, activeSubs: p.activeSubs, pct: Math.round((p.activeSubs / 214) * 100) + '%' }));
+    const saActivityRows = data.saRecentActivity.map(a => ({ text: a.text, time: a.time, dot: a.type === 'alert' ? '#dc2626' : a.type === 'billing' ? '#0f9d58' : '#4f46e5' }));
+
+    const isAltLayout = s.saOverviewLayout === 'alt';
+    const topOrgs = [...data.orgs].sort((a, b) => b.mrr - a.mrr).slice(0, 5).map((o, i) => ({ rank: i + 1, name: o.name, initial: o.name[0], mrrLabel: money(o.mrr), employees: o.employees }));
+    const planTotal = data.plans.reduce((a, p) => a + p.activeSubs, 0);
+    let acc = 0;
+    const planDonutColors = ['#4f46e5', '#818cf8', '#c7d2fe'];
+    const donutSegments = data.plans.map((p, i) => { const startPct = acc / planTotal * 100; acc += p.activeSubs; const endPct = acc / planTotal * 100; return `${planDonutColors[i]} ${startPct}% ${endPct}%`; }).join(', ');
+    const donutLegend = data.plans.map((p, i) => ({ name: p.name, activeSubs: p.activeSubs, color: planDonutColors[i] }));
+
+    const orgSearchLower = s.orgSearch.toLowerCase();
+    const orgsFiltered = data.orgs.filter(o => (s.orgFilter === 'All' || o.status === s.orgFilter) && o.name.toLowerCase().includes(orgSearchLower));
+    const orgFilterChips = ['All', 'Active', 'Pending', 'Suspended'].map(f => ({
+      label: f, onClick: () => this.setOrgFilter(f),
+      bg: s.orgFilter === f ? '#eef1fd' : '#fff', color: s.orgFilter === f ? '#4f46e5' : '#6b6e88', border: s.orgFilter === f ? '#c7cdf7' : '#e7e9f2'
+    }));
+    const orgRows = orgsFiltered.map(o => {
+      const b = badge(o.status);
+      return { name: o.name, industry: o.industry, plan: o.plan, employees: o.employees, status: o.status, joined: o.joined,
+        initial: o.name[0], badgeBg: b.bg, badgeColor: b.color,
+        onView: () => this.selectOrg(o.id), onDeactivate: () => this.toggleOrgStatus(o.id),
+        deactivateLabel: o.status === 'Suspended' ? 'Reactivate' : 'Suspend' };
+    });
+    const orgCountLabel = `${data.orgs.length} organizations · ${activeOrgs} active`;
+
+    const selOrgRaw = data.orgs.find(o => o.id === s.selectedOrgId) || data.orgs[0];
+    const selBadge = badge(selOrgRaw.status);
+    const selectedOrg = { ...selOrgRaw, initial: selOrgRaw.name[0], badgeBg: selBadge.bg, badgeColor: selBadge.color, mrrLabel: money(selOrgRaw.mrr), adminInitial: selOrgRaw.name.split(' ').map(w => w[0]).slice(0, 2).join(''), adminName: selOrgRaw.name + ' Admin' };
+
+    // SA users
+    const userSearchLower = s.userSearch.toLowerCase();
+    const usersFiltered = data.platformUsers.filter(u => (s.userRoleFilter === 'All' || u.role === s.userRoleFilter) && u.name.toLowerCase().includes(userSearchLower));
+    const userRoleChips = ['All', 'Super Admin', 'Org Admin', 'Employee'].map(f => ({
+      label: f, onClick: () => this.setUserRoleFilter(f),
+      bg: s.userRoleFilter === f ? '#eef1fd' : '#fff', color: s.userRoleFilter === f ? '#4f46e5' : '#6b6e88', border: s.userRoleFilter === f ? '#c7cdf7' : '#e7e9f2'
+    }));
+    const userRows = usersFiltered.map(u => {
+      const b = badge(u.status);
+      return { ...u, badgeBg: b.bg, badgeColor: b.color, onToggle: () => this.toggleUserStatus(u), toggleLabel: u.status === 'Active' ? 'Suspend' : 'Reactivate', toggleColor: u.status === 'Active' ? '#dc2626' : '#0f9d58' };
+    });
+    const platformUserCountLabel = `${data.platformUsers.length} users across ${data.orgs.length} organizations`;
+
+    // SA plans
+    const planCards = data.plans.map(p => ({ ...p, featureRows: p.features.map(f => ({ text: f })) }));
+    const activeSubRows = data.orgs.filter(o => o.status === 'Active').map(o => ({ name: o.name, plan: o.plan, mrrLabel: money(o.mrr), joined: o.joined }));
+    const expiredSubRows = data.expiredSubscriptions;
+
+    // SA settings
+    const settingsGroups = [
+      { title: 'General', items: [
+        { key: 'maintenanceMode', label: 'Maintenance mode', desc: 'Take the platform offline for all orgs' },
+        { key: 'publicSignup', label: 'Public sign-up', desc: 'Allow new orgs to self-register' }
+      ] },
+      { title: 'Email', items: [
+        { key: 'emailNotifications', label: 'Email notifications', desc: 'System emails for key events' },
+        { key: 'weeklyDigest', label: 'Weekly digest', desc: 'Summary email to org admins' }
+      ] },
+      { title: 'Notifications', items: [
+        { key: 'smsNotifications', label: 'SMS notifications', desc: 'Critical alerts via SMS' }
+      ] },
+      { title: 'Security', items: [
+        { key: 'twoFactorRequired', label: 'Require 2FA', desc: 'Enforce two-factor for all admins' },
+        { key: 'autoDeactivateInactive', label: 'Auto-deactivate inactive users', desc: 'After 90 days of no activity' }
+      ] }
+    ].map(g => ({ ...g, items: g.items.map(it => ({ ...it, onToggle: () => this.toggleSetting(it.key), trackBg: s.settings[it.key] ? '#4f46e5' : '#e0e2ee', knobLeft: s.settings[it.key] ? '21px' : '3px' })) }));
+
+    // OA data
+    const present = data.attendanceToday.filter(a => a.status === 'Present' || a.status === 'Late').length;
+    const absent = data.attendanceToday.filter(a => a.status === 'Absent').length;
+    const onLeave = data.attendanceToday.filter(a => a.status === 'On Leave').length;
+    const pendingLeaveCount = data.leaveRequests.filter(l => l.status === 'Pending').length;
+    const oaStats = [
+      { label: 'Total Employees', value: data.employees.length, dot: '#4f46e5' },
+      { label: 'Present Today', value: present, dot: '#0f9d58' },
+      { label: 'Absent Today', value: absent, dot: '#dc2626' },
+      { label: 'On Leave', value: onLeave, dot: '#818cf8' },
+      { label: 'Pending Requests', value: pendingLeaveCount, dot: '#b45309' }
+    ];
+    const attendanceWeekBars = [88, 92, 85, 94, 90, 96, 91].map((v, i) => ({ label: ['Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue'][i], pct: v + '%' }));
+    const payrollTotal = data.payroll.reduce((a, p) => a + p.net, 0);
+    const payrollPaidCount = data.payroll.filter(p => p.status === 'Paid').length;
+    const payrollProcessingCount = data.payroll.filter(p => p.status === 'Processing').length;
+    const oaActivityRows = [
+      { text: 'Owen Blake requested Casual Leave', time: '25 min ago', dot: '#b45309' },
+      { text: 'Payroll for June closed successfully', time: '2 hrs ago', dot: '#0f9d58' },
+      { text: 'Tom Reilly marked Inactive', time: 'Yesterday', dot: '#dc2626' },
+      { text: 'New candidate applied for Backend Engineer', time: '2 days ago', dot: '#4f46e5' }
+    ];
+
+    const empSearchLower = s.empSearch.toLowerCase();
+    const empFiltered = data.employees.filter(e => (s.deptFilter === 'All' || e.dept === s.deptFilter) && e.name.toLowerCase().includes(empSearchLower));
+    const deptNames = ['All', ...data.departments.map(d => d.name)];
+    const deptChips = deptNames.map(d => ({
+      label: d, onClick: () => this.setDeptFilter(d),
+      bg: s.deptFilter === d ? '#eef1fd' : '#fff', color: s.deptFilter === d ? '#4f46e5' : '#6b6e88', border: s.deptFilter === d ? '#c7cdf7' : '#e7e9f2'
+    }));
+    const empRows = empFiltered.map(e => {
+      const b = badge(e.status);
+      return { ...e, badgeBg: b.bg, badgeColor: b.color, onEdit: () => this.openEditEmployee(e), onToggleStatus: () => this.toggleEmpStatus(e), toggleLabel: e.status === 'Inactive' ? 'Activate' : 'Deactivate' };
+    });
+    const empCountLabel = `${data.employees.length} employees across ${data.departments.length} departments`;
+
+    const isDailyView = s.attendanceView === 'daily';
+    const attendanceRows = data.attendanceToday.map(a => { const b = badge(a.status); return { ...a, badgeBg: b.bg, badgeColor: b.color }; });
+    const monthlyRows = data.employees.slice(0, 6).map((e, i) => ({ name: e.name, present: 20 - i, late: i, absent: i > 3 ? 1 : 0, rate: (94 - i * 2) + '%' }));
+
+    const leaveRows = data.leaveRequests.map(l => { const b = badge(l.status); return { ...l, badgeBg: b.bg, badgeColor: b.color, isPending: l.status === 'Pending', onApprove: () => this.approveLeave(l.id), onReject: () => this.rejectLeave(l.id) }; });
+    const leavePendingCount = data.leaveRequests.filter(l => l.status === 'Pending').length;
+    const leaveApprovedCount = data.leaveRequests.filter(l => l.status === 'Approved').length;
+    const leaveRejectedCount = data.leaveRequests.filter(l => l.status === 'Rejected').length;
+
+    const payrollRows = data.payroll.map(p => { const b = badge(p.status); return { ...p, badgeBg: b.bg, badgeColor: b.color, baseLabel: money(p.base), bonusLabel: '+' + money(p.bonus), deductLabel: '-' + money(p.deductions), netLabel: money(p.net) }; });
+    const avgSalaryLabel = money(Math.round(payrollTotal / data.payroll.length));
+
+    // Employee data
+    const ce = data.currentEmployee;
+    const empLeaveRows = ce.leaveHistory.map(l => { const b = badge(l.status); return { ...l, badgeBg: b.bg, badgeColor: b.color }; });
+    const empPayslipRows = ce.payslips.map(p => ({ ...p, netLabel: money(p.net), onDownload: () => this.downloadSlip(p.month + ' payslip') }));
+    const empAttendanceRows = ce.attendanceHistory.map(a => { const b = badge(a.status); return { ...a, badgeBg: b.bg, badgeColor: b.color }; });
+    const announcementRows = data.announcements;
+
+    let attendanceStatusLabel = 'Not checked in';
+    let attendanceStatusColor = '#9296b3';
+    let checkInTimeLabel = 'Your day hasn\'t started yet';
+    if (s.checkedIn && !s.checkedOut) { attendanceStatusLabel = 'Checked in'; attendanceStatusColor = '#0f9d58'; checkInTimeLabel = 'Since ' + s.checkInTime; }
+    if (s.checkedOut) { attendanceStatusLabel = 'Checked out'; attendanceStatusColor = '#4f46e5'; checkInTimeLabel = 'Checked in at ' + s.checkInTime; }
+
+    const modal = s.modal;
+    const cp = s.confirmPayload || {};
+
+    return {
+      isLogin: false, isLoggedIn: true, isMobile,
+      showBackdrop: isMobile && s.mobileNavOpen,
+      sidebarLeft: isMobile ? (s.mobileNavOpen ? '0px' : '-260px') : '0px',
+      contentMarginLeft: isMobile ? '0px' : '260px',
+      roleSectionLabel: roleLabels[s.role], navItems, currentScreenLabel, isPlaceholderScreen, screenIs,
+      toggleMobileNav: () => this.toggleMobileNav(), closeMobileNav: () => this.closeMobileNav(), logout: () => this.logout(),
+      showSearch: true, globalSearch: s.globalSearch, onGlobalSearchChange: (e) => this.onGlobalSearchChange(e),
+      toggleNotif: () => this.toggleNotif(), notifOpen: s.notifOpen, notifItems: data.announcements,
+      toggleProfile: () => this.toggleProfile(), profileOpen: s.profileOpen,
+      profileInitials: roleInitials[s.role], profileName: roleNames[s.role], profileRoleLabel: roleLabels[s.role],
+
+      saStats, mrrBars, plansList, saActivityRows,
+      isAltLayout, setClassicLayout: () => this.setSaOverviewLayout('classic'), setAltLayout: () => this.setSaOverviewLayout('alt'),
+      classicTabBg: !isAltLayout ? '#fff' : 'transparent', classicTabColor: !isAltLayout ? '#14152e' : '#6b6e88',
+      altTabBg: isAltLayout ? '#fff' : 'transparent', altTabColor: isAltLayout ? '#14152e' : '#6b6e88',
+      topOrgs, donutSegments, donutLegend, totalRevenueLabel: money(data.orgs.reduce((a, o) => a + o.mrr, 0)), totalEmployeesLabel: totalEmployees.toLocaleString(),
+      orgSearch: s.orgSearch, onOrgSearchChange: (e) => this.onOrgSearchChange(e), orgFilterChips, orgRows, orgCountLabel, openAddOrg: () => this.openAddOrg(),
+      selectedOrg, backToOrgs: () => this.backToOrgs(), suspendSelectedOrg: () => this.suspendSelectedOrg(), deleteSelectedOrg: () => this.deleteSelectedOrg(),
+
+      userSearch: s.userSearch, onUserSearchChange: (e) => this.onUserSearchChange(e), userRoleChips, userRows, platformUserCountLabel,
+      planCards, activeSubRows, expiredSubRows, openCreatePlan: () => this.openCreatePlan(),
+      settingsGroups, saveSettings: () => this.saveSettings(),
+
+      todayLabel: 'Sunday, July 19, 2026',
+      oaStats, attendanceWeekBars, payrollTotalLabel: money(payrollTotal), payrollPaidCount, payrollProcessingCount, oaActivityRows,
+      empSearch: s.empSearch, onEmpSearchChange: (e) => this.onEmpSearchChange(e), deptChips, empRows, empCountLabel, openAddEmployee: () => this.openAddEmployee(),
+
+      isDailyView, dailyTabBg: isDailyView ? '#fff' : 'transparent', dailyTabColor: isDailyView ? '#14152e' : '#6b6e88',
+      monthlyTabBg: !isDailyView ? '#fff' : 'transparent', monthlyTabColor: !isDailyView ? '#14152e' : '#6b6e88',
+      setDailyView: () => this.setDailyView(), setMonthlyView: () => this.setMonthlyView(), attendanceRows, monthlyRows,
+
+      leavePendingCount, leaveApprovedCount, leaveRejectedCount, leaveRows,
+      payrollRows, avgSalaryLabel, runPayroll: () => this.runPayroll(),
+
+      empFirstName: ce.name.split(' ')[0], empTitleDept: `${ce.title} · ${ce.dept}`,
+      attendanceStatusLabel, attendanceStatusColor, checkInTimeLabel,
+      showCheckInBtn: !s.checkedIn, showCheckOutBtn: s.checkedIn && !s.checkedOut,
+      doCheckIn: () => this.doCheckIn(), doCheckOut: () => this.doCheckOut(),
+      leaveBalance: ce.leaveBalance, openApplyLeave: () => this.openApplyLeave(),
+      empLeaveRows, empPayslipRows, empAttendanceRows, announcementRows,
+
+      modal, modalMaxWidth: modal === 'addEmployee' ? '460px' : '420px',
+      isConfirmModal: modal === 'confirm', confirmTitle: cp.title, confirmMessage: cp.message, confirmLabel: cp.label,
+      confirmAction: () => this.confirmAction(), closeModal: () => this.closeModal(),
+      isCreatePlanModal: modal === 'createPlan', formPlanName: s.formPlanName, formPlanPrice: s.formPlanPrice, formPlanSeats: s.formPlanSeats,
+      onFormPlanNameChange: (e) => this.onFormPlanNameChange(e), onFormPlanPriceChange: (e) => this.onFormPlanPriceChange(e), onFormPlanSeatsChange: (e) => this.onFormPlanSeatsChange(e), submitCreatePlan: () => this.submitCreatePlan(),
+      isAddOrgModal: modal === 'addOrg', formOrgName: s.formOrgName, formOrgEmail: s.formOrgEmail, formOrgPlan: s.formOrgPlan,
+      onFormOrgNameChange: (e) => this.onFormOrgNameChange(e), onFormOrgEmailChange: (e) => this.onFormOrgEmailChange(e), onFormOrgPlanChange: (e) => this.onFormOrgPlanChange(e), submitAddOrg: () => this.submitAddOrg(),
+      isAddEmployeeModal: modal === 'addEmployee', empModalTitle: s.editingEmpId ? 'Edit Employee' : 'Add Employee', empModalSubmitLabel: s.editingEmpId ? 'Save changes' : 'Add employee',
+      formEmpName: s.formEmpName, formEmpEmail: s.formEmpEmail, formEmpDept: s.formEmpDept, formEmpTitle: s.formEmpTitle, departmentOptions: data.departments,
+      onFormEmpNameChange: (e) => this.onFormEmpNameChange(e), onFormEmpEmailChange: (e) => this.onFormEmpEmailChange(e), onFormEmpDeptChange: (e) => this.onFormEmpDeptChange(e), onFormEmpTitleChange: (e) => this.onFormEmpTitleChange(e), submitAddEmployee: () => this.submitAddEmployee(),
+      isApplyLeaveModal: modal === 'applyLeave', formLeaveType: s.formLeaveType, formLeaveFrom: s.formLeaveFrom, formLeaveTo: s.formLeaveTo, formLeaveReason: s.formLeaveReason,
+      onFormLeaveTypeChange: (e) => this.onFormLeaveTypeChange(e), onFormLeaveFromChange: (e) => this.onFormLeaveFromChange(e), onFormLeaveToChange: (e) => this.onFormLeaveToChange(e), onFormLeaveReasonChange: (e) => this.onFormLeaveReasonChange(e), submitApplyLeave: () => this.submitApplyLeave(),
+
+      toast: s.toast, toastMessage: s.toast ? s.toast.message : '', toastColor: s.toast ? s.toast.color : '#4f46e5'
+    };
+  }
+}
+
+</script>
+</body>
+</html>

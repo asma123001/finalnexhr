@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #f5f6fa; }
+    * { box-sizing: border-box; }
+    ::placeholder { color: #a3a6c2; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes modalIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;font-family:'Manrope',sans-serif;color:#14152e;background:#f5f6fa;">
+
+  <sc-if value="{{ showBackdrop }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeMobileNav }}" style="position:fixed;inset:0;background:rgba(10,10,30,0.45);z-index:55;"></div>
+  </sc-if>
+
+  <div style="position:fixed;top:0;left:{{ sidebarLeft }};height:100vh;width:260px;background:#1c1a4a;z-index:60;transition:left 0.22s ease;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="padding:22px 20px;display:flex;align-items:center;gap:10px;">
+      <div style="width:34px;height:34px;border-radius:9px;background:#4f46e5;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;flex-shrink:0;">N</div>
+      <div style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.02em;">NexHR</div>
+    </div>
+    <div style="padding-left:20px;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#6f6da0;text-transform:uppercase;margin-bottom:6px;">Employee</div>
+    <div style="display:flex;flex-direction:column;gap:2px;padding:0 12px;flex:1;overflow-y:auto;">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+        <div onClick="{{ item.onClick }}" style="padding:10px 12px;border-radius:9px;cursor:pointer;font-size:14px;background:{{ item.bg }};color:{{ item.color }};font-weight:{{ item.weight }};transition:all 0.15s ease;">{{ item.label }}</div>
+      </sc-for>
+    </div>
+    <div style="padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);">
+      <div onClick="{{ logout }}" style="font-size:13.5px;color:#b7b6d9;font-weight:600;text-decoration:none;cursor:pointer;">Log out</div>
+    </div>
+  </div>
+
+  <div style="margin-left:{{ contentMarginLeft }};min-height:100vh;display:flex;flex-direction:column;transition:margin-left 0.22s ease;">
+    <div style="height:64px;flex-shrink:0;background:#fff;border-bottom:1px solid #e7e9f2;display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:40;">
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toggleMobileNav }}" style="border:1px solid #e7e9f2;background:#fff;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;flex-shrink:0;">
+          <div style="width:16px;height:2px;background:#3f4159;border-radius:1px;"></div>
+          <div style="width:16px;height:2px;background:#3f4159;border-radius:1px;"></div>
+          <div style="width:16px;height:2px;background:#3f4159;border-radius:1px;"></div>
+        </button>
+      </sc-if>
+      <div style="font-size:16px;font-weight:700;flex-shrink:0;">{{ currentScreenLabel }}</div>
+      <div style="flex:1;"></div>
+      <div style="position:relative;">
+        <button onClick="{{ toggleNotif }}" style="width:38px;height:38px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;cursor:pointer;position:relative;color:#3f4159;font-weight:700;font-size:13px;">
+          🔔
+          <div style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#dc2626;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:800;">3</div>
+        </button>
+        <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:46px;right:0;width:300px;background:#fff;border:1px solid #e7e9f2;border-radius:12px;box-shadow:0 12px 32px rgba(20,21,46,0.14);padding:8px;z-index:70;animation:modalIn 0.15s ease;">
+            <div style="font-size:12.5px;font-weight:700;color:#6b6e88;padding:8px 10px;">Notifications</div>
+            <sc-for list="{{ notifItems }}" as="n" hint-placeholder-count="3">
+              <div style="padding:9px 10px;border-radius:8px;font-size:13px;">
+                <div style="color:#14152e;font-weight:600;margin-bottom:2px;">{{ n.title }}</div>
+                <div style="color:#9296b3;font-size:11.5px;">{{ n.time }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="position:relative;">
+        <div onClick="{{ toggleProfile }}" style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:5px 8px;border-radius:9px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">{{ empInitials }}</div>
+          <sc-if value="{{ !isMobile }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#14152e;">{{ empName }}</div>
+              <div style="font-size:11px;color:#9296b3;">{{ empTitleDept }}</div>
+            </div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ profileOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:52px;right:0;width:200px;background:#fff;border:1px solid #e7e9f2;border-radius:12px;box-shadow:0 12px 32px rgba(20,21,46,0.14);padding:6px;z-index:70;animation:modalIn 0.15s ease;">
+            <div onClick="{{ goToProfile }}" style="padding:9px 12px;font-size:13px;color:#3f4159;font-weight:600;cursor:pointer;border-radius:8px;">My Profile</div>
+            <div onClick="{{ goToProfile }}" style="padding:9px 12px;font-size:13px;color:#3f4159;font-weight:600;cursor:pointer;border-radius:8px;">Account Settings</div>
+            <div style="height:1px;background:#e7e9f2;margin:4px 0;"></div>
+            <div onClick="{{ logout }}" style="display:block;padding:9px 12px;font-size:13px;color:#dc2626;font-weight:600;cursor:pointer;border-radius:8px;text-decoration:none;">Log out</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="flex:1;padding:28px;max-width:1200px;width:100%;">
+
+      <sc-if value="{{ !dataReady }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;justify-content:center;padding:120px 0;color:#9296b3;font-size:14px;">Loading your dashboard…</div>
+      </sc-if>
+
+      <sc-if value="{{ dataReady }}" hint-placeholder-val="{{ false }}">
+
+      <sc-if value="{{ screenIs.dashboard }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Welcome back, {{ empFirstName }}</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">{{ empTitleDept }}</div>
+
+        <div style="display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;">
+            <div style="font-size:12.5px;color:#6b6e88;font-weight:600;margin-bottom:10px;">Today's attendance</div>
+            <div style="font-size:20px;font-weight:800;margin-bottom:4px;color:{{ attendanceStatusColor }};">{{ attendanceStatusLabel }}</div>
+            <div style="font-size:12.5px;color:#9296b3;margin-bottom:14px;">{{ checkInTimeLabel }}</div>
+            <sc-if value="{{ showCheckInBtn }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ doCheckIn }}" style="width:100%;padding:11px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Check in</button>
+            </sc-if>
+            <sc-if value="{{ showCheckOutBtn }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ doCheckOut }}" style="width:100%;padding:11px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Check out</button>
+            </sc-if>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;">
+            <div style="font-size:12.5px;color:#6b6e88;font-weight:600;margin-bottom:12px;">Leave balance</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="font-size:13px;color:#3f4159;">Annual</div><div style="font-weight:700;font-size:13px;">{{ leaveBalance.annual }} days</div></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="font-size:13px;color:#3f4159;">Sick</div><div style="font-weight:700;font-size:13px;">{{ leaveBalance.sick }} days</div></div>
+            <div style="display:flex;justify-content:space-between;"><div style="font-size:13px;color:#3f4159;">Casual</div><div style="font-weight:700;font-size:13px;">{{ leaveBalance.casual }} days</div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+              <div style="font-size:12.5px;color:#6b6e88;font-weight:600;margin-bottom:10px;">Need time off?</div>
+              <div style="font-size:13.5px;color:#3f4159;line-height:1.5;">Submit a leave request and track approval status right here.</div>
+            </div>
+            <button onClick="{{ openApplyLeave }}" style="margin-top:14px;width:100%;padding:11px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Apply for leave</button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:20px;">
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+            <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Leave history</div>
+            <sc-for list="{{ empLeaveRows }}" as="l" hint-placeholder-count="3">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f0f1f6;">
+                <div>
+                  <div style="font-size:13.5px;font-weight:700;">{{ l.type }}</div>
+                  <div style="font-size:12px;color:#9296b3;">{{ l.from }} &rarr; {{ l.to }} &middot; {{ l.days }} days</div>
+                </div>
+                <span style="padding:4px 10px;border-radius:999px;background:{{ l.badgeBg }};color:{{ l.badgeColor }};font-size:12px;font-weight:700;">{{ l.status }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+            <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Payslips</div>
+            <sc-for list="{{ empPayslipRows }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f0f1f6;">
+                <div>
+                  <div style="font-size:13.5px;font-weight:700;">{{ p.month }}</div>
+                  <div style="font-size:12px;color:#9296b3;">{{ p.netLabel }}</div>
+                </div>
+                <a href="#" onClick="{{ p.onDownload }}" style="color:#4f46e5;font-weight:700;font-size:12.5px;text-decoration:none;">Download</a>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;">
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+            <div style="padding:16px 22px 4px;font-size:14.5px;font-weight:700;">Attendance history</div>
+            <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;padding:10px 22px;font-size:11px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+              <div>Date</div><div>In</div><div>Out</div><div>Status</div><div>Hours</div>
+            </div>
+            <sc-for list="{{ empAttendanceRows }}" as="a" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;padding:12px 22px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13px;">
+                <div style="font-weight:700;">{{ a.date }}</div>
+                <div style="color:#6b6e88;">{{ a.checkIn }}</div>
+                <div style="color:#6b6e88;">{{ a.checkOut }}</div>
+                <div><span style="padding:3px 9px;border-radius:999px;background:{{ a.badgeBg }};color:{{ a.badgeColor }};font-size:11.5px;font-weight:700;">{{ a.status }}</span></div>
+                <div style="color:#6b6e88;">{{ a.hours }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+            <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Company announcements</div>
+            <sc-for list="{{ announcementRows }}" as="a" hint-placeholder-count="3">
+              <div style="padding:11px 0;border-bottom:1px solid #f0f1f6;">
+                <div style="font-size:13.5px;font-weight:700;margin-bottom:3px;">{{ a.title }}</div>
+                <div style="font-size:12px;color:#9296b3;">{{ a.time }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.profile }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">My Profile</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">Your personal information on file</div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:24px;display:flex;gap:20px;align-items:center;margin-bottom:20px;">
+          <div style="width:64px;height:64px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;flex-shrink:0;">{{ empInitials }}</div>
+          <div>
+            <div style="font-size:19px;font-weight:800;">{{ empName }}</div>
+            <div style="font-size:13.5px;color:#6b6e88;margin-top:2px;">{{ empTitleDept }}</div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div><div style="font-size:12px;color:#9296b3;font-weight:600;margin-bottom:4px;">Manager</div><div style="font-size:13.5px;font-weight:700;">{{ empManager }}</div></div>
+          <div><div style="font-size:12px;color:#9296b3;font-weight:600;margin-bottom:4px;">Department</div><div style="font-size:13.5px;font-weight:700;">{{ empDept }}</div></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.attendance }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">My Attendance</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">Your check-in/out history</div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;padding:12px 20px;font-size:11px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+            <div>Date</div><div>In</div><div>Out</div><div>Status</div><div>Hours</div>
+          </div>
+          <sc-for list="{{ empAttendanceRows }}" as="a" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+              <div style="font-weight:700;">{{ a.date }}</div>
+              <div style="color:#6b6e88;">{{ a.checkIn }}</div>
+              <div style="color:#6b6e88;">{{ a.checkOut }}</div>
+              <div><span style="padding:4px 10px;border-radius:999px;background:{{ a.badgeBg }};color:{{ a.badgeColor }};font-size:12px;font-weight:700;">{{ a.status }}</span></div>
+              <div style="color:#6b6e88;">{{ a.hours }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.leave }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;">
+          <div>
+            <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Leave</div>
+            <div style="font-size:14px;color:#6b6e88;">Balances and request history</div>
+          </div>
+          <button onClick="{{ openApplyLeave }}" style="padding:11px 18px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">+ Apply for Leave</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:20px;">
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Annual</div><div style="font-size:22px;font-weight:800;">{{ leaveBalance.annual }} days</div></div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Sick</div><div style="font-size:22px;font-weight:800;">{{ leaveBalance.sick }} days</div></div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Casual</div><div style="font-size:22px;font-weight:800;">{{ leaveBalance.casual }} days</div></div>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:1.4fr 1.4fr 0.7fr 1fr;padding:12px 20px;font-size:11px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+            <div>Type</div><div>Dates</div><div>Days</div><div>Status</div>
+          </div>
+          <sc-for list="{{ empLeaveRows }}" as="l" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:1.4fr 1.4fr 0.7fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+              <div style="font-weight:700;">{{ l.type }}</div>
+              <div style="color:#6b6e88;font-size:12.5px;">{{ l.from }} &rarr; {{ l.to }}</div>
+              <div style="color:#3f4159;">{{ l.days }}</div>
+              <div><span style="padding:4px 10px;border-radius:999px;background:{{ l.badgeBg }};color:{{ l.badgeColor }};font-size:12px;font-weight:700;">{{ l.status }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.payroll }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Payroll</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">Your salary and payslip history</div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr;padding:12px 20px;font-size:11px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+            <div>Month</div><div>Net pay</div><div>Actions</div>
+          </div>
+          <sc-for list="{{ empPayslipRows }}" as="p" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+              <div style="font-weight:700;">{{ p.month }}</div>
+              <div style="color:#14152e;font-weight:700;">{{ p.netLabel }}</div>
+              <a href="#" onClick="{{ p.onDownload }}" style="color:#4f46e5;font-weight:700;font-size:13px;text-decoration:none;">Download payslip</a>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.announcements }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Announcements</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">Company-wide updates</div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <sc-for list="{{ announcementRows }}" as="a" hint-placeholder-count="3">
+            <div style="padding:16px 20px;border-bottom:1px solid #f0f1f6;">
+              <div style="font-size:14px;font-weight:700;margin-bottom:4px;">{{ a.title }}</div>
+              <div style="font-size:12.5px;color:#9296b3;">{{ a.time }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(10,10,30,0.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.15s ease;">
+      <div style="background:#fff;border-radius:16px;padding:26px;width:100%;max-width:420px;animation:modalIn 0.18s ease;max-height:88vh;overflow-y:auto;position:relative;">
+        <button onClick="{{ closeModal }}" style="position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:8px;border:none;background:#f5f6fa;color:#6b6e88;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">&times;</button>
+
+        <sc-if value="{{ isApplyLeaveModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">Apply for leave</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Leave type</div>
+              <select value="{{ formLeaveType }}" onChange="{{ onFormLeaveTypeChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <option value="Annual Leave">Annual Leave</option><option value="Sick Leave">Sick Leave</option><option value="Casual Leave">Casual Leave</option>
+              </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">From</div><input type="date" value="{{ formLeaveFrom }}" onChange="{{ onFormLeaveFromChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">To</div><input type="date" value="{{ formLeaveTo }}" onChange="{{ onFormLeaveToChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            </div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Reason</div><textarea value="{{ formLeaveReason }}" onChange="{{ onFormLeaveReasonChange }}" placeholder="Brief reason for leave" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;min-height:70px;resize:vertical;"></textarea></div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ submitApplyLeave }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Submit request</button>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:24px;right:24px;background:#fff;border-radius:12px;box-shadow:0 12px 32px rgba(20,21,46,0.16);padding:14px 18px;display:flex;align-items:center;gap:10px;z-index:200;animation:toastIn 0.2s ease;border-left:4px solid {{ toastColor }};">
+      <div style="font-size:13.5px;font-weight:600;color:#14152e;">{{ toastMessage }}</div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+
+const STATUS_COLORS = {
+  Present: { bg: '#e7f8ee', color: '#0f9d58' }, Absent: { bg: '#fdeaea', color: '#dc2626' }, Late: { bg: '#fef3e0', color: '#b45309' },
+  Weekend: { bg: '#f0f1f6', color: '#6b6e88' }, Approved: { bg: '#e7f8ee', color: '#0f9d58' }, Rejected: { bg: '#fdeaea', color: '#dc2626' },
+  Pending: { bg: '#fef3e0', color: '#b45309' }, Paid: { bg: '#e7f8ee', color: '#0f9d58' }
+};
+function badge(status) { return STATUS_COLORS[status] || { bg: '#f0f1f6', color: '#6b6e88' }; }
+function money(n) { return '$' + n.toLocaleString('en-US'); }
+
+class Component extends DCLogic {
+  state = {
+    screen: 'dashboard', data: null,
+    viewportWidth: typeof window !== 'undefined' ? window.innerWidth : 1440,
+    mobileNavOpen: false, notifOpen: false, profileOpen: false, modal: null, toast: null,
+    checkedIn: false, checkInTime: null, checkedOut: false,
+    formLeaveType: 'Annual Leave', formLeaveFrom: '', formLeaveTo: '', formLeaveReason: ''
+  };
+
+  async componentDidMount() {
+    try {
+      const [mod, api] = await Promise.all([import('./data.js'), import('./api-client.js')]);
+      this.api = api;
+      this.setState({ data: { ...mod } });
+      try {
+        const portal = await this.api.api('/org/employee-portal');
+        const ce = {
+          name: portal.firstName + ' ' + portal.lastName,
+          initials: (portal.firstName[0] + portal.lastName[0]).toUpperCase(),
+          title: portal.title,
+          dept: portal.department ? portal.department.name : 'Unassigned',
+          manager: 'Manager',
+          leaveBalance: { annual: 12, sick: 6, casual: 4 },
+          attendanceHistory: portal.attendance.map(a => ({ date: new Date(a.date).toLocaleDateString(), checkIn: a.checkIn ? new Date(a.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—', checkOut: a.checkOut ? new Date(a.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—', status: a.status.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()), hours: a.hours || '—' })),
+          leaveHistory: portal.leaveRequests.map(l => ({ id: l.id, type: l.type, from: new Date(l.fromDate).toLocaleDateString(), to: new Date(l.toDate).toLocaleDateString(), days: l.days, status: l.status.charAt(0) + l.status.slice(1).toLowerCase() })),
+          payslips: portal.payrollItems.map(p => ({ id: p.id, month: p.payrollRun.period, net: p.netCents / 100, status: p.status.charAt(0) + p.status.slice(1).toLowerCase() }))
+        };
+        this.setState(st => ({ data: { ...st.data, currentEmployee: ce } }));
+      } catch (err) {
+        console.warn('Using local demo data because employee portal failed:', err);
+      }
+    } catch (err) { console.error('employee: failed to load data.js', err); }
+    this._onResize = () => this.setState({ viewportWidth: window.innerWidth });
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { if (this._onResize) window.removeEventListener('resize', this._onResize); if (this._toastTimer) clearTimeout(this._toastTimer); }
+
+  showToast(message, color) {
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this.setState({ toast: { message, color: color || '#4f46e5' } });
+    this._toastTimer = setTimeout(() => this.setState({ toast: null }), 2600);
+  }
+  setScreen(key) { this.setState({ screen: key, mobileNavOpen: false, notifOpen: false, profileOpen: false }); }
+  goToProfile() { this.setScreen('profile'); }
+  toggleMobileNav() { this.setState(s => ({ mobileNavOpen: !s.mobileNavOpen })); }
+  closeMobileNav() { this.setState({ mobileNavOpen: false }); }
+  toggleNotif() { this.setState(s => ({ notifOpen: !s.notifOpen, profileOpen: false })); }
+  toggleProfile() { this.setState(s => ({ profileOpen: !s.profileOpen, notifOpen: false })); }
+  logout() {
+    if (this.api && this.api.clearSession) this.api.clearSession();
+    else { localStorage.removeItem('nexhr_token'); localStorage.removeItem('nexhr_user'); }
+    window.location.href = 'NexHR.dc.html';
+  }
+
+  closeModal() { this.setState({ modal: null, formLeaveReason: '' }); }
+  doCheckIn() {
+    const now = new Date(); const t = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    this.setState({ checkedIn: true, checkedOut: false, checkInTime: t });
+    this.showToast('Checked in at ' + t, '#0f9d58');
+  }
+  doCheckOut() { this.setState({ checkedOut: true }); this.showToast('Checked out — have a great evening!', '#4f46e5'); }
+  openApplyLeave() { this.setState({ modal: 'applyLeave', formLeaveType: 'Annual Leave', formLeaveFrom: '', formLeaveTo: '', formLeaveReason: '' }); }
+  onFormLeaveTypeChange(e) { this.setState({ formLeaveType: e.target.value }); }
+  onFormLeaveFromChange(e) { this.setState({ formLeaveFrom: e.target.value }); }
+  onFormLeaveToChange(e) { this.setState({ formLeaveTo: e.target.value }); }
+  onFormLeaveReasonChange(e) { this.setState({ formLeaveReason: e.target.value }); }
+  async submitApplyLeave() {
+    try {
+      await this.api.api('/org/leave', { method: 'POST', body: JSON.stringify({ type: this.state.formLeaveType, fromDate: this.state.formLeaveFrom, toDate: this.state.formLeaveTo, reason: this.state.formLeaveReason }) });
+    } catch (err) {
+      this.showToast(err.message || 'Leave request could not be submitted', '#dc2626');
+      return;
+    }
+    this.setState(s => ({ data: { ...s.data, currentEmployee: { ...s.data.currentEmployee, leaveHistory: [{ id: 'le' + Date.now(), type: s.formLeaveType, from: s.formLeaveFrom || 'TBD', to: s.formLeaveTo || 'TBD', days: 1, status: 'Pending' }, ...s.data.currentEmployee.leaveHistory] } } }));
+    this.closeModal();
+    this.showToast('Leave request submitted', '#0f9d58');
+  }
+  downloadSlip(label) { this.showToast('Downloading ' + label, '#4f46e5'); }
+
+  renderVals() {
+    const s = this.state;
+    const data = s.data;
+    const isMobile = s.viewportWidth < 900;
+
+    const navRaw = [
+      { key: 'dashboard', label: 'Dashboard' }, { key: 'profile', label: 'My Profile' }, { key: 'attendance', label: 'Attendance' },
+      { key: 'leave', label: 'Leave' }, { key: 'payroll', label: 'Payroll' }, { key: 'announcements', label: 'Announcements' }
+    ];
+    const navItems = navRaw.map(n => ({ key: n.key, label: n.label, onClick: () => this.setScreen(n.key),
+      bg: s.screen === n.key ? 'rgba(255,255,255,0.1)' : 'transparent', color: s.screen === n.key ? '#fff' : '#b7b6d9', weight: s.screen === n.key ? 700 : 500 }));
+    const labelMap = {}; navRaw.forEach(n => labelMap[n.key] = n.label);
+    const currentScreenLabel = labelMap[s.screen] || 'NexHR';
+    const screenIs = { dashboard: s.screen === 'dashboard', profile: s.screen === 'profile', attendance: s.screen === 'attendance',
+      leave: s.screen === 'leave', payroll: s.screen === 'payroll', announcements: s.screen === 'announcements' };
+
+    const shellBase = {
+      isMobile, showBackdrop: isMobile && s.mobileNavOpen,
+      sidebarLeft: isMobile ? (s.mobileNavOpen ? '0px' : '-260px') : '0px', contentMarginLeft: isMobile ? '0px' : '260px',
+      navItems, currentScreenLabel, screenIs, dataReady: !!data,
+      toggleMobileNav: () => this.toggleMobileNav(), closeMobileNav: () => this.closeMobileNav(),
+      toggleNotif: () => this.toggleNotif(), notifOpen: s.notifOpen, notifItems: [],
+      toggleProfile: () => this.toggleProfile(), profileOpen: s.profileOpen, goToProfile: () => this.goToProfile(), logout: () => this.logout(),
+      empInitials: 'NF', empName: 'Loading…', empTitleDept: '', modal: null, toast: null
+    };
+    if (!data) return shellBase;
+
+    try {
+      const ce = data.currentEmployee;
+      const empLeaveRows = ce.leaveHistory.map(l => { const b = badge(l.status); return { ...l, badgeBg: b.bg, badgeColor: b.color }; });
+      const empPayslipRows = ce.payslips.map(p => ({ ...p, netLabel: money(p.net), onDownload: () => this.downloadSlip(p.month + ' payslip') }));
+      const empAttendanceRows = ce.attendanceHistory.map(a => { const b = badge(a.status); return { ...a, badgeBg: b.bg, badgeColor: b.color }; });
+      const announcementRows = data.announcements;
+
+      let attendanceStatusLabel = 'Not checked in';
+      let attendanceStatusColor = '#9296b3';
+      let checkInTimeLabel = "Your day hasn't started yet";
+      if (s.checkedIn && !s.checkedOut) { attendanceStatusLabel = 'Checked in'; attendanceStatusColor = '#0f9d58'; checkInTimeLabel = 'Since ' + s.checkInTime; }
+      if (s.checkedOut) { attendanceStatusLabel = 'Checked out'; attendanceStatusColor = '#4f46e5'; checkInTimeLabel = 'Checked in at ' + s.checkInTime; }
+
+      return {
+        ...shellBase, notifItems: announcementRows,
+        empInitials: ce.initials, empName: ce.name, empFirstName: ce.name.split(' ')[0], empTitleDept: `${ce.title} · ${ce.dept}`,
+        empManager: ce.manager, empDept: ce.dept,
+        attendanceStatusLabel, attendanceStatusColor, checkInTimeLabel,
+        showCheckInBtn: !s.checkedIn, showCheckOutBtn: s.checkedIn && !s.checkedOut,
+        doCheckIn: () => this.doCheckIn(), doCheckOut: () => this.doCheckOut(),
+        leaveBalance: ce.leaveBalance, openApplyLeave: () => this.openApplyLeave(),
+        empLeaveRows, empPayslipRows, empAttendanceRows, announcementRows,
+
+        modal: s.modal, isApplyLeaveModal: s.modal === 'applyLeave',
+        formLeaveType: s.formLeaveType, formLeaveFrom: s.formLeaveFrom, formLeaveTo: s.formLeaveTo, formLeaveReason: s.formLeaveReason,
+        onFormLeaveTypeChange: (e) => this.onFormLeaveTypeChange(e), onFormLeaveFromChange: (e) => this.onFormLeaveFromChange(e),
+        onFormLeaveToChange: (e) => this.onFormLeaveToChange(e), onFormLeaveReasonChange: (e) => this.onFormLeaveReasonChange(e),
+        submitApplyLeave: () => this.submitApplyLeave(), closeModal: () => this.closeModal(),
+
+        toast: s.toast, toastMessage: s.toast ? s.toast.message : '', toastColor: s.toast ? s.toast.color : '#4f46e5'
+      };
+    } catch (err) {
+      console.error('employee renderVals() error:', err);
+      return shellBase;
+    }
+  }
+}
+
+</script>
+</body>
+</html>

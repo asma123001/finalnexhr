@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #f5f6fa; }
+    * { box-sizing: border-box; }
+    ::placeholder { color: #a3a6c2; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes modalIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;font-family:'Manrope',sans-serif;color:#14152e;background:#f5f6fa;">
+
+  <sc-if value="{{ showBackdrop }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeMobileNav }}" style="position:fixed;inset:0;background:rgba(10,10,30,0.45);z-index:55;"></div>
+  </sc-if>
+
+  <div style="position:fixed;top:0;left:{{ sidebarLeft }};height:100vh;width:260px;background:#1c1a4a;z-index:60;transition:left 0.22s ease;overflow-y:auto;display:flex;flex-direction:column;">
+    <div style="padding:22px 20px;display:flex;align-items:center;gap:10px;">
+      <div style="width:34px;height:34px;border-radius:9px;background:#4f46e5;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;flex-shrink:0;">N</div>
+      <div style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.02em;">NexHR</div>
+    </div>
+    <div style="padding-left:20px;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#6f6da0;text-transform:uppercase;margin-bottom:6px;">Super Admin</div>
+    <div style="display:flex;flex-direction:column;gap:2px;padding:0 12px;flex:1;">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="5">
+        <div onClick="{{ item.onClick }}" style="padding:10px 12px;border-radius:9px;cursor:pointer;font-size:14px;background:{{ item.bg }};color:{{ item.color }};font-weight:{{ item.weight }};transition:all 0.15s ease;">{{ item.label }}</div>
+      </sc-for>
+    </div>
+    <div style="padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);">
+      <div onClick="{{ logout }}" style="font-size:13.5px;color:#b7b6d9;font-weight:600;cursor:pointer;">Log out</div>
+    </div>
+  </div>
+
+  <div style="margin-left:{{ contentMarginLeft }};min-height:100vh;display:flex;flex-direction:column;transition:margin-left 0.22s ease;">
+    <div style="height:64px;flex-shrink:0;background:#fff;border-bottom:1px solid #e7e9f2;display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:40;">
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toggleMobileNav }}" style="border:1px solid #e7e9f2;background:#fff;border-radius:8px;width:36px;height:36px;cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;flex-shrink:0;">
+          <div style="width:16px;height:2px;background:#3f4159;border-radius:1px;"></div>
+          <div style="width:16px;height:2px;background:#3f4159;border-radius:1px;"></div>
+          <div style="width:16px;height:2px;background:#3f4159;border-radius:1px;"></div>
+        </button>
+      </sc-if>
+      <div style="font-size:16px;font-weight:700;flex-shrink:0;">{{ currentScreenLabel }}</div>
+      <input placeholder="Search..." value="{{ globalSearch }}" onChange="{{ onGlobalSearchChange }}" style="flex:1;max-width:340px;padding:9px 14px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#f8f9fc;" />
+      <div style="flex:1;"></div>
+      <div style="position:relative;">
+        <button onClick="{{ toggleNotif }}" style="width:38px;height:38px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;cursor:pointer;position:relative;color:#3f4159;font-weight:700;font-size:13px;">
+          🔔
+          <div style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#dc2626;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:800;">3</div>
+        </button>
+        <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:46px;right:0;width:300px;background:#fff;border:1px solid #e7e9f2;border-radius:12px;box-shadow:0 12px 32px rgba(20,21,46,0.14);padding:8px;z-index:70;animation:modalIn 0.15s ease;">
+            <div style="font-size:12.5px;font-weight:700;color:#6b6e88;padding:8px 10px;">Notifications</div>
+            <sc-for list="{{ notifItems }}" as="n" hint-placeholder-count="3">
+              <div style="padding:9px 10px;border-radius:8px;font-size:13px;">
+                <div style="color:#14152e;font-weight:600;margin-bottom:2px;">{{ n.text }}</div>
+                <div style="color:#9296b3;font-size:11.5px;">{{ n.time }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="position:relative;">
+        <div onClick="{{ toggleProfile }}" style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:5px 8px;border-radius:9px;">
+          <div style="width:32px;height:32px;border-radius:9px;background:#4f46e5;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;">N</div>
+          <sc-if value="{{ !isMobile }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#14152e;">Sarmad</div>
+              <div style="font-size:11px;color:#9296b3;">Super Admin</div>
+            </div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ profileOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:52px;right:0;width:200px;background:#fff;border:1px solid #e7e9f2;border-radius:12px;box-shadow:0 12px 32px rgba(20,21,46,0.14);padding:6px;z-index:70;animation:modalIn 0.15s ease;">
+            <div onClick="{{ goToProfile }}" style="padding:9px 12px;font-size:13px;color:#3f4159;font-weight:600;cursor:pointer;border-radius:8px;">My Profile</div>
+            <div onClick="{{ goToAccountSettings }}" style="padding:9px 12px;font-size:13px;color:#3f4159;font-weight:600;cursor:pointer;border-radius:8px;">Account Settings</div>
+            <div style="height:1px;background:#e7e9f2;margin:4px 0;"></div>
+            <div onClick="{{ logout }}" style="padding:9px 12px;font-size:13px;color:#dc2626;font-weight:600;cursor:pointer;border-radius:8px;">Log out</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="flex:1;padding:28px;max-width:1400px;width:100%;">
+
+      <sc-if value="{{ !dataReady }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;justify-content:center;padding:120px 0;color:#9296b3;font-size:14px;">Loading platform data…</div>
+      </sc-if>
+
+      <sc-if value="{{ dataReady }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ screenIs.saOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Platform Overview</div>
+            <div style="font-size:14px;color:#6b6e88;">All organizations at a glance</div>
+          </div>
+          <div style="display:flex;background:#f0f1f6;border-radius:10px;padding:4px;gap:4px;">
+            <button onClick="{{ setClassicLayout }}" style="padding:9px 16px;border-radius:8px;border:none;font-family:inherit;font-size:13px;cursor:pointer;background:{{ classicTabBg }};color:{{ classicTabColor }};font-weight:700;">Classic</button>
+            <button onClick="{{ setAltLayout }}" style="padding:9px 16px;border-radius:8px;border:none;font-family:inherit;font-size:13px;cursor:pointer;background:{{ altTabBg }};color:{{ altTabColor }};font-weight:700;">Spotlight</button>
+          </div>
+        </div>
+
+        <sc-if value="{{ !isAltLayout }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px;">
+          <sc-for list="{{ saStats }}" as="st" hint-placeholder-count="4">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <div style="width:8px;height:8px;border-radius:2px;background:{{ st.dot }};"></div>
+                <div style="font-size:12.5px;color:#6b6e88;font-weight:600;">{{ st.label }}</div>
+              </div>
+              <div style="font-size:28px;font-weight:800;letter-spacing:-0.02em;">{{ st.value }}</div>
+              <div style="font-size:12px;color:{{ st.deltaColor }};margin-top:6px;font-weight:600;">{{ st.delta }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:20px;">
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+            <div style="font-size:14.5px;font-weight:700;margin-bottom:18px;">Recurring revenue — last 6 months</div>
+            <div style="display:flex;align-items:flex-end;gap:14px;height:140px;">
+              <sc-for list="{{ mrrBars }}" as="b" hint-placeholder-count="6">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;">
+                  <div style="width:100%;max-width:36px;background:#4f46e5;border-radius:6px 6px 0 0;height:{{ b.pct }};"></div>
+                  <div style="font-size:11.5px;color:#9296b3;font-weight:600;">{{ b.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+            <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">Subscription plans</div>
+            <sc-for list="{{ plansList }}" as="p" hint-placeholder-count="3">
+              <div style="margin-bottom:14px;">
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                  <div style="font-weight:700;">{{ p.name }}</div>
+                  <div style="color:#6b6e88;">{{ p.activeSubs }} orgs</div>
+                </div>
+                <div style="height:8px;background:#f0f1f6;border-radius:4px;overflow:hidden;">
+                  <div style="height:100%;width:{{ p.pct }};background:#4f46e5;border-radius:4px;"></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+          <div style="font-size:14.5px;font-weight:700;margin-bottom:14px;">Recent activity</div>
+          <sc-for list="{{ saActivityRows }}" as="a" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f1f6;">
+              <div style="width:8px;height:8px;border-radius:50%;background:{{ a.dot }};flex-shrink:0;"></div>
+              <div style="font-size:13.5px;color:#14152e;flex:1;">{{ a.text }}</div>
+              <div style="font-size:12px;color:#9296b3;">{{ a.time }}</div>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ isAltLayout }}" hint-placeholder-val="{{ false }}">
+          <div style="background:linear-gradient(120deg,#1c1a4a,#2c1f6b,#1c1a4a);background-size:200% 200%;animation:gradientShift 16s ease infinite;border-radius:20px;padding:28px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;margin-bottom:20px;">
+            <div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600;margin-bottom:8px;">Total recurring revenue</div>
+              <div style="font-size:38px;font-weight:800;letter-spacing:-0.02em;">{{ totalRevenueLabel }}</div>
+            </div>
+            <div style="width:1px;height:48px;background:rgba(255,255,255,0.15);"></div>
+            <div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600;margin-bottom:8px;">Employees managed</div>
+              <div style="font-size:38px;font-weight:800;letter-spacing:-0.02em;">{{ totalEmployeesLabel }}</div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:8px;height:64px;">
+              <sc-for list="{{ mrrBars }}" as="b" hint-placeholder-count="6">
+                <div style="width:14px;background:rgba(255,255,255,0.35);border-radius:4px 4px 0 0;height:{{ b.pct }};"></div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">Top organizations by revenue</div>
+              <sc-for list="{{ topOrgs }}" as="o" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #f0f1f6;">
+                  <div style="width:26px;height:26px;border-radius:8px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;">{{ o.rank }}</div>
+                  <div style="width:36px;height:36px;border-radius:9px;background:#f5f6fa;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">{{ o.initial }}</div>
+                  <div style="flex:1;">
+                    <div style="font-size:13.5px;font-weight:700;">{{ o.name }}</div>
+                    <div style="font-size:12px;color:#9296b3;">{{ o.employees }} employees</div>
+                  </div>
+                  <div style="font-size:14px;font-weight:800;color:#0f9d58;">{{ o.mrrLabel }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;display:flex;flex-direction:column;align-items:center;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:18px;align-self:flex-start;">Plan distribution</div>
+              <div style="width:140px;height:140px;border-radius:50%;background:conic-gradient({{ donutSegments }});margin-bottom:20px;"></div>
+              <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
+                <sc-for list="{{ donutLegend }}" as="d" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:10px;height:10px;border-radius:3px;background:{{ d.color }};flex-shrink:0;"></div>
+                    <div style="font-size:13px;color:#3f4159;flex:1;">{{ d.name }}</div>
+                    <div style="font-size:13px;font-weight:700;">{{ d.activeSubs }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.saOrgs }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;">
+          <div>
+            <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Organizations</div>
+            <div style="font-size:14px;color:#6b6e88;">{{ orgCountLabel }}</div>
+          </div>
+          <button onClick="{{ openAddOrg }}" style="padding:11px 18px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">+ Add Organization</button>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+          <input placeholder="Search organizations..." value="{{ orgSearch }}" onChange="{{ onOrgSearchChange }}" style="flex:1;min-width:220px;padding:10px 14px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" />
+          <sc-for list="{{ orgFilterChips }}" as="c" hint-placeholder-count="4">
+            <button onClick="{{ c.onClick }}" style="padding:10px 16px;border-radius:9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">{{ c.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;">
+          <sc-for list="{{ orgRows }}" as="o" hint-placeholder-count="6">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div style="display:flex;gap:12px;align-items:center;">
+                  <div style="width:42px;height:42px;border-radius:10px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;">{{ o.initial }}</div>
+                  <div>
+                    <div style="font-weight:800;font-size:15px;">{{ o.name }}</div>
+                    <div style="font-size:12px;color:#9296b3;">{{ o.industry }}</div>
+                  </div>
+                </div>
+                <span style="padding:4px 10px;border-radius:999px;background:{{ o.badgeBg }};color:{{ o.badgeColor }};font-size:11.5px;font-weight:700;flex-shrink:0;">{{ o.status }}</span>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#6b6e88;"><div>Plan</div><div style="color:#14152e;font-weight:700;">{{ o.plan }}</div></div>
+
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#6b6e88;margin-bottom:6px;"><div>Employees</div><div style="color:#14152e;font-weight:700;">{{ o.activeEmployees }} / {{ o.employees }}</div></div>
+                <div style="height:6px;background:#f0f1f6;border-radius:4px;overflow:hidden;"><div style="height:100%;width:{{ o.empPct }};background:#4f46e5;border-radius:4px;"></div></div>
+              </div>
+
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#6b6e88;margin-bottom:6px;"><div>Storage</div><div style="color:#14152e;font-weight:700;">{{ o.storageLabel }}</div></div>
+                <div style="height:6px;background:#f0f1f6;border-radius:4px;overflow:hidden;"><div style="height:100%;width:{{ o.storagePct }};background:#818cf8;border-radius:4px;"></div></div>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#6b6e88;"><div>Admin</div><div style="color:#14152e;font-weight:600;">{{ o.email }}</div></div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#6b6e88;"><div>Biometric Devices</div><div style="color:#14152e;font-weight:700;">{{ o.deviceCount }}</div></div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#6b6e88;"><div>Expires</div><div style="color:#14152e;font-weight:600;">{{ o.expiry }}</div></div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#6b6e88;"><div>Last activity</div><div style="color:#14152e;font-weight:600;">{{ o.lastActivity }}</div></div>
+
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;padding-top:14px;border-top:1px solid #f0f1f6;">
+                <button onClick="{{ o.onView }}" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">View</button>
+                <button onClick="{{ o.onEdit }}" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">Edit</button>
+                <button onClick="{{ o.onManage }}" style="flex:1;padding:9px 0;border-radius:8px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">Manage</button>
+                <button onClick="{{ o.onDeactivate }}" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid #fbdada;background:#fff;color:#dc2626;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">{{ o.deactivateLabel }}</button>
+                <button onClick="{{ o.onDelete }}" style="flex:1;padding:9px 0;border-radius:8px;border:none;background:#dc2626;color:#fff;font-weight:700;font-size:12.5px;font-family:inherit;cursor:pointer;">Delete</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.saOrgDetail }}" hint-placeholder-val="{{ false }}">
+        <a href="#" onClick="{{ backToOrgs }}" style="color:#4f46e5;font-size:13.5px;font-weight:700;text-decoration:none;display:inline-block;margin-bottom:16px;">&larr; Back to organizations</a>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:24px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
+          <div style="display:flex;gap:16px;align-items:center;">
+            <div style="width:56px;height:56px;border-radius:14px;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;">{{ selectedOrg.initial }}</div>
+            <div>
+              <div style="font-size:20px;font-weight:800;">{{ selectedOrg.name }}</div>
+              <div style="font-size:13.5px;color:#6b6e88;margin-top:2px;">{{ selectedOrg.industry }} &middot; {{ selectedOrg.email }}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="padding:6px 14px;border-radius:999px;background:{{ selectedOrg.badgeBg }};color:{{ selectedOrg.badgeColor }};font-size:13px;font-weight:700;">{{ selectedOrg.status }}</span>
+            <button onClick="{{ selectedOrg.onEdit }}" style="padding:9px 16px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Edit</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px;">
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Employees</div><div style="font-size:22px;font-weight:800;">{{ selectedOrg.employees }}</div></div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Plan</div><div style="font-size:22px;font-weight:800;">{{ selectedOrg.plan }}</div></div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">MRR</div><div style="font-size:22px;font-weight:800;">{{ selectedOrg.mrrLabel }}</div></div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Joined</div><div style="font-size:22px;font-weight:800;">{{ selectedOrg.joined }}</div></div>
+        </div>
+
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+            <div>
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:4px;">Admin Management</div>
+              <div style="font-size:12.5px;color:#9296b3;">Manage this organization's admins and their module permissions</div>
+            </div>
+            <button onClick="{{ openAddOrgAdmin }}" style="padding:10px 16px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">+ Add Admin</button>
+          </div>
+          <div style="border:1px solid #f0f1f6;border-radius:12px;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:1.6fr 1.3fr 1fr 1fr 1.4fr;padding:11px 16px;font-size:11px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+              <div>Admin</div><div>Role</div><div>Status</div><div>Last Active</div><div>Actions</div>
+            </div>
+            <sc-for list="{{ orgAdminRows }}" as="a" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:1.6fr 1.3fr 1fr 1fr 1.4fr;padding:13px 16px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:30px;height:30px;border-radius:50%;background:#eef1fd;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11.5px;flex-shrink:0;">{{ a.initials }}</div>
+                  <div>
+                    <div style="font-weight:700;">{{ a.name }}</div>
+                    <div style="font-size:11.5px;color:#9296b3;">{{ a.email }}</div>
+                  </div>
+                </div>
+                <div style="color:#3f4159;">{{ a.role }}</div>
+                <div><span style="padding:3px 9px;border-radius:999px;background:{{ a.badgeBg }};color:{{ a.badgeColor }};font-size:11.5px;font-weight:700;">{{ a.status }}</span></div>
+                <div style="color:#9296b3;font-size:12px;">{{ a.lastActive }}</div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <a href="#" onClick="{{ a.onEdit }}" style="color:#4f46e5;font-weight:700;font-size:12px;text-decoration:none;">Edit</a>
+                  <a href="#" onClick="{{ a.onResetPassword }}" style="color:#3f4159;font-weight:700;font-size:12px;text-decoration:none;">Reset password</a>
+                  <a href="#" onClick="{{ a.onToggleStatus }}" style="color:{{ a.toggleColor }};font-weight:700;font-size:12px;text-decoration:none;">{{ a.toggleLabel }}</a>
+                  <a href="#" onClick="{{ a.onRemove }}" style="color:#dc2626;font-weight:700;font-size:12px;text-decoration:none;">Remove</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:1px solid #fbdada;border-radius:16px;padding:22px;">
+          <div style="font-size:14.5px;font-weight:700;margin-bottom:4px;color:#dc2626;">Danger zone</div>
+          <div style="font-size:13px;color:#6b6e88;margin-bottom:14px;">Suspending or deleting an organization revokes access for all of its employees.</div>
+          <div style="display:flex;gap:10px;">
+            <button onClick="{{ suspendSelectedOrg }}" style="padding:10px 16px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Suspend organization</button>
+            <button onClick="{{ deleteSelectedOrg }}" style="padding:10px 16px;border-radius:9px;border:none;background:#dc2626;color:#fff;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;">Delete organization</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.saBiometric }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;">
+          <div>
+            <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Biometric Devices</div>
+            <div style="font-size:14px;color:#6b6e88;">{{ deviceCountLabel }}</div>
+          </div>
+          <button onClick="{{ openAddDevice }}" style="padding:11px 18px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">+ Add Device</button>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <div>
+            <div style="font-size:13.5px;font-weight:700;">Biometric integration</div>
+            <div style="font-size:12px;color:#9296b3;">Master switch — allow organizations to connect biometric attendance devices</div>
+          </div>
+          <div onClick="{{ toggleBiometricMaster }}" style="width:40px;height:22px;border-radius:999px;background:{{ biometricTrackBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background 0.15s ease;">
+            <div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:3px;left:{{ biometricKnobLeft }};transition:left 0.15s ease;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:1.6fr 1.2fr 1fr 1fr 1.2fr 1fr 1fr 1fr;padding:12px 20px;font-size:11px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+            <div>Device</div><div>Organization</div><div>Type</div><div>Model</div><div>IP : Port</div><div>Location</div><div>Status</div><div>Last Sync</div>
+          </div>
+          <sc-for list="{{ deviceRows }}" as="d" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:1.6fr 1.2fr 1fr 1fr 1.2fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13px;">
+              <div>
+                <div style="font-weight:700;">{{ d.name }}</div>
+                <div style="font-size:11.5px;color:#9296b3;">{{ d.serial }}</div>
+              </div>
+              <div style="color:#3f4159;">{{ d.org }}</div>
+              <div style="color:#3f4159;">{{ d.type }}</div>
+              <div style="color:#3f4159;">{{ d.model }}</div>
+              <div style="color:#6b6e88;font-size:12px;">{{ d.ip }}:{{ d.port }}</div>
+              <div style="color:#6b6e88;">{{ d.location }}</div>
+              <div><span style="padding:4px 10px;border-radius:999px;background:{{ d.badgeBg }};color:{{ d.badgeColor }};font-size:11.5px;font-weight:700;">{{ d.status }}</span></div>
+              <div style="color:#9296b3;font-size:12px;">{{ d.lastSync }}</div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:16px;padding:0 20px 14px;border-bottom:1px solid #f0f1f6;">
+              <a href="#" onClick="{{ d.onToggleEnabled }}" style="color:{{ d.enabledColor }};font-weight:700;font-size:12.5px;text-decoration:none;">{{ d.enabledLabel }}</a>
+              <a href="#" onClick="{{ d.onDisconnect }}" style="color:#dc2626;font-weight:700;font-size:12.5px;text-decoration:none;">Disconnect</a>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.saAudit }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Audit Logs</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">{{ auditCountLabel }} · who did what, where, and when</div>
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+          <input placeholder="Search actor, action, or organization..." value="{{ auditSearch }}" onChange="{{ onAuditSearchChange }}" style="flex:1;min-width:260px;padding:10px 14px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" />
+          <sc-for list="{{ auditRoleChips }}" as="c" hint-placeholder-count="3">
+            <button onClick="{{ c.onClick }}" style="padding:10px 16px;border-radius:9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">{{ c.label }}</button>
+          </sc-for>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:1.3fr 2fr 1.3fr 1.3fr 1fr;padding:12px 20px;font-size:11px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+            <div>Actor</div><div>Action</div><div>Organization</div><div>Date &amp; Time</div><div>IP Address</div>
+          </div>
+          <sc-for list="{{ auditRows }}" as="a" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:1.3fr 2fr 1.3fr 1.3fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:7px;height:7px;border-radius:50%;background:{{ a.roleDot }};flex-shrink:0;"></div>
+                <div>
+                  <div style="font-weight:700;">{{ a.actor }}</div>
+                  <div style="font-size:11px;color:#9296b3;">{{ a.role }}</div>
+                </div>
+              </div>
+              <div style="color:#14152e;">{{ a.action }}</div>
+              <div style="color:#3f4159;">{{ a.org }}</div>
+              <div style="color:#6b6e88;font-size:12.5px;">{{ a.time }}</div>
+              <div style="color:#9296b3;font-size:12.5px;font-family:monospace;">{{ a.ip }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.saSupport }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Support</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">Tickets raised by organization admins across the platform</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:20px;">
+          <sc-for list="{{ ticketStats }}" as="st" hint-placeholder-count="4">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                <div style="width:8px;height:8px;border-radius:2px;background:{{ st.dot }};"></div>
+                <div style="font-size:12px;color:#6b6e88;font-weight:600;">{{ st.label }}</div>
+              </div>
+              <div style="font-size:24px;font-weight:800;">{{ st.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+          <sc-for list="{{ ticketStatusChips }}" as="c" hint-placeholder-count="4">
+            <button onClick="{{ c.onClick }}" style="padding:10px 16px;border-radius:9px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">{{ c.label }}</button>
+          </sc-for>
+        </div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:2fr 1.2fr 0.9fr 1fr 1.2fr 1fr;padding:12px 20px;font-size:11px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+            <div>Subject</div><div>Organization</div><div>Priority</div><div>Status</div><div>Created</div><div>Actions</div>
+          </div>
+          <sc-for list="{{ ticketRows }}" as="t" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:2fr 1.2fr 0.9fr 1fr 1.2fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13px;">
+              <div>
+                <div style="font-weight:700;">{{ t.subject }}</div>
+                <div style="font-size:11.5px;color:#9296b3;">by {{ t.createdBy }}</div>
+              </div>
+              <div style="color:#3f4159;">{{ t.org }}</div>
+              <div><span style="padding:4px 10px;border-radius:999px;background:{{ t.priorityBg }};color:{{ t.priorityColor }};font-size:11.5px;font-weight:700;">{{ t.priority }}</span></div>
+              <div><span style="padding:4px 10px;border-radius:999px;background:{{ t.statusBg }};color:{{ t.statusColor }};font-size:11.5px;font-weight:700;">{{ t.status }}</span></div>
+              <div style="color:#9296b3;font-size:12px;">{{ t.created }}</div>
+              <sc-if value="{{ t.isOpenOrPending }}" hint-placeholder-val="{{ true }}">
+                <a href="#" onClick="{{ t.onResolve }}" style="color:#0f9d58;font-weight:700;font-size:12.5px;text-decoration:none;">Mark resolved</a>
+              </sc-if>
+              <sc-if value="{{ !t.isOpenOrPending }}" hint-placeholder-val="{{ false }}">
+                <a href="#" onClick="{{ t.onReopen }}" style="color:#4f46e5;font-weight:700;font-size:12.5px;text-decoration:none;">Reopen</a>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.saAnnouncements }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Announcements</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">Broadcast a message to organizations across the platform</div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;margin-bottom:24px;">
+          <div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:8px;">Send to</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+            <sc-for list="{{ announceTargetOptions }}" as="o" hint-placeholder-count="3">
+              <button onClick="{{ o.onClick }}" style="padding:9px 16px;border-radius:9px;border:1px solid {{ o.border }};background:{{ o.bg }};color:{{ o.color }};font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ isSelectedOrgsTarget }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;padding:14px;background:#f8f9fc;border-radius:10px;">
+              <sc-for list="{{ announceOrgChecklist }}" as="c" hint-placeholder-count="6">
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#3f4159;cursor:pointer;">
+                  <input type="checkbox" checked="{{ c.checked }}" onChange="{{ c.onToggle }}" style="width:15px;height:15px;accent-color:#4f46e5;" />
+                  {{ c.name }}
+                </label>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:8px;">Message</div>
+          <textarea value="{{ announceMessage }}" onChange="{{ onAnnounceMessageChange }}" placeholder="System maintenance scheduled for Sunday at 2:00 AM." style="width:100%;padding:12px 14px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;min-height:90px;resize:vertical;margin-bottom:16px;"></textarea>
+          <button onClick="{{ sendAnnouncement }}" style="padding:11px 20px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Send announcement</button>
+        </div>
+        <div style="font-size:14.5px;font-weight:700;margin-bottom:12px;">Sent announcements</div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <sc-for list="{{ announcementRows }}" as="a" hint-placeholder-count="3">
+            <div style="padding:16px 20px;border-bottom:1px solid #f0f1f6;">
+              <div style="font-size:13.5px;font-weight:700;margin-bottom:4px;">{{ a.message }}</div>
+              <div style="font-size:12px;color:#9296b3;">To {{ a.target }} &middot; by {{ a.sentBy }} &middot; {{ a.time }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.saHealth }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">System Health</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">{{ overallServerStatus }}</div>
+
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;margin-bottom:20px;">
+          <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">Service status</div>
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <sc-for list="{{ serviceRows }}" as="sv" hint-placeholder-count="5">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f0f1f6;">
+                <div style="font-size:13.5px;color:#14152e;font-weight:600;">{{ sv.name }}</div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:{{ sv.dot }};"></div>
+                  <div style="font-size:13px;font-weight:700;color:{{ sv.dot }};">{{ sv.status }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px;">
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Online devices</div><div style="font-size:22px;font-weight:800;color:#0f9d58;">{{ onlineDeviceCount }}</div></div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Offline devices</div><div style="font-size:22px;font-weight:800;color:#dc2626;">{{ offlineDeviceCount }}</div></div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Failed syncs (24h)</div><div style="font-size:22px;font-weight:800;color:#b45309;">{{ offlineDeviceCount }}</div></div>
+          <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:18px;"><div style="font-size:12px;color:#6b6e88;font-weight:600;margin-bottom:8px;">Server uptime</div><div style="font-size:22px;font-weight:800;">99.97%</div></div>
+        </div>
+
+        <div style="font-size:14.5px;font-weight:700;margin-bottom:12px;">Recent system errors</div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <sc-for list="{{ errorRows }}" as="e" hint-placeholder-count="4">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid #f0f1f6;">
+              <div style="font-size:13.5px;color:#14152e;flex:1;">{{ e.message }}</div>
+              <span style="padding:4px 10px;border-radius:999px;background:{{ e.badgeBg }};color:{{ e.badgeColor }};font-size:11.5px;font-weight:700;flex-shrink:0;">{{ e.severity }}</span>
+              <div style="font-size:12px;color:#9296b3;flex-shrink:0;width:80px;text-align:right;">{{ e.time }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.saPlans }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;">
+          <div>
+            <div style="font-size:22px;font-weight:800;margin-bottom:2px;">Subscriptions &amp; Plans</div>
+            <div style="font-size:14px;color:#6b6e88;">Manage pricing tiers and monitor subscription health</div>
+          </div>
+          <button onClick="{{ openCreatePlan }}" style="padding:11px 18px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">+ Create Plan</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:24px;">
+          <sc-for list="{{ planCards }}" as="p" hint-placeholder-count="3">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+                <div style="font-size:16px;font-weight:800;">{{ p.name }}</div>
+                <div style="font-size:12px;color:#9296b3;font-weight:700;">{{ p.activeSubs }} orgs</div>
+              </div>
+              <div style="font-size:22px;font-weight:800;color:#4f46e5;margin-bottom:2px;">{{ p.price }}</div>
+              <div style="font-size:12.5px;color:#9296b3;margin-bottom:16px;">{{ p.seats }}</div>
+              <sc-for list="{{ p.featureRows }}" as="f" hint-placeholder-count="3">
+                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                  <div style="width:6px;height:6px;border-radius:2px;background:#818cf8;flex-shrink:0;"></div>
+                  <div style="font-size:12.5px;color:#3f4159;">{{ f.text }}</div>
+                </div>
+              </sc-for>
+              <div style="display:flex;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid #f0f1f6;">
+                <a href="#" onClick="{{ p.onEdit }}" style="color:#4f46e5;font-weight:700;font-size:12.5px;text-decoration:none;">Edit</a>
+                <a href="#" onClick="{{ p.onDelete }}" style="color:#dc2626;font-weight:700;font-size:12.5px;text-decoration:none;">Delete</a>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:14.5px;font-weight:700;margin-bottom:12px;">Active subscriptions</div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;margin-bottom:24px;">
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+            <div>Organization</div><div>Plan</div><div>MRR</div><div>Renews</div>
+          </div>
+          <sc-for list="{{ activeSubRows }}" as="a" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+              <div style="font-weight:700;">{{ a.name }}</div>
+              <div style="color:#3f4159;">{{ a.plan }}</div>
+              <div style="color:#0f9d58;font-weight:700;">{{ a.mrrLabel }}</div>
+              <div style="color:#9296b3;">{{ a.joined }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:14.5px;font-weight:700;margin-bottom:12px;">Expired subscriptions</div>
+        <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;padding:12px 20px;font-size:11.5px;font-weight:700;color:#9296b3;text-transform:uppercase;letter-spacing:0.04em;border-bottom:1px solid #f0f1f6;">
+            <div>Organization</div><div>Plan</div><div>Expired</div><div>Reason</div>
+          </div>
+          <sc-for list="{{ expiredSubRows }}" as="x" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;padding:14px 20px;align-items:center;border-bottom:1px solid #f0f1f6;font-size:13.5px;">
+              <div style="font-weight:700;">{{ x.org }}</div>
+              <div style="color:#3f4159;">{{ x.plan }}</div>
+              <div style="color:#9296b3;">{{ x.expired }}</div>
+              <div style="color:#dc2626;">{{ x.reason }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ screenIs.saSettings }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:22px;font-weight:800;margin-bottom:2px;">System Settings</div>
+        <div style="font-size:14px;color:#6b6e88;margin-bottom:22px;">Platform-wide configuration for every organization</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
+          <sc-for list="{{ settingsGroups }}" as="g" hint-placeholder-count="4">
+            <div style="background:#fff;border:1px solid #e7e9f2;border-radius:16px;padding:22px;">
+              <div style="font-size:14.5px;font-weight:700;margin-bottom:16px;">{{ g.title }}</div>
+              <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f0f1f6;">
+                  <div>
+                    <div style="font-size:13.5px;font-weight:600;color:#14152e;">{{ it.label }}</div>
+                    <div style="font-size:12px;color:#9296b3;">{{ it.desc }}</div>
+                  </div>
+                  <div onClick="{{ it.onToggle }}" style="width:40px;height:22px;border-radius:999px;background:{{ it.trackBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background 0.15s ease;">
+                    <div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:3px;left:{{ it.knobLeft }};transition:left 0.15s ease;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+        <button onClick="{{ saveSettings }}" style="margin-top:20px;padding:11px 20px;border-radius:10px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Save changes</button>
+      </sc-if>
+      </sc-if>
+
+    </div>
+  </div>
+
+  <sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(10,10,30,0.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.15s ease;">
+      <div style="background:#fff;border-radius:16px;padding:26px;width:100%;max-width:{{ modalMaxWidth }};animation:modalIn 0.18s ease;max-height:88vh;overflow-y:auto;position:relative;">
+        <button onClick="{{ closeModal }}" style="position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:8px;border:none;background:#f5f6fa;color:#6b6e88;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">&times;</button>
+
+        <sc-if value="{{ isConfirmModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:8px;">{{ confirmTitle }}</div>
+          <div style="font-size:13.5px;color:#6b6e88;margin-bottom:22px;line-height:1.5;">{{ confirmMessage }}</div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ confirmAction }}" style="padding:10px 18px;border-radius:9px;border:none;background:#dc2626;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">{{ confirmLabel }}</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAddOrgModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">{{ addOrgTitle }}</div>
+          <div style="display:flex;gap:16px;align-items:center;margin-bottom:18px;">
+            <div style="width:72px;height:72px;flex-shrink:0;">
+              <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="new-org-logo" shape="rounded" radius="14" placeholder="Logo" hint-size="72px,72px"></x-import>
+            </div>
+            <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Organization / Company name</div><input value="{{ formOrgName }}" onChange="{{ onFormOrgNameChange }}" placeholder="Acme Corp" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgNameBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgNameError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgNameError }}</div></sc-if></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;">
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Industry</div>
+              <select value="{{ formOrgIndustry }}" onChange="{{ onFormOrgIndustryChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <option value="Retail">Retail</option><option value="Logistics">Logistics</option><option value="Healthcare">Healthcare</option>
+                <option value="Manufacturing">Manufacturing</option><option value="Finance">Finance</option><option value="Technology">Technology</option>
+                <option value="Hospitality">Hospitality</option><option value="Professional Services">Professional Services</option>
+              </select>
+            </div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Plan</div>
+              <select value="{{ formOrgPlan }}" onChange="{{ onFormOrgPlanChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <sc-for list="{{ planOptions }}" as="p" hint-placeholder-count="3"><option value="{{ p.name }}">{{ p.name }}</option></sc-for>
+              </select>
+            </div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Admin user ID</div><input value="{{ formOrgUserId }}" onChange="{{ onFormOrgUserIdChange }}" placeholder="admin@acme.com" autocomplete="off" autocapitalize="none" spellcheck="false" data-lpignore="true" data-1p-ignore="true" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgUserIdBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgUserIdError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgUserIdError }}</div></sc-if></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Admin password</div><input type="password" value="{{ formOrgUserPass }}" onChange="{{ onFormOrgUserPassChange }}" placeholder="••••••••" autocomplete="new-password" data-lpignore="true" data-1p-ignore="true" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgUserPassBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgUserPassError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgUserPassError }}</div></sc-if></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Company email</div><input value="{{ formOrgEmail }}" onChange="{{ onFormOrgEmailChange }}" placeholder="admin@acme.com" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgEmailBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgEmailError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgEmailError }}</div></sc-if></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Phone number</div><input value="{{ formOrgPhone }}" onChange="{{ onFormOrgPhoneChange }}" placeholder="+1 415 555 0100" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div style="grid-column:1/3;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Website</div><input value="{{ formOrgWebsite }}" onChange="{{ onFormOrgWebsiteChange }}" placeholder="https://acme.com" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formOrgWebsiteBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formOrgWebsiteError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formOrgWebsiteError }}</div></sc-if></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Country</div><input value="{{ formOrgCountry }}" onChange="{{ onFormOrgCountryChange }}" placeholder="United States" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">City</div><input value="{{ formOrgCity }}" onChange="{{ onFormOrgCityChange }}" placeholder="San Francisco" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div style="grid-column:1/3;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Address</div><input value="{{ formOrgAddress }}" onChange="{{ onFormOrgAddressChange }}" placeholder="Street address" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Time zone</div>
+              <select value="{{ formOrgTimezone }}" onChange="{{ onFormOrgTimezoneChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <option value="GMT-8 Pacific">GMT-8 Pacific</option><option value="GMT-5 Eastern">GMT-5 Eastern</option><option value="GMT+0 London">GMT+0 London</option>
+                <option value="GMT+1 Central Europe">GMT+1 Central Europe</option><option value="GMT+5 Pakistan">GMT+5 Pakistan</option><option value="GMT+5:30 India">GMT+5:30 India</option><option value="GMT+8 Singapore">GMT+8 Singapore</option>
+              </select>
+            </div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Currency</div>
+              <select value="{{ formOrgCurrency }}" onChange="{{ onFormOrgCurrencyChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <option value="USD">USD ($)</option><option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option><option value="INR">INR (₹)</option><option value="AED">AED (د.إ)</option><option value="PKR">PKR (₨)</option>
+              </select>
+            </div>
+            <div style="grid-column:1/3;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Date format</div>
+              <select value="{{ formOrgDateFormat }}" onChange="{{ onFormOrgDateFormatChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <option value="MM/DD/YYYY">MM/DD/YYYY</option><option value="DD/MM/YYYY">DD/MM/YYYY</option><option value="YYYY-MM-DD">YYYY-MM-DD</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ submitAddOrg }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ submitOrgButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">{{ addOrgSubmitLabel }}</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCreatePlanModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">{{ planModalTitle }}</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Plan name</div><input value="{{ formPlanName }}" onChange="{{ onFormPlanNameChange }}" placeholder="Pro" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Price</div><input value="{{ formPlanPrice }}" onChange="{{ onFormPlanPriceChange }}" placeholder="$49/mo" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Seat limit</div><input value="{{ formPlanSeats }}" onChange="{{ onFormPlanSeatsChange }}" placeholder="Up to 200 employees" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            </div>
+            <div>
+              <div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:8px;">Custom modules</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;background:#f8f9fc;border-radius:10px;padding:12px;">
+                <sc-for list="{{ planModuleChoices }}" as="m" hint-placeholder-count="8">
+                  <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#3f4159;font-weight:600;cursor:pointer;">
+                    <input type="checkbox" checked="{{ m.checked }}" onChange="{{ m.onToggle }}" />
+                    {{ m.name }}
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ submitCreatePlan }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ submitPlanButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">{{ createPlanSubmitLabel }}</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isOrgAdminModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">{{ orgAdminModalTitle }}</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px;">
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Full name</div><input value="{{ formAdminName }}" onChange="{{ onFormAdminNameChange }}" placeholder="Ali Raza" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Email</div><input value="{{ formAdminEmail }}" onChange="{{ onFormAdminEmailChange }}" placeholder="ali@company.com" autocomplete="off" autocapitalize="none" spellcheck="false" data-lpignore="true" data-1p-ignore="true" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Role</div>
+              <select value="{{ formAdminRole }}" onChange="{{ onFormAdminRoleChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <sc-for list="{{ adminRoleOptions }}" as="r" hint-placeholder-count="5"><option value="{{ r }}">{{ r }}</option></sc-for>
+              </select>
+            </div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">{{ adminPasswordLabel }}</div><input type="password" value="{{ formAdminPassword }}" onChange="{{ onFormAdminPasswordChange }}" placeholder="Minimum 8 characters" autocomplete="new-password" data-lpignore="true" data-1p-ignore="true" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid {{ formAdminPasswordBorder }};font-size:13.5px;font-family:inherit;outline:none;" /><sc-if value="{{ formAdminPasswordError }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#dc2626;margin-top:5px;">{{ formAdminPasswordError }}</div></sc-if></div>
+          </div>
+          <div style="background:#f8f9fc;border-radius:10px;padding:14px;margin-bottom:22px;">
+            <div style="font-size:11.5px;font-weight:700;color:#6b6e88;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Permissions for this role</div>
+            <sc-for list="{{ adminRolePermissionList }}" as="p" hint-placeholder-count="4">
+              <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+                <div style="width:6px;height:6px;border-radius:2px;background:#818cf8;flex-shrink:0;"></div>
+                <div style="font-size:12.5px;color:#3f4159;">{{ p.text }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ submitOrgAdmin }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">{{ orgAdminSubmitLabel }}</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAddDeviceModal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:17px;font-weight:800;margin-bottom:18px;">Add Biometric Device</div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:22px;">
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Device name</div><input value="{{ formDeviceName }}" onChange="{{ onFormDeviceNameChange }}" placeholder="Main Office Device" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Organization</div>
+              <select value="{{ formDeviceOrg }}" onChange="{{ onFormDeviceOrgChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                <sc-for list="{{ orgOptions }}" as="o" hint-placeholder-count="5"><option value="{{ o.id }}">{{ o.name }}</option></sc-for>
+              </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Device type</div>
+                <select value="{{ formDeviceType }}" onChange="{{ onFormDeviceTypeChange }}" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;background:#fff;">
+                  <option value="Fingerprint">Fingerprint</option><option value="Face Recognition">Face Recognition</option><option value="Card Reader">Card Reader</option><option value="Iris Scanner">Iris Scanner</option>
+                </select>
+              </div>
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Device model</div><input value="{{ formDeviceModel }}" onChange="{{ onFormDeviceModelChange }}" placeholder="ZKTeco" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            </div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Device serial number</div><input value="{{ formDeviceSerial }}" onChange="{{ onFormDeviceSerialChange }}" placeholder="XXXXX" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;">
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Device IP address</div><input value="{{ formDeviceIp }}" onChange="{{ onFormDeviceIpChange }}" placeholder="192.168.1.100" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+              <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Port</div><input value="{{ formDevicePort }}" onChange="{{ onFormDevicePortChange }}" placeholder="4370" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+            </div>
+            <div><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Location</div><input value="{{ formDeviceLocation }}" onChange="{{ onFormDeviceLocationChange }}" placeholder="Head Office" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;" /></div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
+            <button onClick="{{ submitAddDevice }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Add device</button>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:24px;right:24px;background:#fff;border-radius:12px;box-shadow:0 12px 32px rgba(20,21,46,0.16);padding:14px 18px;display:flex;align-items:center;gap:10px;z-index:200;animation:toastIn 0.2s ease;border-left:4px solid {{ toastColor }};">
+    <div style="font-size:13.5px;font-weight:600;color:#14152e;">{{ toastMessage }}</div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+
+const STATUS_COLORS = {
+  Active: { bg: '#e7f8ee', color: '#0f9d58' }, Pending: { bg: '#fef3e0', color: '#b45309' }, Trial: { bg: '#eef1fd', color: '#4f46e5' }, Suspended: { bg: '#fdeaea', color: '#dc2626' },
+  Approved: { bg: '#e7f8ee', color: '#0f9d58' }, Rejected: { bg: '#fdeaea', color: '#dc2626' }, Inactive: { bg: '#f0f1f6', color: '#6b6e88' }
+};
+function badge(status) { return STATUS_COLORS[status] || { bg: '#f0f1f6', color: '#6b6e88' }; }
+function money(n) { return '$' + n.toLocaleString('en-US'); }
+
+class Component extends DCLogic {
+  state = {
+    screen: 'sa-overview', data: null,
+    viewportWidth: typeof window !== 'undefined' ? window.innerWidth : 1440,
+    mobileNavOpen: false, notifOpen: false, profileOpen: false, modal: null, confirmPayload: null, toast: null,
+    globalSearch: '', orgSearch: '', orgFilter: 'All', selectedOrgId: null,
+    saOverviewLayout: 'classic', userSearch: '', userRoleFilter: 'All',
+    formOrgName: '', formOrgEmail: '', formOrgPlan: 'Starter', formOrgIndustry: 'Technology',
+    formOrgUserId: '', formOrgUserPass: '', formOrgPhone: '', formOrgWebsite: '', formOrgCountry: '', formOrgCity: '', formOrgAddress: '',
+    formOrgTimezone: 'GMT-8 Pacific', formOrgCurrency: 'USD', formOrgDateFormat: 'MM/DD/YYYY', editingOrgId: null, formOrgErrors: {},
+    formPlanName: '', formPlanPrice: '', formPlanSeats: '', formPlanModules: [], editingPlanId: null,
+    editingOrgAdminId: null, formAdminName: '', formAdminEmail: '', formAdminRole: 'HR Admin', formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'edit',
+    biometricEnabled: true, auditSearch: '', auditRoleFilter: 'All', ticketStatusFilter: 'All',
+    announceTarget: 'All', announceSelectedOrgs: [], announceMessage: '',
+    isSubmittingOrg: false, isSubmittingPlan: false,
+    formDeviceName: '', formDeviceOrg: '', formDeviceType: 'Fingerprint', formDeviceModel: '', formDeviceSerial: '', formDeviceIp: '', formDevicePort: '4370', formDeviceLocation: '',
+    settings: { maintenanceMode: false, emailNotifications: true, smsNotifications: false, twoFactorRequired: true, autoDeactivateInactive: true, weeklyDigest: true, publicSignup: false }
+  };
+
+  async componentDidMount() {
+    try {
+      const [mod, api] = await Promise.all([import('./data.js'), import('./api-client.js')]);
+      this.api = api;
+      this.setState({ data: { ...mod } });
+      try {
+        const dashboard = await this.api.api('/platform/dashboard');
+        const orgs = dashboard.organizations.map(o => this.mapApiOrg(o));
+        const plans = dashboard.packages.map(p => this.mapApiPackage(p));
+        const biometricDevices = (dashboard.biometricDevices || []).map(d => this.mapApiDevice(d));
+        const platformUsers = (dashboard.users || []).map(u => this.mapApiUser(u));
+        const orgAdmins = (dashboard.users || []).filter(u => u.role === 'ORG_ADMIN' && u.organizationId).map(u => this.mapApiOrgAdmin(u));
+        this.setState(st => ({ data: { ...st.data, orgs, plans, biometricDevices, platformUsers, orgAdmins }, formOrgPlan: plans[0] ? plans[0].name : st.formOrgPlan }));
+      } catch (err) {
+        console.warn('Using local demo data because API dashboard failed:', err);
+      }
+    } catch (err) {
+      console.error('Canvas: failed to load data.js', err);
+    }
+    this._onResize = () => this.setState({ viewportWidth: window.innerWidth });
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { if (this._onResize) window.removeEventListener('resize', this._onResize); if (this._toastTimer) clearTimeout(this._toastTimer); }
+
+  showToast(message, color) {
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this.setState({ toast: { message, color: color || '#4f46e5' } });
+    this._toastTimer = setTimeout(() => this.setState({ toast: null }), 2600);
+  }
+  mapApiOrg(o) {
+    const employeeCount = o._count && typeof o._count.employees === 'number' ? o._count.employees : 0;
+    return {
+      id: o.id,
+      name: o.name,
+      industry: o.industry || 'General',
+      plan: o.package ? o.package.name : 'Starter',
+      status: o.status === 'ACTIVE' ? 'Active' : o.status === 'SUSPENDED' ? 'Suspended' : 'Pending',
+      employees: employeeCount,
+      activeEmployees: employeeCount,
+      joined: o.createdAt ? new Date(o.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
+      email: o.email || '',
+      mrr: o.package && o.package.priceCents ? o.package.priceCents / 100 : 0,
+      expiry: 'Active',
+      storageUsedGb: 0,
+      storageLimitGb: o.package ? o.package.storageLimitGb : 5,
+      lastActivity: 'Just now'
+    };
+  }
+  mapApiPackage(p) {
+    return {
+      id: p.id,
+      name: p.name,
+      price: p.priceCents ? '$' + (p.priceCents / 100).toLocaleString() + '/mo' : 'Custom',
+      seats: p.seatLimit ? 'Up to ' + p.seatLimit + ' employees' : 'Unlimited',
+      activeSubs: p._count && typeof p._count.organizations === 'number' ? p._count.organizations : 0,
+      features: p.features && p.features.length ? p.features : ['Core HR', 'Attendance']
+    };
+  }
+  mapApiDevice(d) {
+    return {
+      id: d.id,
+      organizationId: d.organizationId,
+      name: d.name,
+      org: d.organization ? d.organization.name : '',
+      type: d.type,
+      model: d.model || '',
+      serial: d.serial,
+      ip: d.ip || '',
+      port: d.port || 4370,
+      location: d.location || '',
+      status: d.status === 'ONLINE' ? 'Online' : 'Offline',
+      lastSync: d.lastSyncAt ? new Date(d.lastSyncAt).toLocaleString() : 'Never',
+      enabled: d.enabled
+    };
+  }
+  mapApiUser(u) {
+    const role = u.role === 'SUPER_ADMIN' ? 'Super Admin' : u.role === 'ORG_ADMIN' ? 'Org Admin' : 'Employee';
+    const status = u.status === 'ACTIVE' ? 'Active' : u.status === 'SUSPENDED' ? 'Suspended' : 'Inactive';
+    return { id: u.id, name: u.name, initials: this.initials(u.name), org: u.organization ? u.organization.name : 'NexHR Platform', role, status, lastActive: u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : 'Never', email: u.email };
+  }
+  mapApiOrgAdmin(u) {
+    const roleLabel = u.permissions && u.permissions[0] && u.permissions[0] !== '*' ? u.permissions[0] : 'Organization Admin';
+    return { id: u.id, orgId: u.organizationId, name: u.name, initials: this.initials(u.name), email: u.email, role: roleLabel, status: u.status === 'ACTIVE' ? 'Active' : 'Inactive', lastActive: u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : 'Never' };
+  }
+  initials(name) {
+    return String(name || 'NA').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'NA';
+  }
+  setScreen(key) { this.setState({ screen: key, mobileNavOpen: false, notifOpen: false, profileOpen: false }); }
+  toggleMobileNav() { this.setState(s => ({ mobileNavOpen: !s.mobileNavOpen })); }
+  closeMobileNav() { this.setState({ mobileNavOpen: false }); }
+  toggleNotif() { this.setState(s => ({ notifOpen: !s.notifOpen, profileOpen: false })); }
+  toggleProfile() { this.setState(s => ({ profileOpen: !s.profileOpen, notifOpen: false })); }
+  goToProfile() { this.setScreen('sa-overview'); }
+  goToAccountSettings() { this.setScreen('sa-settings'); }
+  logout() {
+    if (this.api && this.api.clearSession) this.api.clearSession();
+    else { localStorage.removeItem('nexhr_token'); localStorage.removeItem('nexhr_user'); }
+    window.location.href = 'NexHR.dc.html';
+  }
+  onGlobalSearchChange(e) { this.setState({ globalSearch: e.target.value }); }
+
+  openModal(type) { this.setState({ modal: type }); }
+  closeModal() { this.setState({ modal: null, confirmPayload: null, formOrgName: '', formOrgEmail: '', formOrgErrors: {}, formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'edit', editingPlanId: null, formPlanModules: [] }); }
+  askConfirm(title, message, label, onConfirm) { this.setState({ modal: 'confirm', confirmPayload: { title, message, label, onConfirm } }); }
+  confirmAction() { const p = this.state.confirmPayload; if (p && p.onConfirm) p.onConfirm(); this.closeModal(); }
+
+  setSaOverviewLayout(v) { this.setState({ saOverviewLayout: v }); }
+  onOrgSearchChange(e) { this.setState({ orgSearch: e.target.value }); }
+  setOrgFilter(f) { this.setState({ orgFilter: f }); }
+  openAddOrg() {
+    const defaultPlan = ((this.state.data && this.state.data.plans && this.state.data.plans[0]) || {}).name || 'Starter';
+    this.setState({ modal: 'addOrg', editingOrgId: null, formOrgName: '', formOrgEmail: '', formOrgPlan: defaultPlan, formOrgIndustry: 'Technology', formOrgErrors: {},
+      formOrgUserId: '', formOrgUserPass: '', formOrgPhone: '', formOrgWebsite: '', formOrgCountry: '', formOrgCity: '', formOrgAddress: '',
+      formOrgTimezone: 'GMT-8 Pacific', formOrgCurrency: 'USD', formOrgDateFormat: 'MM/DD/YYYY' });
+  }
+  openEditOrg(o) {
+    this.setState({ modal: 'addOrg', editingOrgId: o.id, formOrgName: o.name, formOrgEmail: o.email, formOrgPlan: o.plan, formOrgIndustry: o.industry, formOrgErrors: {},
+      formOrgUserId: o.userId || '', formOrgUserPass: '', formOrgPhone: o.phone || '', formOrgWebsite: o.website || '', formOrgCountry: o.country || '', formOrgCity: o.city || '', formOrgAddress: o.address || '',
+      formOrgTimezone: o.timezone || 'GMT-8 Pacific', formOrgCurrency: o.currency || 'USD', formOrgDateFormat: o.dateFormat || 'MM/DD/YYYY' });
+  }
+  clearOrgFieldError(field) { this.setState(s => ({ formOrgErrors: { ...s.formOrgErrors, [field]: '' } })); }
+  onFormOrgNameChange(e) { this.clearOrgFieldError('name'); this.setState({ formOrgName: e.target.value }); }
+  onFormOrgEmailChange(e) { this.clearOrgFieldError('email'); this.setState({ formOrgEmail: e.target.value }); }
+  onFormOrgPlanChange(e) { this.setState({ formOrgPlan: e.target.value }); }
+  onFormOrgIndustryChange(e) { this.setState({ formOrgIndustry: e.target.value }); }
+  onFormOrgUserIdChange(e) { this.clearOrgFieldError('userId'); this.setState({ formOrgUserId: e.target.value }); }
+  onFormOrgUserPassChange(e) { this.clearOrgFieldError('password'); this.setState({ formOrgUserPass: e.target.value }); }
+  onFormOrgPhoneChange(e) { this.setState({ formOrgPhone: e.target.value }); }
+  onFormOrgWebsiteChange(e) { this.clearOrgFieldError('website'); this.setState({ formOrgWebsite: e.target.value }); }
+  onFormOrgCountryChange(e) { this.setState({ formOrgCountry: e.target.value }); }
+  onFormOrgCityChange(e) { this.setState({ formOrgCity: e.target.value }); }
+  onFormOrgAddressChange(e) { this.setState({ formOrgAddress: e.target.value }); }
+  onFormOrgTimezoneChange(e) { this.setState({ formOrgTimezone: e.target.value }); }
+  onFormOrgCurrencyChange(e) { this.setState({ formOrgCurrency: e.target.value }); }
+  onFormOrgDateFormatChange(e) { this.setState({ formOrgDateFormat: e.target.value }); }
+  validateOrgForm(fields, password) {
+    const errors = {};
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!fields.name || fields.name.length < 2) errors.name = 'Organization name must be at least 2 characters.';
+    if (!fields.userId || !emailPattern.test(fields.userId.trim())) errors.userId = 'Admin user ID must be a valid email address.';
+    if (!password || password.length < 8) errors.password = 'Admin password must be at least 8 characters.';
+    if (!fields.email || !emailPattern.test(fields.email.trim())) errors.email = 'Company email must be a valid email address.';
+    if (fields.website && !/^(https?:\/\/)?[^\s]+\.[^\s]+$/.test(fields.website.trim())) errors.website = 'Website must be a valid domain, like example.com.';
+    return errors;
+  }
+  async submitAddOrg() {
+    if (this.state.isSubmittingOrg) return;
+    const s = this.state;
+    const fields = { name: s.formOrgName.trim(), industry: s.formOrgIndustry, plan: s.formOrgPlan, email: s.formOrgEmail.trim(),
+      userId: s.formOrgUserId.trim(), phone: s.formOrgPhone, website: s.formOrgWebsite, country: s.formOrgCountry, city: s.formOrgCity, address: s.formOrgAddress,
+      timezone: s.formOrgTimezone, currency: s.formOrgCurrency, dateFormat: s.formOrgDateFormat };
+    if (s.editingOrgId) {
+      this.setState(st => ({ data: { ...st.data, orgs: st.data.orgs.map(o => o.id === s.editingOrgId ? { ...o, ...fields } : o) } }));
+      this.showToast('Organization updated', '#0f9d58');
+    } else {
+      const formOrgErrors = this.validateOrgForm(fields, s.formOrgUserPass);
+      if (Object.keys(formOrgErrors).length) {
+        this.setState({ formOrgErrors });
+        return;
+      }
+      this.setState({ isSubmittingOrg: true });
+      try {
+        const adminLoginEmail = (fields.userId || fields.email).trim();
+        const result = await this.api.api('/platform/organizations', { method: 'POST', body: JSON.stringify({ name: fields.name, adminEmail: adminLoginEmail, companyEmail: fields.email, adminName: `${fields.name} Admin`, adminPassword: s.formOrgUserPass || undefined, packageName: fields.plan, industry: fields.industry }) });
+        const createdOrg = result.organization || {};
+        const selectedPlan = (this.state.data.plans || []).find(p => p.name === fields.plan);
+        const newOrg = { id: createdOrg.id || 'org' + Date.now(), ...fields, status: createdOrg.status === 'PENDING' ? 'Pending' : 'Active', employees: 0, activeEmployees: 0, joined: createdOrg.createdAt ? new Date(createdOrg.createdAt).toLocaleDateString() : new Date().toLocaleDateString(), mrr: selectedPlan ? Number(String(selectedPlan.price).replace(/[^0-9.]/g, '')) || 0 : 0, expiry: 'Active', storageUsedGb: 0, storageLimitGb: createdOrg.package && createdOrg.package.storageLimitGb ? createdOrg.package.storageLimitGb : 5, lastActivity: 'Just now' };
+        this.setState(st => ({ data: { ...st.data, orgs: [newOrg, ...st.data.orgs], plans: st.data.plans.map(p => p.name === fields.plan ? { ...p, activeSubs: (p.activeSubs || 0) + 1 } : p) } }));
+        this.showToast('Organization and admin credentials created', '#0f9d58');
+      } catch (err) {
+        this.setState({ isSubmittingOrg: false });
+        const message = err.message || 'Organization could not be created';
+        if (/admin user id|adminemail|email.*already/i.test(message)) {
+          this.setState({ formOrgErrors: { userId: message } });
+          return;
+        }
+        if (/company email/i.test(message)) {
+          this.setState({ formOrgErrors: { email: message } });
+          return;
+        }
+        this.showToast(err.message || 'Organization could not be created', '#dc2626');
+        return;
+      }
+    }
+    this.setState({ isSubmittingOrg: false });
+    this.closeModal();
+  }
+  selectOrg(id) { this.setState({ selectedOrgId: id, screen: 'sa-org-detail' }); }
+  openAddOrgAdmin() { this.setState({ modal: 'orgAdmin', editingOrgAdminId: null, formAdminName: '', formAdminEmail: '', formAdminRole: 'HR Admin', formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'add' }); }
+  openEditOrgAdmin(a) { this.setState({ modal: 'orgAdmin', editingOrgAdminId: a.id, formAdminName: a.name, formAdminEmail: a.email, formAdminRole: a.role, formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'edit' }); }
+  openResetOrgAdminPassword(a) { this.setState({ modal: 'orgAdmin', editingOrgAdminId: a.id, formAdminName: a.name, formAdminEmail: a.email, formAdminRole: a.role, formAdminPassword: '', formAdminPasswordError: '', adminPasswordMode: 'reset' }); }
+  onFormAdminNameChange(e) { this.setState({ formAdminName: e.target.value }); }
+  onFormAdminEmailChange(e) { this.setState({ formAdminEmail: e.target.value }); }
+  onFormAdminRoleChange(e) { this.setState({ formAdminRole: e.target.value }); }
+  onFormAdminPasswordChange(e) { this.setState({ formAdminPassword: e.target.value, formAdminPasswordError: '' }); }
+  adminRowFromApi(admin) { return this.mapApiOrgAdmin(admin); }
+  async submitOrgAdmin() {
+    const s = this.state;
+    const orgId = s.selectedOrgId || (s.data.orgs[0] || {}).id;
+    if ((s.adminPasswordMode === 'add' || s.adminPasswordMode === 'reset') && (!s.formAdminPassword || s.formAdminPassword.length < 8)) {
+      this.setState({ formAdminPasswordError: 'Admin password must be at least 8 characters.' });
+      return;
+    }
+    if (s.editingOrgAdminId) {
+      try {
+        const path = s.adminPasswordMode === 'reset' ? `/platform/organization-admins/${s.editingOrgAdminId}/password` : `/platform/organization-admins/${s.editingOrgAdminId}`;
+        const body = s.adminPasswordMode === 'reset'
+          ? { password: s.formAdminPassword }
+          : { name: s.formAdminName, email: s.formAdminEmail, roleLabel: s.formAdminRole, password: s.formAdminPassword || undefined };
+        const saved = await this.api.api(path, { method: 'PATCH', body: JSON.stringify(body) });
+        const row = this.adminRowFromApi(saved);
+        this.setState(st => ({ data: { ...st.data, orgAdmins: st.data.orgAdmins.map(a => a.id === s.editingOrgAdminId ? row : a), platformUsers: st.data.platformUsers.map(u => u.id === s.editingOrgAdminId ? this.mapApiUser(saved) : u) } }));
+        this.showToast(s.adminPasswordMode === 'reset' ? 'Admin password reset' : 'Admin updated', '#0f9d58');
+      } catch (err) {
+        this.showToast(err.message || 'Admin could not be saved', '#dc2626');
+        return;
+      }
+    } else {
+      try {
+        const saved = await this.api.api('/platform/organization-admins', { method: 'POST', body: JSON.stringify({ organizationId: orgId, name: s.formAdminName || 'New Admin', email: s.formAdminEmail, password: s.formAdminPassword, roleLabel: s.formAdminRole }) });
+        const newAdmin = this.adminRowFromApi(saved);
+        this.setState(st => ({ data: { ...st.data, orgAdmins: [newAdmin, ...st.data.orgAdmins], platformUsers: [this.mapApiUser(saved), ...st.data.platformUsers] } }));
+        this.showToast('Admin added', '#0f9d58');
+      } catch (err) {
+        this.showToast(err.message || 'Admin could not be added', '#dc2626');
+        return;
+      }
+    }
+    this.closeModal();
+  }
+  resetAdminPassword(a) {
+    this.openResetOrgAdminPassword(a);
+  }
+  toggleOrgAdminStatus(a) {
+    this.askConfirm(a.status === 'Active' ? 'Deactivate admin' : 'Activate admin', `This will ${a.status === 'Active' ? 'revoke' : 'restore'} ${a.name}'s admin access.`, a.status === 'Active' ? 'Deactivate' : 'Activate', () => {
+      const nextStatus = a.status === 'Active' ? 'SUSPENDED' : 'ACTIVE';
+      this.api.api('/platform/organization-admins/' + encodeURIComponent(a.id) + '/status', { method: 'PATCH', body: JSON.stringify({ status: nextStatus }) }).then(saved => {
+        const row = this.adminRowFromApi(saved);
+        this.setState(s2 => ({ data: { ...s2.data, orgAdmins: s2.data.orgAdmins.map(x => x.id === a.id ? row : x), platformUsers: s2.data.platformUsers.map(u => u.id === a.id ? this.mapApiUser(saved) : u) } }));
+        this.showToast('Admin status updated', '#0f9d58');
+      }).catch(err => this.showToast(err.message || 'Admin status could not be updated', '#dc2626'));
+    });
+  }
+  removeOrgAdmin(a) {
+    this.askConfirm('Remove admin', `${a.name} will permanently lose access to this organization.`, 'Remove', () => {
+      this.api.api('/platform/organization-admins/' + encodeURIComponent(a.id), { method: 'DELETE' }).then(() => {
+        this.setState(s2 => ({ data: { ...s2.data, orgAdmins: s2.data.orgAdmins.filter(x => x.id !== a.id), platformUsers: s2.data.platformUsers.filter(u => u.id !== a.id) } }));
+        this.showToast('Admin removed', '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Admin could not be removed', '#dc2626'));
+    });
+  }
+  backToOrgs() { this.setState({ screen: 'sa-orgs' }); }
+  toggleOrgStatus(id) {
+    this.setState(s => ({ data: { ...s.data, orgs: s.data.orgs.map(o => o.id === id ? { ...o, status: o.status === 'Suspended' ? 'Active' : 'Suspended' } : o) } }));
+    this.showToast('Organization status updated', '#0f9d58');
+  }
+  suspendSelectedOrg() { this.askConfirm('Suspend organization', 'This organization will lose access immediately. You can reactivate it later.', 'Suspend', () => { this.toggleOrgStatus(this.state.selectedOrgId); }); }
+  deleteSelectedOrg() {
+    this.deleteOrgById(this.state.selectedOrgId);
+  }
+  deleteOrgById(id) {
+    const org = this.state.data.orgs.find(o => o.id === id);
+    const name = org ? org.name : 'this organization';
+    this.askConfirm('Delete organization', 'This permanently deletes the organization and all of its data. This cannot be undone.', 'Delete', () => {
+      this.api.api('/platform/organizations/' + encodeURIComponent(id), { method: 'DELETE' }).then(() => {
+        this.setState(s => ({ data: { ...s.data, orgs: s.data.orgs.filter(o => o.id !== id), orgAdmins: s.data.orgAdmins.filter(a => a.orgId !== id && a.organizationId !== id) }, screen: 'sa-orgs', selectedOrgId: s.selectedOrgId === id ? null : s.selectedOrgId }));
+        this.showToast(`${name} deleted`, '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Organization could not be deleted', '#dc2626'));
+    });
+  }
+  onUserSearchChange(e) { this.setState({ userSearch: e.target.value }); }
+  setUserRoleFilter(r) { this.setState({ userRoleFilter: r }); }
+  toggleUserStatus(u) {
+    this.askConfirm(u.status === 'Active' ? 'Suspend user' : 'Reactivate user', `This will ${u.status === 'Active' ? 'revoke' : 'restore'} platform access for ${u.name}.`, u.status === 'Active' ? 'Suspend' : 'Reactivate', () => {
+      this.setState(s => ({ data: { ...s.data, platformUsers: s.data.platformUsers.map(x => x.id === u.id ? { ...x, status: x.status === 'Active' ? 'Suspended' : 'Active' } : x) } }));
+      this.showToast('User status updated', '#0f9d58');
+    });
+  }
+  availablePlanModules() {
+    return ['Employees', 'Departments', 'Attendance', 'Attendance Policies', 'Shift & Roster', 'Leave', 'Exit Management', 'Payroll', 'Loans & Advances', 'HR Letters', 'Reports', 'Employee Portal', 'Organization Settings', 'Roles & Permissions', 'Biometric Devices'];
+  }
+  openCreatePlan() { this.setState({ modal: 'createPlan', editingPlanId: null, formPlanName: '', formPlanPrice: '', formPlanSeats: '', formPlanModules: ['Employees', 'Attendance'] }); }
+  openEditPlan(p) { this.setState({ modal: 'createPlan', editingPlanId: p.id, formPlanName: p.name, formPlanPrice: p.price, formPlanSeats: p.seats, formPlanModules: [...(p.features || [])] }); }
+  onFormPlanNameChange(e) { this.setState({ formPlanName: e.target.value }); }
+  onFormPlanPriceChange(e) { this.setState({ formPlanPrice: e.target.value }); }
+  onFormPlanSeatsChange(e) { this.setState({ formPlanSeats: e.target.value }); }
+  togglePlanModule(m) {
+    this.setState(s => ({ formPlanModules: s.formPlanModules.includes(m) ? s.formPlanModules.filter(x => x !== m) : [...s.formPlanModules, m] }));
+  }
+  parsePlanPriceCents(value) {
+    const parsed = Number(String(value || '').replace(/[^0-9.]/g, ''));
+    return Number.isFinite(parsed) ? Math.round(parsed * 100) : 0;
+  }
+  parsePlanSeatLimit(value) {
+    const parsed = Number(String(value || '').replace(/[^0-9]/g, ''));
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  }
+  async submitCreatePlan() {
+    if (this.state.isSubmittingPlan) return;
+    const s = this.state;
+    const newPlan = { name: s.formPlanName.trim() || 'New Plan', price: s.formPlanPrice.trim() || 'Custom', seats: s.formPlanSeats.trim() || 'Custom', activeSubs: 0, features: s.formPlanModules.length ? s.formPlanModules : ['Employees', 'Attendance'] };
+    try {
+      this.setState({ isSubmittingPlan: true });
+      const payload = { name: newPlan.name, priceCents: this.parsePlanPriceCents(newPlan.price), seatLimit: this.parsePlanSeatLimit(newPlan.seats), storageLimitGb: 5, features: newPlan.features };
+      const saved = s.editingPlanId
+        ? await this.api.api('/platform/packages/' + encodeURIComponent(s.editingPlanId), { method: 'PATCH', body: JSON.stringify(payload) })
+        : await this.api.api('/platform/packages', { method: 'POST', body: JSON.stringify(payload) });
+      const savedPlan = this.mapApiPackage(saved);
+      this.setState(st => ({ data: { ...st.data, plans: s.editingPlanId ? st.data.plans.map(p => p.id === s.editingPlanId ? savedPlan : p) : [...st.data.plans.filter(p => p.name !== savedPlan.name), savedPlan] }, formOrgPlan: savedPlan.name }));
+    } catch (err) {
+      this.setState({ isSubmittingPlan: false });
+      this.showToast(err.message || 'Plan could not be saved', '#dc2626');
+      return;
+    }
+    this.setState({ isSubmittingPlan: false });
+    this.closeModal();
+    this.showToast(s.editingPlanId ? 'Plan updated' : 'Plan created', '#0f9d58');
+  }
+  deletePlan(p) {
+    this.askConfirm('Delete plan', `This permanently deletes ${p.name}. Plans assigned to organizations cannot be deleted.`, 'Delete', () => {
+      this.api.api('/platform/packages/' + encodeURIComponent(p.id), { method: 'DELETE' }).then(() => {
+        this.setState(s => ({ data: { ...s.data, plans: s.data.plans.filter(x => x.id !== p.id) } }));
+        this.showToast('Plan deleted', '#dc2626');
+      }).catch(err => this.showToast(err.message || 'Plan could not be deleted', '#dc2626'));
+    });
+  }
+  toggleSetting(key) { this.setState(s => ({ settings: { ...s.settings, [key]: !s.settings[key] } })); }
+  saveSettings() { this.showToast('Settings saved', '#0f9d58'); }
+
+  setAnnounceTarget(t) { this.setState({ announceTarget: t }); }
+  toggleAnnounceOrg(id) { this.setState(s => ({ announceSelectedOrgs: s.announceSelectedOrgs.includes(id) ? s.announceSelectedOrgs.filter(x => x !== id) : [...s.announceSelectedOrgs, id] })); }
+  onAnnounceMessageChange(e) { this.setState({ announceMessage: e.target.value }); }
+  sendAnnouncement() {
+    const s = this.state;
+    if (!s.announceMessage.trim()) { this.showToast('Write a message before sending', '#dc2626'); return; }
+    let target = 'All organizations';
+    if (s.announceTarget === 'Admins') target = 'Organization Admins';
+    else if (s.announceTarget === 'Selected') target = s.data.orgs.filter(o => s.announceSelectedOrgs.includes(o.id)).map(o => o.name).join(', ') || 'No organizations selected';
+    const newAnnouncement = { id: 'pa' + Date.now(), message: s.announceMessage.trim(), target, sentBy: 'Sarmad', time: 'Just now' };
+    this.setState(st => ({ data: { ...st.data, platformAnnouncements: [newAnnouncement, ...st.data.platformAnnouncements] }, announceMessage: '', announceSelectedOrgs: [] }));
+    this.showToast('Announcement sent', '#0f9d58');
+  }
+  setTicketStatusFilter(f) { this.setState({ ticketStatusFilter: f }); }
+  setTicketStatus(t, status) {
+    this.setState(s => ({ data: { ...s.data, supportTickets: s.data.supportTickets.map(x => x.id === t.id ? { ...x, status, lastUpdate: 'Just now' } : x) } }));
+    this.showToast(`Ticket marked ${status}`, '#0f9d58');
+  }
+  onAuditSearchChange(e) { this.setState({ auditSearch: e.target.value }); }
+  setAuditRoleFilter(r) { this.setState({ auditRoleFilter: r }); }
+  toggleBiometricMaster() {
+    this.setState(s => ({ biometricEnabled: !s.biometricEnabled }));
+    this.showToast(!this.state.biometricEnabled ? 'Biometric integration enabled' : 'Biometric integration disabled', '#0f9d58');
+  }
+  async toggleDeviceEnabled(d) {
+    const enabled = !d.enabled;
+    this.setState(s => ({ data: { ...s.data, biometricDevices: s.data.biometricDevices.map(x => x.id === d.id ? { ...x, enabled } : x) } }));
+    try {
+      const updated = await this.api.api(`/platform/biometric-devices/${d.id}`, { method: 'PATCH', body: JSON.stringify({ enabled }) });
+      this.setState(s => ({ data: { ...s.data, biometricDevices: s.data.biometricDevices.map(x => x.id === d.id ? this.mapApiDevice(updated) : x) } }));
+    } catch (err) {
+      this.setState(s => ({ data: { ...s.data, biometricDevices: s.data.biometricDevices.map(x => x.id === d.id ? { ...x, enabled: d.enabled } : x) } }));
+      this.showToast(err.message || 'Device could not be updated', '#dc2626');
+    }
+  }
+  disconnectDevice(d) {
+    this.askConfirm('Disconnect device', `${d.name} will stop syncing attendance data for ${d.org} until reconnected.`, 'Disconnect', () => {
+      this.updateDeviceStatus(d, 'OFFLINE');
+    });
+  }
+  async updateDeviceStatus(d, status) {
+    try {
+      const updated = await this.api.api(`/platform/biometric-devices/${d.id}`, { method: 'PATCH', body: JSON.stringify({ status }) });
+      this.setState(s => ({ data: { ...s.data, biometricDevices: s.data.biometricDevices.map(x => x.id === d.id ? this.mapApiDevice(updated) : x) } }));
+      this.showToast(status === 'OFFLINE' ? 'Device disconnected' : 'Device updated', status === 'OFFLINE' ? '#dc2626' : '#0f9d58');
+    } catch (err) {
+      this.showToast(err.message || 'Device could not be updated', '#dc2626');
+    }
+  }
+  openAddDevice() {
+    this.setState({ modal: 'addDevice', formDeviceName: '', formDeviceOrg: (this.state.data.orgs[0] || {}).id || '', formDeviceType: 'Fingerprint', formDeviceModel: '', formDeviceSerial: '', formDeviceIp: '', formDevicePort: '4370', formDeviceLocation: '' });
+  }
+  onFormDeviceNameChange(e) { this.setState({ formDeviceName: e.target.value }); }
+  onFormDeviceOrgChange(e) { this.setState({ formDeviceOrg: e.target.value }); }
+  onFormDeviceTypeChange(e) { this.setState({ formDeviceType: e.target.value }); }
+  onFormDeviceModelChange(e) { this.setState({ formDeviceModel: e.target.value }); }
+  onFormDeviceSerialChange(e) { this.setState({ formDeviceSerial: e.target.value }); }
+  onFormDeviceIpChange(e) { this.setState({ formDeviceIp: e.target.value }); }
+  onFormDevicePortChange(e) { this.setState({ formDevicePort: e.target.value }); }
+  onFormDeviceLocationChange(e) { this.setState({ formDeviceLocation: e.target.value }); }
+  async submitAddDevice() {
+    const s = this.state;
+    try {
+      const created = await this.api.api('/platform/biometric-devices', { method: 'POST', body: JSON.stringify({
+        organizationId: s.formDeviceOrg,
+        name: s.formDeviceName.trim() || 'New Device',
+        type: s.formDeviceType,
+        model: s.formDeviceModel.trim() || undefined,
+        serial: s.formDeviceSerial.trim(),
+        ip: s.formDeviceIp.trim() || undefined,
+        port: Number(s.formDevicePort) || 4370,
+        location: s.formDeviceLocation.trim() || undefined
+      }) });
+      const newDevice = this.mapApiDevice(created);
+      this.setState(st => ({ data: { ...st.data, biometricDevices: [newDevice, ...st.data.biometricDevices] } }));
+      this.closeModal();
+      this.showToast('Device added', '#0f9d58');
+    } catch (err) {
+      this.showToast(err.message || 'Device could not be added', '#dc2626');
+    }
+  }
+
+  renderVals() {
+    const s = this.state;
+    const data = s.data;
+    const isMobile = s.viewportWidth < 900;
+
+    const navRaw = [
+      { key: 'sa-overview', label: 'Overview' }, { key: 'sa-orgs', label: 'Organizations' },
+      { key: 'sa-biometric', label: 'Biometric Devices' }, { key: 'sa-audit', label: 'Audit Logs' }, { key: 'sa-support', label: 'Support' },
+      { key: 'sa-announcements', label: 'Announcements' }, { key: 'sa-health', label: 'System Health' },
+      { key: 'sa-plans', label: 'Subscriptions & Plans' }, { key: 'sa-settings', label: 'System Settings' }
+    ];
+    const navItems = navRaw.map(n => ({ key: n.key, label: n.label, onClick: () => this.setScreen(n.key),
+      bg: s.screen === n.key ? 'rgba(255,255,255,0.1)' : 'transparent', color: s.screen === n.key ? '#fff' : '#b7b6d9', weight: s.screen === n.key ? 700 : 500 }));
+    const labelMap = {}; navRaw.forEach(n => labelMap[n.key] = n.label); labelMap['sa-org-detail'] = 'Organization Detail';
+    const currentScreenLabel = labelMap[s.screen] || 'NexHR';
+    const screenIs = {
+      saOverview: s.screen === 'sa-overview', saOrgs: s.screen === 'sa-orgs', saOrgDetail: s.screen === 'sa-org-detail',
+      saUsers: s.screen === 'sa-users', saPlans: s.screen === 'sa-plans', saSettings: s.screen === 'sa-settings',
+      saBiometric: s.screen === 'sa-biometric', saAudit: s.screen === 'sa-audit', saSupport: s.screen === 'sa-support',
+      saAnnouncements: s.screen === 'sa-announcements', saHealth: s.screen === 'sa-health'
+    };
+    const shellBase = {
+      isMobile, showBackdrop: isMobile && s.mobileNavOpen,
+      sidebarLeft: isMobile ? (s.mobileNavOpen ? '0px' : '-260px') : '0px', contentMarginLeft: isMobile ? '0px' : '260px',
+      navItems, currentScreenLabel, screenIs, dataReady: !!data,
+      toggleMobileNav: () => this.toggleMobileNav(), closeMobileNav: () => this.closeMobileNav(),
+      globalSearch: s.globalSearch, onGlobalSearchChange: (e) => this.onGlobalSearchChange(e),
+      toggleNotif: () => this.toggleNotif(), notifOpen: s.notifOpen, notifItems: [],
+      toggleProfile: () => this.toggleProfile(), profileOpen: s.profileOpen,
+      goToProfile: () => this.goToProfile(), goToAccountSettings: () => this.goToAccountSettings(),
+      logout: () => this.logout(),
+      modal: null, toast: null
+    };
+    if (!data) return shellBase;
+
+    const totalEmployees = data.orgs.reduce((a, o) => a + o.employees, 0);
+    const activeOrgs = data.orgs.filter(o => o.status === 'Active').length;
+    const pendingOrgs = data.orgs.filter(o => o.status === 'Pending').length;
+    const saStats = [
+      { label: 'Total Organizations', value: data.orgs.length, delta: '+2 this month', deltaColor: '#0f9d58', dot: '#4f46e5' },
+      { label: 'Total Employees', value: totalEmployees.toLocaleString(), delta: '+184 this month', deltaColor: '#0f9d58', dot: '#818cf8' },
+      { label: 'Active Organizations', value: activeOrgs, delta: `${pendingOrgs} pending`, deltaColor: '#b45309', dot: '#0f9d58' },
+      { label: 'Monthly Revenue', value: money(data.orgs.reduce((a, o) => a + o.mrr, 0)), delta: '+6.2% MoM', deltaColor: '#0f9d58', dot: '#f59e0b' }
+    ];
+    const mrrBars = [62, 68, 71, 76, 84, 91].map((v, i) => ({ label: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'][i], pct: v + '%' }));
+    const maxPlanSubs = Math.max(1, ...data.plans.map(p => p.activeSubs || 0));
+    const plansList = data.plans.map(p => ({ name: p.name, activeSubs: p.activeSubs, pct: Math.round(((p.activeSubs || 0) / maxPlanSubs) * 100) + '%' }));
+    const saActivityRows = data.saRecentActivity.map(a => ({ text: a.text, time: a.time, dot: a.type === 'alert' ? '#dc2626' : a.type === 'billing' ? '#0f9d58' : '#4f46e5' }));
+
+    const isAltLayout = s.saOverviewLayout === 'alt';
+    const topOrgs = [...data.orgs].sort((a, b) => b.mrr - a.mrr).slice(0, 5).map((o, i) => ({ rank: i + 1, name: o.name, initial: o.name[0], mrrLabel: money(o.mrr), employees: o.employees }));
+    const planTotal = data.plans.reduce((a, p) => a + (p.activeSubs || 0), 0) || 1;
+    let acc = 0;
+    const planDonutColors = ['#4f46e5', '#818cf8', '#c7d2fe'];
+    const donutSegments = data.plans.map((p, i) => { const startPct = acc / planTotal * 100; acc += p.activeSubs || 0; const endPct = acc / planTotal * 100; return `${planDonutColors[i % planDonutColors.length]} ${startPct}% ${endPct}%`; }).join(', ');
+    const donutLegend = data.plans.map((p, i) => ({ name: p.name, activeSubs: p.activeSubs, color: planDonutColors[i % planDonutColors.length] }));
+
+    const orgSearchLower = s.orgSearch.toLowerCase();
+    const orgsFiltered = data.orgs.filter(o => (s.orgFilter === 'All' || o.status === s.orgFilter) && o.name.toLowerCase().includes(orgSearchLower));
+    const orgFilterChips = ['All', 'Active', 'Trial', 'Suspended'].map(f => ({ label: f, onClick: () => this.setOrgFilter(f),
+      bg: s.orgFilter === f ? '#eef1fd' : '#fff', color: s.orgFilter === f ? '#4f46e5' : '#6b6e88', border: s.orgFilter === f ? '#c7cdf7' : '#e7e9f2' }));
+    const orgRows = orgsFiltered.map(o => {
+      const b = badge(o.status);
+      const deviceCount = data.biometricDevices.filter(d => d.org === o.name).length;
+      const empPct = Math.round((o.activeEmployees / o.employees) * 100) || 0;
+      const storagePct = Math.round((o.storageUsedGb / o.storageLimitGb) * 100);
+      return { name: o.name, industry: o.industry, plan: o.plan, employees: o.employees, activeEmployees: o.activeEmployees, empPct: empPct + '%',
+        status: o.status, joined: o.joined, email: o.email, expiry: o.expiry, lastActivity: o.lastActivity,
+        storageLabel: `${o.storageUsedGb} GB / ${o.storageLimitGb} GB`, storagePct: storagePct + '%', deviceCount,
+        initial: o.name[0], badgeBg: b.bg, badgeColor: b.color,
+        onView: () => this.selectOrg(o.id), onEdit: () => this.openEditOrg(o), onManage: () => this.selectOrg(o.id), onDelete: () => this.deleteOrgById(o.id),
+        onDeactivate: () => this.toggleOrgStatus(o.id), deactivateLabel: o.status === 'Suspended' ? 'Reactivate' : 'Suspend' };
+    });
+    const orgCountLabel = `${data.orgs.length} organizations · ${activeOrgs} active`;
+
+    const selOrgRaw = data.orgs.find(o => o.id === s.selectedOrgId) || data.orgs[0];
+    const selBadge = badge(selOrgRaw.status);
+    const selectedOrg = { ...selOrgRaw, initial: selOrgRaw.name[0], badgeBg: selBadge.bg, badgeColor: selBadge.color, mrrLabel: money(selOrgRaw.mrr), onEdit: () => this.openEditOrg(selOrgRaw) };
+
+    const orgAdminRows = data.orgAdmins.filter(a => a.orgId === selOrgRaw.id).map(a => {
+      const b = badge(a.status);
+      return { ...a, badgeBg: b.bg, badgeColor: b.color, toggleLabel: a.status === 'Active' ? 'Deactivate' : 'Activate', toggleColor: a.status === 'Active' ? '#dc2626' : '#0f9d58',
+        onEdit: () => this.openEditOrgAdmin(a), onResetPassword: () => this.resetAdminPassword(a), onToggleStatus: () => this.toggleOrgAdminStatus(a), onRemove: () => this.removeOrgAdmin(a) };
+    });
+
+    const userSearchLower = s.userSearch.toLowerCase();
+    const usersFiltered = data.platformUsers.filter(u => (s.userRoleFilter === 'All' || u.role === s.userRoleFilter) && u.name.toLowerCase().includes(userSearchLower));
+    const userRoleChips = ['All', 'Super Admin', 'Org Admin', 'Employee'].map(f => ({ label: f, onClick: () => this.setUserRoleFilter(f),
+      bg: s.userRoleFilter === f ? '#eef1fd' : '#fff', color: s.userRoleFilter === f ? '#4f46e5' : '#6b6e88', border: s.userRoleFilter === f ? '#c7cdf7' : '#e7e9f2' }));
+    const userRows = usersFiltered.map(u => { const b = badge(u.status); return { ...u, badgeBg: b.bg, badgeColor: b.color, onToggle: () => this.toggleUserStatus(u), toggleLabel: u.status === 'Active' ? 'Suspend' : 'Reactivate', toggleColor: u.status === 'Active' ? '#dc2626' : '#0f9d58' }; });
+    const platformUserCountLabel = `${data.platformUsers.length} users across ${data.orgs.length} organizations`;
+
+    const planCards = data.plans.map(p => ({ ...p, featureRows: p.features.map(f => ({ text: f })), onEdit: () => this.openEditPlan(p), onDelete: () => this.deletePlan(p) }));
+    const activeSubRows = data.orgs.filter(o => o.status === 'Active').map(o => ({ name: o.name, plan: o.plan, mrrLabel: money(o.mrr), joined: o.joined }));
+    const expiredSubRows = data.expiredSubscriptions;
+
+    const settingsGroups = [
+      { title: 'General', items: [
+        { key: 'maintenanceMode', label: 'Maintenance mode', desc: 'Take the platform offline for all orgs' },
+        { key: 'publicSignup', label: 'Public sign-up', desc: 'Allow new orgs to self-register' }
+      ] },
+      { title: 'Email', items: [
+        { key: 'emailNotifications', label: 'Email notifications', desc: 'System emails for key events' },
+        { key: 'weeklyDigest', label: 'Weekly digest', desc: 'Summary email to org admins' }
+      ] },
+      { title: 'Notifications', items: [{ key: 'smsNotifications', label: 'SMS notifications', desc: 'Critical alerts via SMS' }] },
+      { title: 'Security', items: [
+        { key: 'twoFactorRequired', label: 'Require 2FA', desc: 'Enforce two-factor for all admins' },
+        { key: 'autoDeactivateInactive', label: 'Auto-deactivate inactive users', desc: 'After 90 days of no activity' }
+      ] }
+    ].map(g => ({ ...g, items: g.items.map(it => ({ ...it, onToggle: () => this.toggleSetting(it.key), trackBg: s.settings[it.key] ? '#4f46e5' : '#e0e2ee', knobLeft: s.settings[it.key] ? '21px' : '3px' })) }));
+
+    const deviceRows = data.biometricDevices.map(d => {
+      const b = badge(d.status === 'Online' ? 'Active' : 'Inactive');
+      return { ...d, portLabel: 'Port ' + d.port, badgeBg: b.bg, badgeColor: b.color, onDisconnect: () => this.disconnectDevice(d), onToggleEnabled: () => this.toggleDeviceEnabled(d), enabledLabel: d.enabled ? 'Enabled' : 'Disabled', enabledColor: d.enabled ? '#0f9d58' : '#9296b3' };
+    });
+    const onlineDeviceCount = data.biometricDevices.filter(d => d.status === 'Online').length;
+    const offlineDeviceCount = data.biometricDevices.length - onlineDeviceCount;
+
+    const healthStatusColors = { Operational: { bg: '#e7f8ee', color: '#0f9d58' }, Degraded: { bg: '#fef3e0', color: '#b45309' }, Down: { bg: '#fdeaea', color: '#dc2626' } };
+    const serviceRows = data.systemServices.map(sv => { const c = healthStatusColors[sv.status] || healthStatusColors.Operational; return { ...sv, dot: c.color, bg: c.bg }; });
+    const errorSeverityColors = { Error: { bg: '#fdeaea', color: '#dc2626' }, Warning: { bg: '#fef3e0', color: '#b45309' }, Info: { bg: '#eef1fd', color: '#4f46e5' } };
+    const errorRows = data.systemErrors.map(e => { const c = errorSeverityColors[e.severity] || errorSeverityColors.Info; return { ...e, badgeBg: c.bg, badgeColor: c.color }; });
+    const overallServerStatus = data.systemServices.every(sv => sv.status === 'Operational') ? 'All systems operational' : 'Some systems degraded';
+
+    const auditSearchLower = s.auditSearch.toLowerCase();
+    const auditFiltered = data.auditLogs.filter(a => (s.auditRoleFilter === 'All' || a.role === s.auditRoleFilter) &&
+      (a.actor.toLowerCase().includes(auditSearchLower) || a.action.toLowerCase().includes(auditSearchLower) || a.org.toLowerCase().includes(auditSearchLower)));
+    const auditRoleChips = ['All', 'Super Admin', 'Org Admin'].map(f => ({ label: f, onClick: () => this.setAuditRoleFilter(f),
+      bg: s.auditRoleFilter === f ? '#eef1fd' : '#fff', color: s.auditRoleFilter === f ? '#4f46e5' : '#6b6e88', border: s.auditRoleFilter === f ? '#c7cdf7' : '#e7e9f2' }));
+    const auditRows = auditFiltered.map(a => ({ ...a, roleDot: a.role === 'Super Admin' ? '#4f46e5' : '#818cf8' }));
+    const auditCountLabel = `${data.auditLogs.length} events logged`;
+
+    const ticketPriorityColors = { High: { bg: '#fdeaea', color: '#dc2626' }, Medium: { bg: '#fef3e0', color: '#b45309' }, Low: { bg: '#f0f1f6', color: '#6b6e88' } };
+    const openCount = data.supportTickets.filter(t => t.status === 'Open').length;
+    const pendingCount = data.supportTickets.filter(t => t.status === 'Pending').length;
+    const resolvedCount = data.supportTickets.filter(t => t.status === 'Resolved').length;
+    const highPriorityCount = data.supportTickets.filter(t => t.priority === 'High' && t.status !== 'Resolved').length;
+    const ticketStats = [
+      { label: 'Open', value: openCount, dot: '#4f46e5' }, { label: 'Pending', value: pendingCount, dot: '#b45309' },
+      { label: 'Resolved', value: resolvedCount, dot: '#0f9d58' }, { label: 'High Priority', value: highPriorityCount, dot: '#dc2626' }
+    ];
+    const ticketStatusChips = ['All', 'Open', 'Pending', 'Resolved'].map(f => ({ label: f, onClick: () => this.setTicketStatusFilter(f),
+      bg: s.ticketStatusFilter === f ? '#eef1fd' : '#fff', color: s.ticketStatusFilter === f ? '#4f46e5' : '#6b6e88', border: s.ticketStatusFilter === f ? '#c7cdf7' : '#e7e9f2' }));
+    const ticketRows = data.supportTickets.filter(t => s.ticketStatusFilter === 'All' || t.status === s.ticketStatusFilter).map(t => {
+      const pb = ticketPriorityColors[t.priority]; const sb = badge(t.status === 'Open' ? 'Pending' : t.status);
+      return { ...t, priorityBg: pb.bg, priorityColor: pb.color, statusBg: t.status === 'Resolved' ? '#e7f8ee' : (t.status === 'Open' ? '#eef1fd' : '#fef3e0'), statusColor: t.status === 'Resolved' ? '#0f9d58' : (t.status === 'Open' ? '#4f46e5' : '#b45309'),
+        isOpenOrPending: t.status !== 'Resolved', onResolve: () => this.setTicketStatus(t, 'Resolved'), onReopen: () => this.setTicketStatus(t, 'Open') };
+    });
+
+    const modal = s.modal;
+    const cp = s.confirmPayload || {};
+
+    return {
+      ...shellBase,
+      notifItems: data.announcements,
+
+      saStats, mrrBars, plansList, saActivityRows,
+      isAltLayout, setClassicLayout: () => this.setSaOverviewLayout('classic'), setAltLayout: () => this.setSaOverviewLayout('alt'),
+      classicTabBg: !isAltLayout ? '#fff' : 'transparent', classicTabColor: !isAltLayout ? '#14152e' : '#6b6e88',
+      altTabBg: isAltLayout ? '#fff' : 'transparent', altTabColor: isAltLayout ? '#14152e' : '#6b6e88',
+      topOrgs, donutSegments, donutLegend, totalRevenueLabel: money(data.orgs.reduce((a, o) => a + o.mrr, 0)), totalEmployeesLabel: totalEmployees.toLocaleString(),
+
+      orgSearch: s.orgSearch, onOrgSearchChange: (e) => this.onOrgSearchChange(e), orgFilterChips, orgRows, orgCountLabel, openAddOrg: () => this.openAddOrg(),
+      selectedOrg, backToOrgs: () => this.backToOrgs(), suspendSelectedOrg: () => this.suspendSelectedOrg(), deleteSelectedOrg: () => this.deleteSelectedOrg(),
+      orgAdminRows, openAddOrgAdmin: () => this.openAddOrgAdmin(),
+
+      userSearch: s.userSearch, onUserSearchChange: (e) => this.onUserSearchChange(e), userRoleChips, userRows, platformUserCountLabel,
+      planCards, activeSubRows, expiredSubRows, openCreatePlan: () => this.openCreatePlan(),
+      settingsGroups, saveSettings: () => this.saveSettings(),
+
+      biometricEnabled: s.biometricEnabled, toggleBiometricMaster: () => this.toggleBiometricMaster(),
+      biometricTrackBg: s.biometricEnabled ? '#4f46e5' : '#e0e2ee', biometricKnobLeft: s.biometricEnabled ? '21px' : '3px',
+      deviceRows, onlineDeviceCount, offlineDeviceCount, deviceCountLabel: `${data.biometricDevices.length} devices across ${data.orgs.length} organizations`,
+      serviceRows, errorRows, overallServerStatus,
+      openAddDevice: () => this.openAddDevice(), orgOptions: data.orgs,
+      auditSearch: s.auditSearch, onAuditSearchChange: (e) => this.onAuditSearchChange(e), auditRoleChips, auditRows, auditCountLabel,
+      ticketStats, ticketStatusChips, ticketRows,
+
+      announceTargetOptions: [
+        { key: 'All', label: 'All organizations' }, { key: 'Selected', label: 'Selected organizations' }, { key: 'Admins', label: 'Organization Admins' }
+      ].map(o => ({ ...o, onClick: () => this.setAnnounceTarget(o.key),
+        bg: s.announceTarget === o.key ? '#eef1fd' : '#fff', color: s.announceTarget === o.key ? '#4f46e5' : '#6b6e88', border: s.announceTarget === o.key ? '#c7cdf7' : '#e7e9f2' })),
+      isSelectedOrgsTarget: s.announceTarget === 'Selected',
+      announceOrgChecklist: data.orgs.map(o => ({ id: o.id, name: o.name, checked: s.announceSelectedOrgs.includes(o.id), onToggle: () => this.toggleAnnounceOrg(o.id) })),
+      announceMessage: s.announceMessage, onAnnounceMessageChange: (e) => this.onAnnounceMessageChange(e), sendAnnouncement: () => this.sendAnnouncement(),
+      announcementRows: data.platformAnnouncements,
+
+      modal, modalMaxWidth: modal === 'addOrg' ? '620px' : (modal === 'addDevice' || modal === 'orgAdmin' ? '520px' : '420px'), isConfirmModal: modal === 'confirm', confirmTitle: cp.title, confirmMessage: cp.message, confirmLabel: cp.label,
+      isAddDeviceModal: modal === 'addDevice', formDeviceName: s.formDeviceName, formDeviceOrg: s.formDeviceOrg, formDeviceType: s.formDeviceType,
+      formDeviceModel: s.formDeviceModel, formDeviceSerial: s.formDeviceSerial, formDeviceIp: s.formDeviceIp, formDevicePort: s.formDevicePort, formDeviceLocation: s.formDeviceLocation,
+      onFormDeviceNameChange: (e) => this.onFormDeviceNameChange(e), onFormDeviceOrgChange: (e) => this.onFormDeviceOrgChange(e), onFormDeviceTypeChange: (e) => this.onFormDeviceTypeChange(e),
+      onFormDeviceModelChange: (e) => this.onFormDeviceModelChange(e), onFormDeviceSerialChange: (e) => this.onFormDeviceSerialChange(e), onFormDeviceIpChange: (e) => this.onFormDeviceIpChange(e),
+      onFormDevicePortChange: (e) => this.onFormDevicePortChange(e), onFormDeviceLocationChange: (e) => this.onFormDeviceLocationChange(e), submitAddDevice: () => this.submitAddDevice(),
+      confirmAction: () => this.confirmAction(), closeModal: () => this.closeModal(),
+      isAddOrgModal: modal === 'addOrg', addOrgTitle: s.editingOrgId ? 'Edit Organization' : 'Add Organization', addOrgSubmitLabel: s.isSubmittingOrg ? 'Creating...' : (s.editingOrgId ? 'Save changes' : 'Create organization'),
+      formOrgName: s.formOrgName, formOrgEmail: s.formOrgEmail, formOrgPlan: s.formOrgPlan, formOrgIndustry: s.formOrgIndustry,
+      planOptions: data.plans && data.plans.length ? data.plans : [{ name: 'Starter' }],
+      formOrgUserId: s.formOrgUserId, formOrgUserPass: s.formOrgUserPass, formOrgPhone: s.formOrgPhone, formOrgWebsite: s.formOrgWebsite,
+      formOrgCountry: s.formOrgCountry, formOrgCity: s.formOrgCity, formOrgAddress: s.formOrgAddress,
+      formOrgTimezone: s.formOrgTimezone, formOrgCurrency: s.formOrgCurrency, formOrgDateFormat: s.formOrgDateFormat,
+      formOrgNameError: s.formOrgErrors.name || '', formOrgUserIdError: s.formOrgErrors.userId || '', formOrgUserPassError: s.formOrgErrors.password || '',
+      formOrgEmailError: s.formOrgErrors.email || '', formOrgWebsiteError: s.formOrgErrors.website || '',
+      formOrgNameBorder: s.formOrgErrors.name ? '#dc2626' : '#e7e9f2', formOrgUserIdBorder: s.formOrgErrors.userId ? '#dc2626' : '#e7e9f2',
+      formOrgUserPassBorder: s.formOrgErrors.password ? '#dc2626' : '#e7e9f2', formOrgEmailBorder: s.formOrgErrors.email ? '#dc2626' : '#e7e9f2',
+      formOrgWebsiteBorder: s.formOrgErrors.website ? '#dc2626' : '#e7e9f2',
+      onFormOrgNameChange: (e) => this.onFormOrgNameChange(e), onFormOrgEmailChange: (e) => this.onFormOrgEmailChange(e), onFormOrgPlanChange: (e) => this.onFormOrgPlanChange(e), submitAddOrg: () => this.submitAddOrg(),
+      isSubmittingOrg: s.isSubmittingOrg, submitOrgButtonBg: s.isSubmittingOrg ? '#9296b3' : '#4f46e5',
+      onFormOrgIndustryChange: (e) => this.onFormOrgIndustryChange(e), onFormOrgUserIdChange: (e) => this.onFormOrgUserIdChange(e), onFormOrgUserPassChange: (e) => this.onFormOrgUserPassChange(e),
+      onFormOrgPhoneChange: (e) => this.onFormOrgPhoneChange(e), onFormOrgWebsiteChange: (e) => this.onFormOrgWebsiteChange(e), onFormOrgCountryChange: (e) => this.onFormOrgCountryChange(e),
+      onFormOrgCityChange: (e) => this.onFormOrgCityChange(e), onFormOrgAddressChange: (e) => this.onFormOrgAddressChange(e), onFormOrgTimezoneChange: (e) => this.onFormOrgTimezoneChange(e),
+      onFormOrgCurrencyChange: (e) => this.onFormOrgCurrencyChange(e), onFormOrgDateFormatChange: (e) => this.onFormOrgDateFormatChange(e),
+      isCreatePlanModal: modal === 'createPlan', planModalTitle: s.editingPlanId ? 'Edit Plan' : 'Create Plan', formPlanName: s.formPlanName, formPlanPrice: s.formPlanPrice, formPlanSeats: s.formPlanSeats,
+      planModuleChoices: this.availablePlanModules().map(m => ({ name: m, checked: s.formPlanModules.includes(m), onToggle: () => this.togglePlanModule(m) })),
+      isSubmittingPlan: s.isSubmittingPlan, submitPlanButtonBg: s.isSubmittingPlan ? '#9296b3' : '#4f46e5', createPlanSubmitLabel: s.isSubmittingPlan ? 'Saving...' : (s.editingPlanId ? 'Save changes' : 'Create plan'),
+      onFormPlanNameChange: (e) => this.onFormPlanNameChange(e), onFormPlanPriceChange: (e) => this.onFormPlanPriceChange(e), onFormPlanSeatsChange: (e) => this.onFormPlanSeatsChange(e), submitCreatePlan: () => this.submitCreatePlan(),
+      isOrgAdminModal: modal === 'orgAdmin', orgAdminModalTitle: s.adminPasswordMode === 'reset' ? 'Reset Admin Password' : (s.editingOrgAdminId ? 'Edit Admin' : 'Add Admin'), orgAdminSubmitLabel: s.adminPasswordMode === 'reset' ? 'Reset password' : (s.editingOrgAdminId ? 'Save changes' : 'Add admin'),
+      formAdminName: s.formAdminName, formAdminEmail: s.formAdminEmail, formAdminRole: s.formAdminRole, adminRoleOptions: Object.keys(data.adminRolePermissions),
+      adminRolePermissionList: (data.adminRolePermissions[s.formAdminRole] || []).map(p => ({ text: p })),
+      formAdminPassword: s.formAdminPassword, formAdminPasswordError: s.formAdminPasswordError, formAdminPasswordBorder: s.formAdminPasswordError ? '#dc2626' : '#e7e9f2',
+      adminPasswordLabel: s.adminPasswordMode === 'edit' ? 'New password (optional)' : 'Admin password',
+      onFormAdminNameChange: (e) => this.onFormAdminNameChange(e), onFormAdminEmailChange: (e) => this.onFormAdminEmailChange(e), onFormAdminRoleChange: (e) => this.onFormAdminRoleChange(e), onFormAdminPasswordChange: (e) => this.onFormAdminPasswordChange(e), submitOrgAdmin: () => this.submitOrgAdmin(),
+
+      toast: s.toast, toastMessage: s.toast ? s.toast.message : '', toastColor: s.toast ? s.toast.color : '#4f46e5'
+    };
+  }
+}
+
+</script>
+</body>
+</html>
