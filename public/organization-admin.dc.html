@@ -1246,7 +1246,11 @@
           <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px;">
             <div style="display:flex;gap:16px;align-items:center;">
               <div style="width:64px;height:64px;flex-shrink:0;">
-                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="emp-modal-photo" shape="circle" placeholder="Photo" hint-size="64px,64px"></x-import>
+                <label style="width:64px;height:64px;border-radius:50%;border:1px dashed #c8ccdc;background:#f8f9fc;color:#6b6e88;display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:700;font-size:12px;cursor:pointer;">
+                  <sc-if value="{{ empModalPhotoUrl }}" hint-placeholder-val="{{ false }}"><img src="{{ empModalPhotoUrl }}" alt="{{ formEmpName }}" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+                  <sc-if value="{{ !empModalPhotoUrl }}" hint-placeholder-val="{{ true }}">Photo</sc-if>
+                  <input id="emp-modal-photo-input" type="file" accept="image/png,image/jpeg,image/webp" onChange="{{ onEmpModalPhotoChange }}" style="display:none;">
+                </label>
               </div>
               <div style="flex:1;"><div style="font-size:12.5px;font-weight:600;color:#3f4159;margin-bottom:6px;">Full name</div><input value="{{ formEmpName }}" onChange="{{ onFormEmpNameChange }}" placeholder="Jane Cooper" style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #e7e9f2;font-size:13.5px;font-family:inherit;outline:none;"></div>
             </div>
@@ -1450,6 +1454,7 @@ class Component extends DCLogic {
     formGenLetterEmployeeId: '', formGenLetterType: 'Appointment Letter', formGenLetterNotes: '',
     reportType: 'Attendance', reportDeptFilter: 'All', reportPeriod: 'Daily', reportFromDate: '', reportToDate: '', idCardEmployeeId: null,
     announceMessage: '', announceTarget: 'All employees', isSyncingBiometric: false,
+    selectedFile: null, selectedFileDataUrl: '', empPhotoPreviewUrl: '', empPhotoPreviewOwnerId: '', formEmpPhotoDataUrl: '',
     orgProfileEdited: null,
     editingHolidayId: null, formHolidayName: '', formHolidayDate: '', formHolidayType: 'Public',
     editingRoleId: null, formRoleName: '', formRoleDescription: '', formRolePermissions: [],
@@ -1716,19 +1721,49 @@ class Component extends DCLogic {
       if (e && e.target) e.target.value = '';
     }
   }
-  async uploadEmployeePhoto(emp, e) {
+  revokeEmployeePhotoPreview() {
+    const url = this.state.empPhotoPreviewUrl;
+    if (url && url.startsWith('blob:')) URL.revokeObjectURL(url);
+  }
+  clearEmployeePhotoInput() {
+    const input = document.getElementById('emp-modal-photo-input');
+    if (input) input.value = '';
+  }
+  resetEmployeePhotoSelection(extra = {}) {
+    this.revokeEmployeePhotoPreview();
+    this.clearEmployeePhotoInput();
+    return { selectedFile: null, selectedFileDataUrl: '', empPhotoPreviewUrl: '', empPhotoPreviewOwnerId: '', formEmpPhotoDataUrl: '', ...extra };
+  }
+  async saveEmployeePhoto(employeeId, dataUrl) {
+    const saved = await this.api.api('/org/employees/' + encodeURIComponent(employeeId), { method: 'PATCH', body: JSON.stringify({ dataUrl }) });
+    const photoDataUrl = saved.photoDataUrl || dataUrl;
+    this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(x => x.id === employeeId ? { ...x, photoDataUrl } : x) } }));
+    try { await this.refreshOrgDashboard(); } catch (_err) {}
+    return photoDataUrl;
+  }
+  async handlePhotoUpload(emp, e) {
+    const file = e && e.target && e.target.files ? e.target.files[0] : null;
     try {
-      const dataUrl = await this.readImageFile(e.target.files && e.target.files[0]);
-      const saved = await this.api.api('/org/employees/' + encodeURIComponent(emp.id) + '/photo', { method: 'PATCH', body: JSON.stringify({ dataUrl }) });
-      const photoDataUrl = saved.photoDataUrl || dataUrl;
-      this.setState(s => ({ data: { ...s.data, employees: s.data.employees.map(x => x.id === emp.id ? { ...x, photoDataUrl } : x) } }));
-      this.showToast('Employee photo uploaded', '#0f9d58');
+      const dataUrl = await this.readImageFile(file);
+      this.revokeEmployeePhotoPreview();
+      const previewUrl = URL.createObjectURL(file);
+      const targetId = emp && emp.id ? emp.id : this.state.editingEmpId;
+      this.setState({ selectedFile: file, selectedFileDataUrl: dataUrl, empPhotoPreviewUrl: previewUrl, empPhotoPreviewOwnerId: targetId || 'new' });
+      if (targetId) {
+        const photoDataUrl = await this.saveEmployeePhoto(targetId, dataUrl);
+        this.revokeEmployeePhotoPreview();
+        this.setState({ selectedFile: null, selectedFileDataUrl: '', empPhotoPreviewUrl: '', empPhotoPreviewOwnerId: '', formEmpPhotoDataUrl: photoDataUrl });
+        this.clearEmployeePhotoInput();
+        this.showToast('Employee photo uploaded', '#0f9d58');
+      }
     } catch (err) {
       this.showToast(err.message || 'Employee photo could not be uploaded', '#dc2626');
     } finally {
       if (e && e.target) e.target.value = '';
     }
   }
+  uploadEmployeePhoto(emp, e) { return this.handlePhotoUpload(emp, e); }
+  onEmpModalPhotoChange(e) { return this.handlePhotoUpload(null, e); }
   apiAttendanceStatus(status) {
     return String(status || 'Present').toUpperCase().replaceAll(' ', '_');
   }
@@ -1756,26 +1791,26 @@ class Component extends DCLogic {
   onGlobalSearchChange(e) { this.setState({ globalSearch: e.target.value }); }
 
   openModal(type) { this.setState({ modal: type }); }
-  closeModal() { this.setState({ modal: null, confirmPayload: null, editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpTitle: '', formEmpDept: '',
+  closeModal() { this.setState(this.resetEmployeePhotoSelection({ modal: null, confirmPayload: null, editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpTitle: '', formEmpDept: '',
     formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpJoinedAt: '', formEmpWorkLocation: '',
     formEmpSalary: '', formEmpSalaryCurrency: 'USD', formEmpPayFrequency: 'Monthly', formEmpGender: '', formEmpDateOfBirth: '', formEmpNationalId: '',
-    formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '', formEmpBankName: '', formEmpBankAccount: '' }); }
+    formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '', formEmpBankName: '', formEmpBankAccount: '' })); }
   askConfirm(title, message, label, onConfirm) { this.setState({ modal: 'confirm', confirmPayload: { title, message, label, onConfirm } }); }
   confirmAction() { const p = this.state.confirmPayload; if (p && p.onConfirm) p.onConfirm(); this.closeModal(); }
 
   onEmpSearchChange(e) { this.setState({ empSearch: e.target.value }); }
   setDeptFilter(d) { this.setState({ deptFilter: d }); }
-  openAddEmployee() { this.setState({ modal: 'addEmployee', editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpDept: (this.state.data.departments[0] || {}).name || '', formEmpTitle: '',
+  openAddEmployee() { this.setState(this.resetEmployeePhotoSelection({ modal: 'addEmployee', editingEmpId: null, formEmpName: '', formEmpEmail: '', formEmpDept: (this.state.data.departments[0] || {}).name || '', formEmpTitle: '',
     formEmpPhone: '', formEmpEmploymentType: 'Full-time', formEmpJoinedAt: new Date().toISOString().slice(0, 10), formEmpWorkLocation: '',
     formEmpSalary: '', formEmpSalaryCurrency: 'USD', formEmpPayFrequency: 'Monthly', formEmpGender: '', formEmpDateOfBirth: '', formEmpNationalId: '',
-    formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '', formEmpBankName: '', formEmpBankAccount: '' }); }
-  openEditEmployee(emp) { this.setState({ modal: 'addEmployee', editingEmpId: emp.id, formEmpName: emp.name, formEmpEmail: emp.email, formEmpDept: emp.dept, formEmpTitle: emp.title,
+    formEmpAddress: '', formEmpEmergencyName: '', formEmpEmergencyPhone: '', formEmpBankName: '', formEmpBankAccount: '' })); }
+  openEditEmployee(emp) { this.setState(this.resetEmployeePhotoSelection({ modal: 'addEmployee', editingEmpId: emp.id, formEmpName: emp.name, formEmpEmail: emp.email, formEmpDept: emp.dept, formEmpTitle: emp.title,
     formEmpPhone: emp.phone || '', formEmpEmploymentType: emp.employmentType || 'Full-time',
     formEmpJoinedAt: emp.joinedAtInput || '', formEmpWorkLocation: emp.workLocation || '', formEmpSalary: emp.salary ? String(emp.salary) : '',
     formEmpSalaryCurrency: emp.salaryCurrency || 'USD', formEmpPayFrequency: emp.payFrequency || 'Monthly', formEmpGender: emp.gender || '',
     formEmpDateOfBirth: emp.dateOfBirth || '', formEmpNationalId: emp.nationalId || '', formEmpAddress: emp.address || '',
     formEmpEmergencyName: emp.emergencyContactName || '', formEmpEmergencyPhone: emp.emergencyContactPhone || '',
-    formEmpBankName: emp.bankName || '', formEmpBankAccount: emp.bankAccount || '' }); }
+    formEmpBankName: emp.bankName || '', formEmpBankAccount: emp.bankAccount || '', formEmpPhotoDataUrl: emp.photoDataUrl || '' })); }
   setDeptFilter(d) { this.setState({ deptFilter: d }); }
   onDeptSearchChange(e) { this.setState({ deptSearch: e.target.value }); }
   setDeptStatusFilter(f) { this.setState({ deptStatusFilter: f }); }
@@ -2190,6 +2225,7 @@ class Component extends DCLogic {
     } else {
       try {
         const created = await this.api.api('/org/employees', { method: 'POST', body: JSON.stringify(this.employeePayload()) });
+        if (this.state.selectedFileDataUrl) await this.saveEmployeePhoto(created.employee.id, this.state.selectedFileDataUrl);
         const latest = await this.refreshOrgDashboard();
         if (!latest.employees.some(e => e.id === created.employee.id)) throw new Error('Employee was saved, but was not returned by the database refresh.');
       } catch (err) {
@@ -2833,6 +2869,7 @@ class Component extends DCLogic {
       modal, modalMaxWidth: modal === 'addEmployee' ? '680px' : (['createShift', 'assignShift', 'requestLoan', 'addDept', 'manualAttendance', 'policy', 'genLetter', 'announce', 'role', 'assignPolicy'].includes(modal) ? '480px' : (modal === 'viewSlip' || modal === 'viewReport' ? '640px' : (modal === 'idCard' ? '420px' : (modal === 'overtimeRules' ? '600px' : '420px')))), isConfirmModal: modal === 'confirm', confirmTitle: cp.title, confirmMessage: cp.message, confirmLabel: cp.label,
       confirmAction: () => this.confirmAction(), closeModal: () => this.closeModal(),
       isAddEmployeeModal: modal === 'addEmployee', empModalTitle: s.editingEmpId ? 'Edit Employee' : 'Add Employee', empModalSubmitLabel: s.editingEmpId ? 'Save changes' : 'Add employee',
+      empModalPhotoUrl: s.empPhotoPreviewUrl || s.formEmpPhotoDataUrl || '', onEmpModalPhotoChange: (e) => this.onEmpModalPhotoChange(e),
       formEmpName: s.formEmpName, formEmpEmail: s.formEmpEmail, formEmpDept: s.formEmpDept, formEmpTitle: s.formEmpTitle, departmentOptions: data.departments,
       formEmpPhone: s.formEmpPhone, formEmpEmploymentType: s.formEmpEmploymentType,
       formEmpJoinedAt: s.formEmpJoinedAt, formEmpWorkLocation: s.formEmpWorkLocation, formEmpSalary: s.formEmpSalary, formEmpSalaryCurrency: s.formEmpSalaryCurrency,
