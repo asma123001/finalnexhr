@@ -1,14 +1,17 @@
 import express from "express";
 import path from "node:path";
 import cors from "cors";
-import * as helmet from "helmet";
+import helmetModule from "helmet";
 import morgan from "morgan";
 import { env } from "./config/env.js";
 import { routes } from "./routes/index.js";
 import { errorHandler, notFound } from "./middleware/error.js";
 
 export const app = express();
-app.use(helmet.default({ contentSecurityPolicy: false }));
+type HelmetFactory = (options?: { contentSecurityPolicy?: false }) => express.RequestHandler;
+const helmetMiddleware =
+  (helmetModule as unknown as { default?: HelmetFactory }).default ?? (helmetModule as unknown as HelmetFactory);
+app.use(helmetMiddleware({ contentSecurityPolicy: false }));
 app.use(cors({ origin: env.CORS_ORIGIN === "*" ? true : env.CORS_ORIGIN, credentials: true }));
 app.use(express.json({ limit: "6mb" }));
 app.use(morgan("dev"));
