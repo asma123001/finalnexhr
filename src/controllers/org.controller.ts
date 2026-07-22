@@ -18,6 +18,18 @@ export const createDepartment = asyncHandler(async (req, res) => {
   res.status(201).json(department);
 });
 
+export const updateDepartment = asyncHandler(async (req, res) => {
+  const department = await org.updateDepartment(tenant(req), req.params.id, req.body);
+  await audit(req, "UPDATE_DEPARTMENT", "Department", department.id);
+  res.json(department);
+});
+
+export const deleteDepartment = asyncHandler(async (req, res) => {
+  await org.deleteDepartment(tenant(req), req.params.id);
+  await audit(req, "DELETE_DEPARTMENT", "Department", req.params.id);
+  res.status(204).send();
+});
+
 export const createEmployee = asyncHandler(async (req, res) => {
   const employee = await org.createEmployee(tenant(req), req.body);
   await audit(req, "CREATE_EMPLOYEE", "Employee", employee.employee.id, { email: employee.employee.email });

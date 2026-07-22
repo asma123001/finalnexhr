@@ -116,7 +116,21 @@ export const departmentSchema = z.object({
   body: z.object({
     name: z.string().min(2, "Department name must be at least 2 characters."),
     code: z.string().min(1, "Department code is required."),
-    description: z.string().optional()
+    description: z.string().optional(),
+    parentId: z.string().nullable().optional(),
+    headId: z.string().nullable().optional(),
+    isActive: z.boolean().optional()
+  })
+});
+
+export const departmentUpdateSchema = z.object({
+  body: z.object({
+    name: z.string().min(2, "Department name must be at least 2 characters.").optional(),
+    code: z.string().min(1, "Department code is required.").optional(),
+    description: z.string().optional(),
+    parentId: z.string().nullable().optional(),
+    headId: z.string().nullable().optional(),
+    isActive: z.boolean().optional()
   })
 });
 

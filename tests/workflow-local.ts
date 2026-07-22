@@ -56,6 +56,61 @@ async function main() {
       method: "POST",
       body: JSON.stringify({ email: org.admin.email, password: "WorkflowAdmin123!", role: "ORG_ADMIN" })
     });
+    const department = await request(baseUrl, "/org/departments", {
+      method: "POST",
+      headers: { authorization: `Bearer ${orgAdmin.token}` },
+      body: JSON.stringify({
+        name: `Workflow Department ${stamp}`,
+        code: "WFDEPT",
+        description: "Created by workflow test"
+      })
+    });
+    let dashboard = await request(baseUrl, "/org/dashboard", {
+      headers: { authorization: `Bearer ${orgAdmin.token}` }
+    });
+    if (!dashboard.departments.some((dept: { id: string }) => dept.id === department.id)) {
+      throw new Error("Created department was not returned by dashboard");
+    }
+    const shift = await request(baseUrl, "/org/shifts", {
+      method: "POST",
+      headers: { authorization: `Bearer ${orgAdmin.token}` },
+      body: JSON.stringify({
+        name: `Workflow Shift ${stamp}`,
+        startTime: "09:00",
+        endTime: "18:00",
+        workingDays: "Mon-Fri",
+        breakMinutes: 60,
+        graceMinutes: 15
+      })
+    });
+    dashboard = await request(baseUrl, "/org/dashboard", {
+      headers: { authorization: `Bearer ${orgAdmin.token}` }
+    });
+    if (!dashboard.shifts.some((savedShift: { id: string }) => savedShift.id === shift.id)) {
+      throw new Error("Created shift was not returned by dashboard");
+    }
+    const renamedDepartment = await request(baseUrl, `/org/departments/${department.id}`, {
+      method: "PATCH",
+      headers: { authorization: `Bearer ${orgAdmin.token}` },
+      body: JSON.stringify({ name: `Workflow Department Updated ${stamp}`, isActive: false })
+    });
+    dashboard = await request(baseUrl, "/org/dashboard", {
+      headers: { authorization: `Bearer ${orgAdmin.token}` }
+    });
+    const savedRenamedDepartment = dashboard.departments.find((dept: { id: string }) => dept.id === renamedDepartment.id);
+    if (!savedRenamedDepartment || savedRenamedDepartment.name !== renamedDepartment.name || savedRenamedDepartment.isActive !== false) {
+      throw new Error("Updated department was not returned by dashboard");
+    }
+    await request(baseUrl, `/org/departments/${department.id}`, {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${orgAdmin.token}` }
+    });
+    dashboard = await request(baseUrl, "/org/dashboard", {
+      headers: { authorization: `Bearer ${orgAdmin.token}` }
+    });
+    if (dashboard.departments.some((dept: { id: string }) => dept.id === department.id)) {
+      throw new Error("Deleted department was still returned by dashboard");
+    }
     const employee = await request(baseUrl, "/org/employees", {
       method: "POST",
       headers: { authorization: `Bearer ${orgAdmin.token}` },

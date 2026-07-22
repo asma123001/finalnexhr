@@ -28,20 +28,47 @@ export async function tenantDashboard(organizationId: string) {
   return { organization, departments, employees, attendance, attendancePolicies, leaveRequests, payrollRuns, shifts, roles, settings, biometricDevices, biometricSyncLogs, branches, holidays, loanRequests, exitRequests, letterTemplates, letters, reports };
 }
 
-async function uniqueDepartmentCode(organizationId: string, inputCode: string, name: string) {
+async function uniqueDepartmentCode(organizationId: string, inputCode: string, name: string, excludeId?: string) {
   const base = (inputCode || name || "DEPT").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12) || "DEPT";
   let code = base;
   let suffix = 1;
-  while (await prisma.department.findUnique({ where: { organizationId_code: { organizationId, code } }, select: { id: true } })) {
+  while (true) {
+    const existing = await prisma.department.findUnique({ where: { organizationId_code: { organizationId, code } }, select: { id: true } });
+    if (!existing || existing.id === excludeId) return code;
     const tail = String(suffix++);
     code = `${base.slice(0, Math.max(1, 12 - tail.length))}${tail}`;
   }
-  return code;
 }
 
 export async function createDepartment(organizationId: string, data: { name: string; code: string; description?: string }) {
   const code = await uniqueDepartmentCode(organizationId, data.code, data.name);
   return prisma.department.create({ data: { organizationId, name: data.name, code, description: data.description } });
+}
+
+export async function updateDepartment(organizationId: string, id: string, data: { name?: string; code?: string; description?: string; parentId?: string | null; headId?: string | null; isActive?: boolean }) {
+  const current = await prisma.department.findFirst({ where: { id, organizationId } });
+  if (!current) throw new AppError(404, "Department not found");
+  const code = data.code ? await uniqueDepartmentCode(organizationId, data.code, data.name ?? current.name, id) : undefined;
+  return prisma.department.update({
+    where: { id },
+    data: {
+      name: data.name,
+      code,
+      description: data.description,
+      parentId: data.parentId,
+      headId: data.headId,
+      isActive: data.isActive
+    }
+  });
+}
+
+export async function deleteDepartment(organizationId: string, id: string) {
+  const current = await prisma.department.findFirst({ where: { id, organizationId }, select: { id: true } });
+  if (!current) throw new AppError(404, "Department not found");
+  return prisma.$transaction(async (tx) => {
+    await tx.department.updateMany({ where: { organizationId, parentId: id }, data: { parentId: null } });
+    return tx.department.delete({ where: { id } });
+  });
 }
 
 type EmployeeInput = {

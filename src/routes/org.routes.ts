@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { authenticate, requireRole, requireTenant } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { attendancePolicySchema, attendanceSchema, departmentSchema, employeeSchema, employeeUpdateSchema, holidaySchema, imageDataSchema, leaveSchema, letterSchema, loanSchema, orgSettingsSchema, roleSchema, shiftAssignmentSchema, shiftSchema } from "../schemas.js";
+import { attendancePolicySchema, attendanceSchema, departmentSchema, departmentUpdateSchema, employeeSchema, employeeUpdateSchema, holidaySchema, imageDataSchema, leaveSchema, letterSchema, loanSchema, orgSettingsSchema, roleSchema, shiftAssignmentSchema, shiftSchema } from "../schemas.js";
 import * as controller from "../controllers/org.controller.js";
 
 export const orgRoutes = Router();
 orgRoutes.use(authenticate, requireTenant);
 orgRoutes.get("/dashboard", requireRole("ORG_ADMIN"), controller.dashboard);
 orgRoutes.post("/departments", requireRole("ORG_ADMIN"), validate(departmentSchema), controller.createDepartment);
+orgRoutes.patch("/departments/:id", requireRole("ORG_ADMIN"), validate(departmentUpdateSchema), controller.updateDepartment);
+orgRoutes.delete("/departments/:id", requireRole("ORG_ADMIN"), controller.deleteDepartment);
 orgRoutes.post("/employees", requireRole("ORG_ADMIN"), validate(employeeSchema), controller.createEmployee);
 orgRoutes.patch("/employees/:id", requireRole("ORG_ADMIN"), validate(employeeUpdateSchema), controller.updateEmployee);
 orgRoutes.patch("/employees/:id/photo", requireRole("ORG_ADMIN"), validate(imageDataSchema), controller.updateEmployeePhoto);

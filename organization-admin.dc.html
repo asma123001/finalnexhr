@@ -1551,7 +1551,7 @@ class Component extends DCLogic {
       this.setState(st => ({ data: { ...st.data, employees, departments, attendanceToday, attendanceAuditLog, biometricDevices, employeeBiometricMap: [],
         attendancePolicies, shifts, shiftAssignments, rosterEntries, shiftSwapRequests: [], leaveRequests, payroll, roles, orgProfile, branches, holidays,
         loanRequests, exitRequests, letterTemplates, generatedLetters } }));
-      return { employees, departments, attendanceToday, biometricDevices };
+      return { employees, departments, attendanceToday, biometricDevices, shifts };
     } catch (err) {
       console.warn('Org dashboard failed; tenant-owned modules remain empty instead of showing demo data:', err);
       throw err;
@@ -1801,7 +1801,13 @@ class Component extends DCLogic {
     const fields = { name: deptName, code: s.formDeptCode.trim() || generatedCode, description: s.formDeptDescription.trim(),
       headId: s.formDeptHeadId, head: headEmp ? headEmp.name : '—', parentId: s.formDeptParentId || null, status: s.formDeptStatus };
     if (s.editingDeptId) {
-      this.setState(st => ({ data: { ...st.data, departments: st.data.departments.map(d => d.id === s.editingDeptId ? { ...d, ...fields } : d) } }));
+      try {
+        await this.api.api('/org/departments/' + encodeURIComponent(s.editingDeptId), { method: 'PATCH', body: JSON.stringify({ name: fields.name, code: fields.code, description: fields.description, headId: fields.headId || null, parentId: fields.parentId, isActive: fields.status === 'Active' }) });
+        await this.refreshOrgDashboard();
+      } catch (err) {
+        this.showToast(err.message || 'Department could not be updated', '#dc2626');
+        return;
+      }
       this.showToast('Department updated', '#0f9d58');
     } else {
       let newDept = null;
@@ -1821,14 +1827,16 @@ class Component extends DCLogic {
   }
   toggleDeptStatus(d) {
     this.askConfirm(d.status === 'Active' ? 'Disable department' : 'Enable department', `This will ${d.status === 'Active' ? 'disable' : 'enable'} ${d.name}.`, d.status === 'Active' ? 'Disable' : 'Enable', () => {
-      this.setState(s2 => ({ data: { ...s2.data, departments: s2.data.departments.map(x => x.id === d.id ? { ...x, status: x.status === 'Active' ? 'Inactive' : 'Active' } : x) } }));
-      this.showToast('Department status updated', '#0f9d58');
+      this.api.api('/org/departments/' + encodeURIComponent(d.id), { method: 'PATCH', body: JSON.stringify({ isActive: d.status !== 'Active' }) }).then(() => {
+        return this.refreshOrgDashboard();
+      }).then(() => this.showToast('Department status updated', '#0f9d58')).catch(err => this.showToast(err.message || 'Department status could not be updated', '#dc2626'));
     });
   }
   deleteDept(d) {
     this.askConfirm('Delete department', `This permanently deletes ${d.name}. Employees in this department will need to be reassigned.`, 'Delete', () => {
-      this.setState(s2 => ({ data: { ...s2.data, departments: s2.data.departments.filter(x => x.id !== d.id) } }));
-      this.showToast('Department deleted', '#dc2626');
+      this.api.api('/org/departments/' + encodeURIComponent(d.id), { method: 'DELETE' }).then(() => {
+        return this.refreshOrgDashboard();
+      }).then(() => this.showToast('Department deleted', '#dc2626')).catch(err => this.showToast(err.message || 'Department could not be deleted', '#dc2626'));
     });
   }
 
@@ -2313,11 +2321,13 @@ class Component extends DCLogic {
     try {
       const saved = await this.api.api('/org/shifts', { method: 'POST', body: JSON.stringify({ name: newShift.name, startTime: newShift.start, endTime: newShift.end, workingDays: newShift.days, breakMinutes: newShift.breakMins, graceMinutes: newShift.graceMins, overtimeAfter: s.formShiftOvertimeEnabled ? newShift.overtimeAfter : undefined }) });
       savedShift = this.mapApiShift(saved);
+      const refreshed = await this.refreshOrgDashboard();
+      const persistedShift = refreshed && refreshed.shifts ? refreshed.shifts.find(sh => sh.id === savedShift.id || sh.name.toLowerCase() === savedShift.name.toLowerCase()) : null;
+      if (!persistedShift) throw new Error('Shift was not found after saving. Please try again.');
     } catch (err) {
       this.showToast(err.message || 'Shift could not be created', '#dc2626');
       return;
     }
-    this.setState(st => ({ data: { ...st.data, shifts: [...st.data.shifts, savedShift] } }));
     this.closeModal();
     this.showToast('Shift created', '#0f9d58');
   }
