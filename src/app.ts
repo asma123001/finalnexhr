@@ -1,4 +1,5 @@
 import express from "express";
+import path from "node:path";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -13,6 +14,7 @@ app.use(express.json({ limit: "6mb" }));
 app.use(morgan("dev"));
 
 app.use("/api", routes);
+app.use(express.static(path.join(process.cwd(), "public")));
 app.use(express.static(process.cwd()));
 app.use(notFound);
 app.use(errorHandler);
