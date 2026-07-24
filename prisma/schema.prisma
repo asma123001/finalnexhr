@@ -140,6 +140,7 @@ model Department {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
+  @@unique([organizationId, name])
   @@unique([organizationId, code])
 }
 
@@ -220,6 +221,8 @@ model Shift {
   assignments    ShiftAssignment[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+
+  @@unique([organizationId, name])
 }
 
 model Timetable {
@@ -244,6 +247,9 @@ model ShiftAssignment {
   effectiveFrom DateTime @default(now())
   effectiveTo   DateTime?
   createdAt   DateTime  @default(now())
+
+  @@index([shiftId, targetType, targetId])
+  @@index([shiftId, employeeId])
 }
 
 model AttendancePolicy {
@@ -258,6 +264,8 @@ model AttendancePolicy {
   isActive       Boolean      @default(true)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, name])
 }
 
 model Attendance {
@@ -339,6 +347,7 @@ model Holiday {
   type           String       @default("Public")
   createdAt      DateTime     @default(now())
 
+  @@unique([organizationId, name, date])
   @@index([organizationId, date])
 }
 
@@ -387,6 +396,8 @@ model PayrollRun {
   items          PayrollItem[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+
+  @@unique([organizationId, period])
 }
 
 model PayrollItem {

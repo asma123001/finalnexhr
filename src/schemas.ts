@@ -137,6 +137,7 @@ export const departmentUpdateSchema = z.object({
 
 export const leaveSchema = z.object({
   body: z.object({
+    employeeId: z.string().optional(),
     type: z.string().min(1, "Leave type is required."),
     fromDate: z.coerce.date(),
     toDate: z.coerce.date(),

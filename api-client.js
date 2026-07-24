@@ -1,4 +1,5 @@
 const API_BASE = window.NEXHR_API_BASE || (location.hostname.endsWith('github.io') ? 'https://finalnexhr.onrender.com/api' : '/api');
+const inFlightMutations = new Map();
 
 function tokenKey() { return 'nexhr_token'; }
 
@@ -27,17 +28,37 @@ export async function api(path, options = {}) {
   const token = isLogin ? getToken() : requireSession();
   const headers = { 'content-type': 'application/json', ...(options.headers || {}) };
   if (token) headers.authorization = `Bearer ${token}`;
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const message = readApiError(data, res.status);
-    if (res.status === 401) {
-      clearSession();
-      throw new Error(message === 'Missing bearer token' ? 'Your session expired. Please sign in again.' : message);
+  const method = String(options.method || 'GET').toUpperCase();
+  const mutationKey = method === 'GET' ? '' : `${method} ${path} ${options.body || ''}`;
+  if (mutationKey && inFlightMutations.has(mutationKey)) return inFlightMutations.get(mutationKey);
+  const request = (async () => {
+    const requestHeaders = { ...headers };
+    if (mutationKey && !requestHeaders['x-idempotency-key']) requestHeaders['x-idempotency-key'] = stableRequestKey(mutationKey);
+    const res = await fetch(`${API_BASE}${path}`, { ...options, headers: requestHeaders });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const message = readApiError(data, res.status);
+      if (res.status === 401) {
+        clearSession();
+        throw new Error(message === 'Missing bearer token' ? 'Your session expired. Please sign in again.' : message);
+      }
+      throw new Error(message);
     }
-    throw new Error(message);
+    return data;
+  })();
+  if (!mutationKey) return request;
+  inFlightMutations.set(mutationKey, request);
+  try {
+    return await request;
+  } finally {
+    inFlightMutations.delete(mutationKey);
   }
-  return data;
+}
+
+function stableRequestKey(value) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) hash = ((hash << 5) - hash + value.charCodeAt(i)) | 0;
+  return `nexhr-${Date.now()}-${Math.abs(hash)}`;
 }
 
 function readApiError(data, status) {

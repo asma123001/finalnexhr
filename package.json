@@ -16,7 +16,9 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:seed": "tsx prisma/seed.ts",
-    "test:workflow": "tsx tests/workflow.ts"
+    "test:workflow": "tsx tests/workflow.ts",
+    "test:workflow:local": "tsx tests/workflow-local.ts",
+    "test:security": "tsx tests/security-local.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^6.19.3",

@@ -1002,7 +1002,7 @@
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
             <button onClick="{{ printLetter }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Print</button>
-            <button onClick="{{ submitGenerateLetter }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Generate</button>
+            <button onClick="{{ submitGenerateLetter }}" disabled="{{ isSubmittingGenerateLetter }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ generateLetterButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ generateLetterButtonCursor }};">{{ generateLetterSubmitLabel }}</button>
           </div>
         </sc-if>
 
@@ -1024,7 +1024,7 @@
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
-            <button onClick="{{ submitHoliday }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Save holiday</button>
+            <button onClick="{{ submitHoliday }}" disabled="{{ isSubmittingHoliday }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ holidayButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ holidayButtonCursor }};">{{ holidaySubmitLabel }}</button>
           </div>
         </sc-if>
 
@@ -1045,7 +1045,7 @@
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
-            <button onClick="{{ submitRole }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Save role</button>
+            <button onClick="{{ submitRole }}" disabled="{{ isSubmittingRole }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ roleButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ roleButtonCursor }};">{{ roleSubmitLabel }}</button>
           </div>
         </sc-if>
 
@@ -1202,7 +1202,7 @@
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
-            <button onClick="{{ submitManualAttendance }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Save entry</button>
+            <button onClick="{{ submitManualAttendance }}" disabled="{{ isSubmittingManualAttendance }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ manualAttendanceButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ manualAttendanceButtonCursor }};">{{ manualAttendanceSubmitLabel }}</button>
           </div>
         </sc-if>
 
@@ -1237,7 +1237,7 @@
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
-            <button onClick="{{ submitDept }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">{{ deptModalSubmitLabel }}</button>
+            <button onClick="{{ submitDept }}" disabled="{{ isSubmittingDept }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ deptButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ deptButtonCursor }};">{{ deptModalSubmitLabel }}</button>
           </div>
         </sc-if>
 
@@ -1304,7 +1304,7 @@
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
-            <button onClick="{{ submitAddEmployee }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">{{ empModalSubmitLabel }}</button>
+            <button onClick="{{ submitAddEmployee }}" disabled="{{ isSubmittingEmployee }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ employeeButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ employeeButtonCursor }};">{{ empModalSubmitLabel }}</button>
           </div>
         </sc-if>
 
@@ -1348,7 +1348,7 @@
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
-            <button onClick="{{ submitCreateShift }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Create shift</button>
+            <button onClick="{{ submitCreateShift }}" disabled="{{ isSubmittingShift }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ shiftButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ shiftButtonCursor }};">{{ shiftSubmitLabel }}</button>
           </div>
         </sc-if>
 
@@ -1386,7 +1386,7 @@
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
-            <button onClick="{{ submitAssignShift }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">{{ assignSubmitLabel }}</button>
+            <button onClick="{{ submitAssignShift }}" disabled="{{ isSubmittingAssignment }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ assignmentButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ assignmentButtonCursor }};">{{ assignSubmitLabel }}</button>
           </div>
         </sc-if>
 
@@ -1410,7 +1410,7 @@
           </div>
           <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button onClick="{{ closeModal }}" style="padding:10px 18px;border-radius:9px;border:1px solid #e7e9f2;background:#fff;color:#3f4159;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Cancel</button>
-            <button onClick="{{ submitRequestLoan }}" style="padding:10px 18px;border-radius:9px;border:none;background:#4f46e5;color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:pointer;">Submit request</button>
+            <button onClick="{{ submitRequestLoan }}" disabled="{{ isSubmittingLoan }}" style="padding:10px 18px;border-radius:9px;border:none;background:{{ loanButtonBg }};color:#fff;font-weight:700;font-size:13.5px;font-family:inherit;cursor:{{ loanButtonCursor }};">{{ loanSubmitLabel }}</button>
           </div>
         </sc-if>
 
@@ -1446,6 +1446,7 @@ class Component extends DCLogic {
     screen: 'oa-overview', data: null,
     viewportWidth: typeof window !== 'undefined' ? window.innerWidth : 1440,
     mobileNavOpen: false, notifOpen: false, profileOpen: false, modal: null, confirmPayload: null, toast: null, viewSlipData: null,
+    pendingActions: {},
     globalSearch: '', empSearch: '', deptFilter: 'All', attendanceView: 'daily',
     deptSearch: '', deptStatusFilter: 'All', editingDeptId: null,
     editingPolicyId: null,
@@ -1522,10 +1523,37 @@ class Component extends DCLogic {
     this.setState({ toast: { message, color: color || '#4f46e5' } });
     this._toastTimer = setTimeout(() => this.setState({ toast: null }), 2600);
   }
+  isActionPending(key) { return !!(this.state.pendingActions && this.state.pendingActions[key]); }
+  beginAction(key) {
+    if (this.isActionPending(key)) return false;
+    this.setState(s => ({ pendingActions: { ...(s.pendingActions || {}), [key]: true } }));
+    return true;
+  }
+  endAction(key) {
+    this.setState(s => {
+      const next = { ...(s.pendingActions || {}) };
+      delete next[key];
+      return { pendingActions: next };
+    });
+  }
+  async runAction(key, task) {
+    if (!this.beginAction(key)) return undefined;
+    try { return await task(); }
+    finally { this.endAction(key); }
+  }
   mapApiDepartment(d, employees) {
     return { id: d.id, name: d.name, code: d.code, description: d.description || '', head: '—', headId: d.headId, parentId: d.parentId, status: d.isActive ? 'Active' : 'Inactive', count: employees.filter(e => e.dept === d.name).length };
   }
   async refreshOrgDashboard(sessionOrgProfile, sessionOrg) {
+    if (this._orgDashboardPromise) return this._orgDashboardPromise;
+    this._orgDashboardPromise = this.loadOrgDashboard(sessionOrgProfile, sessionOrg);
+    try { return await this._orgDashboardPromise; }
+    finally {
+      this._orgDashboardPromise = null;
+      this._orgDashboardLoadedAt = Date.now();
+    }
+  }
+  async loadOrgDashboard(sessionOrgProfile, sessionOrg) {
     try {
       const dashboard = await this.api.api('/org/dashboard');
       const employees = (dashboard.employees || []).map(e => this.mapApiEmployee(e));
@@ -1722,6 +1750,7 @@ class Component extends DCLogic {
     this.setState({ orgLogoPreviewUrl: '', orgLogoSelectedFile: null });
   }
   async uploadOrgLogo(e) {
+    if (!this.beginAction('uploadOrgLogo')) return;
     const file = e && e.target && e.target.files ? e.target.files[0] : null;
     try {
       const dataUrl = await this.readImageFile(file);
@@ -1740,6 +1769,7 @@ class Component extends DCLogic {
     } finally {
       if (e && e.target) e.target.value = '';
       this.resetOrgLogoSelection();
+      this.endAction('uploadOrgLogo');
     }
   }
   revokeEmployeePhotoPreview() {
@@ -1764,11 +1794,13 @@ class Component extends DCLogic {
   }
   async handlePhotoUpload(emp, e) {
     const file = e && e.target && e.target.files ? e.target.files[0] : null;
+    const targetId = emp && emp.id ? emp.id : this.state.editingEmpId;
+    const actionKey = 'photo:' + (targetId || 'new');
+    if (!this.beginAction(actionKey)) return;
     try {
       const dataUrl = await this.readImageFile(file);
       this.revokeEmployeePhotoPreview();
       const previewUrl = URL.createObjectURL(file);
-      const targetId = emp && emp.id ? emp.id : this.state.editingEmpId;
       this.setState({ selectedFile: file, selectedFileDataUrl: dataUrl, empPhotoPreviewUrl: previewUrl, empPhotoPreviewOwnerId: targetId || 'new' });
       if (targetId) {
         const photoDataUrl = await this.saveEmployeePhoto(targetId, dataUrl);
@@ -1781,6 +1813,7 @@ class Component extends DCLogic {
       this.showToast(err.message || 'Employee photo could not be uploaded', '#dc2626');
     } finally {
       if (e && e.target) e.target.value = '';
+      this.endAction(actionKey);
     }
   }
   uploadEmployeePhoto(emp, e) { return this.handlePhotoUpload(emp, e); }
@@ -1853,6 +1886,7 @@ class Component extends DCLogic {
   onFormDeptParentChange(e) { this.setState({ formDeptParentId: e.target.value }); }
   toggleFormDeptStatus() { this.setState(s => ({ formDeptStatus: s.formDeptStatus === 'Active' ? 'Inactive' : 'Active' })); }
   async submitDept() {
+    if (!this.beginAction('submitDept')) return;
     const s = this.state;
     const headEmp = s.data.employees.find(e => e.id === s.formDeptHeadId);
     const deptName = s.formDeptName.trim() || 'New Department';
@@ -1865,6 +1899,7 @@ class Component extends DCLogic {
         await this.refreshOrgDashboard();
       } catch (err) {
         this.showToast(err.message || 'Department could not be updated', '#dc2626');
+        this.endAction('submitDept');
         return;
       }
       this.showToast('Department updated', '#0f9d58');
@@ -1878,11 +1913,13 @@ class Component extends DCLogic {
         if (!savedDept) throw new Error('Department was not found after saving. Please try again.');
       } catch (err) {
         this.showToast(err.message || 'Department could not be created', '#dc2626');
+        this.endAction('submitDept');
         return;
       }
       this.showToast('Department created', '#0f9d58');
     }
     this.closeModal();
+    this.endAction('submitDept');
   }
   toggleDeptStatus(d) {
     this.askConfirm(d.status === 'Active' ? 'Disable department' : 'Enable department', `This will ${d.status === 'Active' ? 'disable' : 'enable'} ${d.name}.`, d.status === 'Active' ? 'Disable' : 'Enable', () => {
@@ -1957,6 +1994,7 @@ class Component extends DCLogic {
   onPolicySearchChange(e) { this.setState({ policySearch: e.target.value }); }
   setPolicyStatusFilter(f) { this.setState({ policyStatusFilter: f }); }
   async savePolicy() {
+    if (!this.beginAction('savePolicy')) return;
     const s = this.state;
     const historyEntry = { id: 'h' + Date.now(), date: 'Jul 19, 2026', actor: 'Org Admin', change: s.selectedPolicyId ? 'Policy updated' : 'Policy created' };
     const finalPolicy = { ...s.draftPolicy, history: [historyEntry, ...s.draftPolicy.history] };
@@ -1966,6 +2004,7 @@ class Component extends DCLogic {
       savedPolicy = this.mapApiPolicy(saved);
     } catch (err) {
       this.showToast(err.message || 'Policy could not be saved', '#dc2626');
+      this.endAction('savePolicy');
       return;
     }
     this.setState(st => {
@@ -1974,8 +2013,10 @@ class Component extends DCLogic {
       return { data: { ...st.data, attendancePolicies }, draftPolicy: savedPolicy, selectedPolicyId: savedPolicy.id };
     });
     this.showToast('Policy saved', '#0f9d58');
+    this.endAction('savePolicy');
   }
   async duplicatePolicyFromBuilder() {
+    if (!this.beginAction('duplicatePolicy')) return;
     const s = this.state;
     const dup = { ...s.draftPolicy, id: 'ap' + Date.now(), name: s.draftPolicy.name + ' (Copy)', status: 'Draft', history: [{ id: 'h' + Date.now(), date: 'Jul 19, 2026', actor: 'Org Admin', change: 'Duplicated from ' + s.draftPolicy.name }] };
     let savedPolicy = dup;
@@ -1983,10 +2024,12 @@ class Component extends DCLogic {
       savedPolicy = this.mapApiPolicy(await this.api.api('/org/attendance-policies', { method: 'POST', body: JSON.stringify(dup) }));
     } catch (err) {
       this.showToast(err.message || 'Policy could not be duplicated', '#dc2626');
+      this.endAction('duplicatePolicy');
       return;
     }
     this.setState(st => ({ data: { ...st.data, attendancePolicies: [savedPolicy, ...st.data.attendancePolicies] }, draftPolicy: savedPolicy, selectedPolicyId: savedPolicy.id }));
     this.showToast('Policy duplicated', '#0f9d58');
+    this.endAction('duplicatePolicy');
   }
   deletePolicyFromBuilder() {
     const s = this.state;
@@ -2003,16 +2046,19 @@ class Component extends DCLogic {
     });
   }
   async duplicatePolicyFromList(p) {
+    if (!this.beginAction('duplicatePolicy:' + p.id)) return;
     const dup = { ...p, id: 'ap' + Date.now(), name: p.name + ' (Copy)', status: 'Draft', history: [{ id: 'h' + Date.now(), date: 'Jul 19, 2026', actor: 'Org Admin', change: 'Duplicated from ' + p.name }] };
     let savedPolicy = dup;
     try {
       savedPolicy = this.mapApiPolicy(await this.api.api('/org/attendance-policies', { method: 'POST', body: JSON.stringify(dup) }));
     } catch (err) {
       this.showToast(err.message || 'Policy could not be duplicated', '#dc2626');
+      this.endAction('duplicatePolicy:' + p.id);
       return;
     }
     this.setState(st => ({ data: { ...st.data, attendancePolicies: [savedPolicy, ...st.data.attendancePolicies] } }));
     this.showToast('Policy duplicated', '#0f9d58');
+    this.endAction('duplicatePolicy:' + p.id);
   }
   deletePolicyFromListRow(p) {
     this.askConfirm('Delete policy', `This permanently deletes ${p.name}.`, 'Delete', () => {
@@ -2028,6 +2074,7 @@ class Component extends DCLogic {
   onFormGenLetterTypeChange(e) { this.setState({ formGenLetterType: e.target.value }); }
   onFormGenLetterNotesChange(e) { this.setState({ formGenLetterNotes: e.target.value }); }
   async submitGenerateLetter() {
+    if (!this.beginAction('submitGenerateLetter')) return;
     const s = this.state;
     const emp = s.data.employees.find(e => e.id === s.formGenLetterEmployeeId);
     let newLetter = { id: 'gl' + Date.now(), employee: emp ? emp.name : 'Employee', type: s.formGenLetterType, generatedOn: new Date().toLocaleDateString(), generatedBy: 'Admin User' };
@@ -2036,11 +2083,13 @@ class Component extends DCLogic {
       newLetter = this.mapApiLetter(saved);
     } catch (err) {
       this.showToast(err.message || 'Letter could not be generated', '#dc2626');
+      this.endAction('submitGenerateLetter');
       return;
     }
     this.setState(st => ({ data: { ...st.data, generatedLetters: [newLetter, ...st.data.generatedLetters] } }));
     this.closeModal();
     this.showToast('Letter generated', '#0f9d58');
+    this.endAction('submitGenerateLetter');
   }
   printLetter() { window.print(); }
 
@@ -2083,12 +2132,15 @@ class Component extends DCLogic {
     this.setState(s => ({ data: { ...s.data, orgProfile: { ...s.data.orgProfile, [key]: value } } }));
   }
   async saveOrgProfile() {
+    if (!this.beginAction('saveOrgProfile')) return;
     try {
       await this.api.api('/org/settings', { method: 'PATCH', body: JSON.stringify(this.state.data.orgProfile) });
       this.updateStoredSessionOrg(this.state.data.orgProfile);
       this.showToast('Organization profile saved', '#0f9d58');
     } catch (err) {
       this.showToast(err.message || 'Organization profile could not be saved', '#dc2626');
+    } finally {
+      this.endAction('saveOrgProfile');
     }
   }
 
@@ -2097,6 +2149,7 @@ class Component extends DCLogic {
   onFormHolidayDateChange(e) { this.setState({ formHolidayDate: e.target.value }); }
   onFormHolidayTypeChange(e) { this.setState({ formHolidayType: e.target.value }); }
   async submitHoliday() {
+    if (!this.beginAction('submitHoliday')) return;
     const s = this.state;
     let holiday = { id: 'hd' + Date.now(), name: s.formHolidayName || 'New Holiday', date: s.formHolidayDate || 'TBD', type: s.formHolidayType };
     try {
@@ -2104,11 +2157,13 @@ class Component extends DCLogic {
       holiday = { id: saved.id, name: saved.name, date: this.formatDate(saved.date), type: saved.type };
     } catch (err) {
       this.showToast(err.message || 'Holiday could not be added', '#dc2626');
+      this.endAction('submitHoliday');
       return;
     }
     this.setState(st => ({ data: { ...st.data, holidays: [...st.data.holidays, holiday] } }));
     this.closeModal();
     this.showToast('Holiday added', '#0f9d58');
+    this.endAction('submitHoliday');
   }
   deleteHoliday(h) {
     this.api.api('/org/holidays/' + encodeURIComponent(h.id), { method: 'DELETE' }).then(() => {
@@ -2125,6 +2180,7 @@ class Component extends DCLogic {
     this.setState(s => ({ formRolePermissions: s.formRolePermissions.includes(mod) ? s.formRolePermissions.filter(m => m !== mod) : [...s.formRolePermissions, mod] }));
   }
   async submitRole() {
+    if (!this.beginAction('submitRole')) return;
     const s = this.state;
     const fields = { name: s.formRoleName.trim() || 'New Role', description: s.formRoleDescription.trim(), permissions: s.formRolePermissions };
     let savedRole = null;
@@ -2132,6 +2188,7 @@ class Component extends DCLogic {
       savedRole = await this.api.api('/org/roles', { method: 'POST', body: JSON.stringify({ id: s.editingRoleId || undefined, ...fields }) });
     } catch (err) {
       this.showToast(err.message || 'Role could not be saved', '#dc2626');
+      this.endAction('submitRole');
       return;
     }
     const roleRow = { id: savedRole.id, name: savedRole.name, description: savedRole.description || '', permissions: savedRole.permissions || [], assignedCount: savedRole.usersCount || 0 };
@@ -2143,6 +2200,7 @@ class Component extends DCLogic {
       this.showToast('Role created', '#0f9d58');
     }
     this.closeModal();
+    this.endAction('submitRole');
   }
   deleteRole(r) {
     this.askConfirm('Delete role', `This permanently deletes the ${r.name} role.`, 'Delete', () => {
@@ -2172,7 +2230,7 @@ class Component extends DCLogic {
     this.showToast('Employee list exported', '#0f9d58');
   }
   async syncEmployeesFromDevice() {
-    if (this.state.isSyncingBiometric) return;
+    if (this.state.isSyncingBiometric || !this.beginAction('syncBiometric')) return;
     this.setState({ isSyncingBiometric: true });
     try {
       const result = await this.api.api('/org/biometric/sync', { method: 'POST', body: JSON.stringify({}) });
@@ -2185,6 +2243,7 @@ class Component extends DCLogic {
       this.showToast(err.message || 'Biometric devices could not be synced', '#dc2626');
     } finally {
       this.setState({ isSyncingBiometric: false });
+      this.endAction('syncBiometric');
     }
   }
   onFormEmpNameChange(e) { this.setState({ formEmpName: e.target.value }); }
@@ -2232,6 +2291,7 @@ class Component extends DCLogic {
     };
   }
   async submitAddEmployee() {
+    if (!this.beginAction('submitAddEmployee')) return;
     const { editingEmpId, formEmpName, formEmpEmail, formEmpDept, formEmpTitle, formEmpPhone, formEmpEmploymentType,
       formEmpWorkLocation, formEmpSalary, formEmpSalaryCurrency, formEmpPayFrequency, formEmpGender, formEmpDateOfBirth, formEmpNationalId,
       formEmpAddress, formEmpEmergencyName, formEmpEmergencyPhone, formEmpBankName, formEmpBankAccount } = this.state;
@@ -2243,6 +2303,7 @@ class Component extends DCLogic {
         if (!latest.employees.some(e => e.id === saved.id)) throw new Error('Employee was saved, but was not returned by the database refresh.');
       } catch (err) {
         this.showToast(err.message || 'Employee could not be updated', '#dc2626');
+        this.endAction('submitAddEmployee');
         return;
       }
       this.showToast('Employee updated', '#0f9d58');
@@ -2254,11 +2315,13 @@ class Component extends DCLogic {
         if (!latest.employees.some(e => e.id === created.employee.id)) throw new Error('Employee was saved, but was not returned by the database refresh.');
       } catch (err) {
         this.showToast(err.message || 'Employee could not be added', '#dc2626');
+        this.endAction('submitAddEmployee');
         return;
       }
       this.showToast('Employee added', '#0f9d58');
     }
     this.closeModal();
+    this.endAction('submitAddEmployee');
   }
   async toggleEmpStatus(emp) {
     this.askConfirm(emp.status === 'Inactive' ? 'Reactivate employee' : 'Deactivate employee', `This will ${emp.status === 'Inactive' ? 're-enable' : 'revoke'} platform access for ${emp.name}.`, emp.status === 'Inactive' ? 'Reactivate' : 'Deactivate', () => {
@@ -2266,6 +2329,7 @@ class Component extends DCLogic {
     });
   }
   async saveEmployeeStatus(emp) {
+    if (!this.beginAction('employeeStatus:' + emp.id)) return;
     const nextStatus = emp.status === 'Inactive' ? 'ACTIVE' : 'INACTIVE';
     try {
       const saved = await this.api.api('/org/employees/' + encodeURIComponent(emp.id), { method: 'PATCH', body: JSON.stringify({ status: nextStatus }) });
@@ -2274,6 +2338,8 @@ class Component extends DCLogic {
       this.showToast('Employee status updated', '#0f9d58');
     } catch (err) {
       this.showToast(err.message || 'Employee status could not be updated', '#dc2626');
+    } finally {
+      this.endAction('employeeStatus:' + emp.id);
     }
   }
   setDailyView() { this.setState({ attendanceView: 'daily' }); }
@@ -2294,6 +2360,7 @@ class Component extends DCLogic {
   onFormAttCheckOutChange(e) { this.setState({ formAttCheckOut: e.target.value }); }
   onFormAttReasonChange(e) { this.setState({ formAttReason: e.target.value }); }
   async submitManualAttendance() {
+    if (!this.beginAction('submitManualAttendance')) return;
     const s = this.state;
     const emp = s.data.employees.find(e => e.id === s.formAttEmployeeId);
     const empName = emp ? emp.name : 'Employee';
@@ -2311,9 +2378,11 @@ class Component extends DCLogic {
       this.setState(st => ({ data: { ...st.data, attendanceToday: [row, ...st.data.attendanceToday.filter(x => x.id !== row.id)], attendanceAuditLog: [auditEntry, ...st.data.attendanceAuditLog] } }));
       this.closeModal();
       this.showToast('Attendance recorded', '#0f9d58');
+      this.endAction('submitManualAttendance');
       return;
     } catch (err) {
       this.showToast(err.message || 'Attendance could not be saved', '#dc2626');
+      this.endAction('submitManualAttendance');
       return;
     }
     const fields = { name: empName, initials: emp ? emp.initials : 'NA', status: s.formAttStatus,
@@ -2332,6 +2401,7 @@ class Component extends DCLogic {
     this.showToast('Attendance recorded', '#0f9d58');
   }
   async approveLeave(id) {
+    if (!this.beginAction('leave:' + id)) return;
     try {
       const saved = await this.api.api('/org/leave/' + encodeURIComponent(id) + '/decision', { method: 'PATCH', body: JSON.stringify({ status: 'APPROVED' }) });
       const row = this.mapApiLeaveRequest(saved);
@@ -2339,9 +2409,12 @@ class Component extends DCLogic {
       this.showToast('Leave request approved', '#0f9d58');
     } catch (err) {
       this.showToast(err.message || 'Leave request could not be approved', '#dc2626');
+    } finally {
+      this.endAction('leave:' + id);
     }
   }
   async rejectLeave(id) {
+    if (!this.beginAction('leave:' + id)) return;
     try {
       const saved = await this.api.api('/org/leave/' + encodeURIComponent(id) + '/decision', { method: 'PATCH', body: JSON.stringify({ status: 'REJECTED' }) });
       const row = this.mapApiLeaveRequest(saved);
@@ -2349,9 +2422,12 @@ class Component extends DCLogic {
       this.showToast('Leave request rejected', '#dc2626');
     } catch (err) {
       this.showToast(err.message || 'Leave request could not be rejected', '#dc2626');
+    } finally {
+      this.endAction('leave:' + id);
     }
   }
   async runPayroll() {
+    if (!this.beginAction('runPayroll')) return;
     try {
       const period = new Date().toISOString().slice(0, 7);
       const run = await this.api.api('/org/payroll/run', { method: 'POST', body: JSON.stringify({ period }) });
@@ -2360,6 +2436,8 @@ class Component extends DCLogic {
       this.showToast('Payroll run completed', '#0f9d58');
     } catch (err) {
       this.showToast(err.message || 'Payroll could not be run', '#dc2626');
+    } finally {
+      this.endAction('runPayroll');
     }
   }
   openViewSlip(p) { this.setState({ modal: 'viewSlip', viewSlipData: p }); }
@@ -2379,6 +2457,7 @@ class Component extends DCLogic {
   onFormShiftColorChange(color) { this.setState({ formShiftColor: color }); }
   toggleFormShiftOvertime() { this.setState(s => ({ formShiftOvertimeEnabled: !s.formShiftOvertimeEnabled })); }
   async submitCreateShift() {
+    if (!this.beginAction('submitCreateShift')) return;
     const s = this.state;
     const newShift = { id: 'sh' + Date.now(), name: s.formShiftName.trim() || 'New Shift', start: s.formShiftStart, end: s.formShiftEnd, days: s.formShiftDays,
       breakMins: parseInt(s.formShiftBreak, 10) || 0, graceMins: parseInt(s.formShiftGrace, 10) || 0, overtimeEnabled: s.formShiftOvertimeEnabled, overtimeAfter: s.formShiftOvertimeAfter,
@@ -2392,10 +2471,12 @@ class Component extends DCLogic {
       if (!persistedShift) throw new Error('Shift was not found after saving. Please try again.');
     } catch (err) {
       this.showToast(err.message || 'Shift could not be created', '#dc2626');
+      this.endAction('submitCreateShift');
       return;
     }
     this.closeModal();
     this.showToast('Shift created', '#0f9d58');
+    this.endAction('submitCreateShift');
   }
   openAssignShift(sh) {
     this.setState({ modal: 'assignShift', formAssignShiftId: sh.id, editingAssignmentId: null, formAssignTarget: 'department',
@@ -2424,9 +2505,10 @@ class Component extends DCLogic {
   onFormAssignStartDateChange(e) { this.setState({ formAssignStartDate: e.target.value }); }
   onFormAssignEndDateChange(e) { this.setState({ formAssignEndDate: e.target.value }); }
   async submitAssignShift() {
+    if (!this.beginAction('submitAssignShift')) return;
     const s = this.state;
     const shift = s.data.shifts.find(sh => sh.id === s.formAssignShiftId);
-    if (!shift) { this.closeModal(); return; }
+    if (!shift) { this.closeModal(); this.endAction('submitAssignShift'); return; }
     const targetType = s.formAssignTarget === 'department' ? 'Department' : 'Employee';
     const target = s.formAssignTarget === 'department' ? s.formAssignDept : (s.data.employees.find(e => e.id === s.formAssignEmployeeId) || {}).name || 'Employee';
     const effectiveFrom = s.formAssignStartDate || 'Jul 19, 2026';
@@ -2445,6 +2527,7 @@ class Component extends DCLogic {
       }) });
     } catch (err) {
       this.showToast(err.message || 'Assignment could not be saved', '#dc2626');
+      this.endAction('submitAssignShift');
       return;
     }
     const finalAssignment = { id: savedAssignment.id, target, targetType, shiftName: shift.name, effectiveFrom, effectiveTo, status: 'Active' };
@@ -2458,6 +2541,7 @@ class Component extends DCLogic {
       this.showToast(`${shift.name} assigned to ${target}`, '#0f9d58');
     }
     this.closeModal();
+    this.endAction('submitAssignShift');
   }
   advanceApplicant(ap) {
     const order = ['Applied', 'Shortlisted', 'Interview', 'Selected', 'Hired'];
@@ -2485,9 +2569,10 @@ class Component extends DCLogic {
 
 
   async advanceExit(ex) {
+    if (!this.beginAction('exit:' + ex.id)) return;
     const order = ['Notice Period', 'Clearance', 'Exit Interview', 'Settlement', 'Exited'];
     const idx = order.indexOf(ex.stage);
-    if (idx === -1 || idx === order.length - 1) return;
+    if (idx === -1 || idx === order.length - 1) { this.endAction('exit:' + ex.id); return; }
     const nextStage = order[idx + 1];
     try {
       const saved = await this.api.api('/org/exits/' + encodeURIComponent(ex.id), { method: 'PATCH', body: JSON.stringify({ stage: nextStage }) });
@@ -2496,9 +2581,12 @@ class Component extends DCLogic {
       this.showToast(ex.employee + ' moved to ' + nextStage, '#4f46e5');
     } catch (err) {
       this.showToast(err.message || 'Exit request could not be updated', '#dc2626');
+    } finally {
+      this.endAction('exit:' + ex.id);
     }
   }
   async toggleClearanceItem(ex, key) {
+    if (!this.beginAction('clearance:' + ex.id + ':' + key)) return;
     const clearance = { ...ex.clearance, [key]: !ex.clearance[key] };
     try {
       const saved = await this.api.api('/org/exits/' + encodeURIComponent(ex.id), { method: 'PATCH', body: JSON.stringify({ clearance }) });
@@ -2506,6 +2594,8 @@ class Component extends DCLogic {
       this.setState(s2 => ({ data: { ...s2.data, exitRequests: s2.data.exitRequests.map(x => x.id === ex.id ? row : x) } }));
     } catch (err) {
       this.showToast(err.message || 'Clearance could not be updated', '#dc2626');
+    } finally {
+      this.endAction('clearance:' + ex.id + ':' + key);
     }
   }
 
@@ -2515,6 +2605,7 @@ class Component extends DCLogic {
   onFormLoanAmountChange(e) { this.setState({ formLoanAmount: e.target.value }); }
   onFormLoanInstallmentsChange(e) { this.setState({ formLoanInstallments: e.target.value }); }
   async submitRequestLoan() {
+    if (!this.beginAction('submitRequestLoan')) return;
     const s = this.state;
     const emp = s.data.employees.find(e => e.id === s.formLoanEmployeeId);
     const payrollRow = s.data.payroll.find(p => p.name === (emp || {}).name);
@@ -2527,11 +2618,13 @@ class Component extends DCLogic {
       savedLoan = this.mapApiLoan(await this.api.api('/org/loans', { method: 'POST', body: JSON.stringify({ employeeId: s.formLoanEmployeeId, type: s.formLoanType, amount, installments, salary: newLoan.salary }) }));
     } catch (err) {
       this.showToast(err.message || 'Loan request could not be submitted', '#dc2626');
+      this.endAction('submitRequestLoan');
       return;
     }
     this.setState(st => ({ data: { ...st.data, loanRequests: [savedLoan, ...st.data.loanRequests] } }));
     this.closeModal();
     this.showToast('Request submitted', '#0f9d58');
+    this.endAction('submitRequestLoan');
   }
   approveLoan(ln) {
     this.askConfirm('Approve request', `${ln.employee}'s ${ln.type.toLowerCase()} of $${ln.amount.toLocaleString()} will be approved and deducted from payroll.`, 'Approve', () => {
@@ -2573,6 +2666,11 @@ class Component extends DCLogic {
     const s = this.state;
     const data = s.data;
     const isMobile = s.viewportWidth < 900;
+    const pending = s.pendingActions || {};
+    const busyBg = '#9296b3';
+    const busyCursor = 'not-allowed';
+    const buttonBg = (key) => pending[key] ? busyBg : '#4f46e5';
+    const buttonCursor = (key) => pending[key] ? busyCursor : 'pointer';
 
     const navGroupsRaw = [
       { title: 'OVERVIEW', items: [{ key: 'oa-overview', label: 'Dashboard' }] },
@@ -2844,6 +2942,7 @@ class Component extends DCLogic {
       setDailyView: () => this.setDailyView(), setMonthlyView: () => this.setMonthlyView(), attendanceRows, monthlyRows,
       attendanceAuditRows, openAddManualAttendance: () => this.openAddManualAttendance(),
       isManualAttendanceModal: modal === 'manualAttendance', manualAttModalTitle: s.editingAttId ? 'Edit Attendance Entry' : 'Add Manual Attendance',
+      isSubmittingManualAttendance: !!pending.submitManualAttendance, manualAttendanceButtonBg: buttonBg('submitManualAttendance'), manualAttendanceButtonCursor: buttonCursor('submitManualAttendance'), manualAttendanceSubmitLabel: pending.submitManualAttendance ? 'Saving...' : 'Save entry',
       formAttEmployeeId: s.formAttEmployeeId, formAttDate: s.formAttDate, formAttStatus: s.formAttStatus, formAttCheckIn: s.formAttCheckIn, formAttCheckOut: s.formAttCheckOut, formAttReason: s.formAttReason,
       onFormAttEmployeeChange: (e) => this.onFormAttEmployeeChange(e), onFormAttDateChange: (e) => this.onFormAttDateChange(e), onFormAttStatusChange: (e) => this.onFormAttStatusChange(e),
       onFormAttCheckInChange: (e) => this.onFormAttCheckInChange(e), onFormAttCheckOutChange: (e) => this.onFormAttCheckOutChange(e), onFormAttReasonChange: (e) => this.onFormAttReasonChange(e),
@@ -2869,6 +2968,7 @@ class Component extends DCLogic {
 
       letterTemplateCards, generatedLetterRows, openGenerateLetter: () => this.openGenerateLetter(), printLetter: () => this.printLetter(),
       isGenLetterModal: modal === 'genLetter', formGenLetterEmployeeId: s.formGenLetterEmployeeId, formGenLetterType: s.formGenLetterType, formGenLetterNotes: s.formGenLetterNotes,
+      isSubmittingGenerateLetter: !!pending.submitGenerateLetter, generateLetterButtonBg: buttonBg('submitGenerateLetter'), generateLetterButtonCursor: buttonCursor('submitGenerateLetter'), generateLetterSubmitLabel: pending.submitGenerateLetter ? 'Generating...' : 'Generate',
       onFormGenLetterEmployeeChange: (e) => this.onFormGenLetterEmployeeChange(e), onFormGenLetterTypeChange: (e) => this.onFormGenLetterTypeChange(e),
       onFormGenLetterNotesChange: (e) => this.onFormGenLetterNotesChange(e), submitGenerateLetter: () => this.submitGenerateLetter(),
 
@@ -2884,15 +2984,18 @@ class Component extends DCLogic {
       branchRows,
       holidayRows, openAddHoliday: () => this.openAddHoliday(),
       isHolidayModal: modal === 'holiday', formHolidayName: s.formHolidayName, formHolidayDate: s.formHolidayDate, formHolidayType: s.formHolidayType,
+      isSubmittingHoliday: !!pending.submitHoliday, holidayButtonBg: buttonBg('submitHoliday'), holidayButtonCursor: buttonCursor('submitHoliday'), holidaySubmitLabel: pending.submitHoliday ? 'Saving...' : 'Save holiday',
       onFormHolidayNameChange: (e) => this.onFormHolidayNameChange(e), onFormHolidayDateChange: (e) => this.onFormHolidayDateChange(e), onFormHolidayTypeChange: (e) => this.onFormHolidayTypeChange(e), submitHoliday: () => this.submitHoliday(),
 
       roleRows, openAddRole: () => this.openAddRole(),
       isRoleModal: modal === 'role', roleModalTitle: s.editingRoleId ? 'Edit Role' : 'Create Role', formRoleName: s.formRoleName, formRoleDescription: s.formRoleDescription, rolePermissionChoices,
+      isSubmittingRole: !!pending.submitRole, roleButtonBg: buttonBg('submitRole'), roleButtonCursor: buttonCursor('submitRole'), roleSubmitLabel: pending.submitRole ? 'Saving...' : 'Save role',
       onFormRoleNameChange: (e) => this.onFormRoleNameChange(e), onFormRoleDescriptionChange: (e) => this.onFormRoleDescriptionChange(e), submitRole: () => this.submitRole(),
 
       modal, modalMaxWidth: modal === 'addEmployee' ? '680px' : (['createShift', 'assignShift', 'requestLoan', 'addDept', 'manualAttendance', 'policy', 'genLetter', 'announce', 'role', 'assignPolicy'].includes(modal) ? '480px' : (modal === 'viewSlip' || modal === 'viewReport' ? '640px' : (modal === 'idCard' ? '420px' : (modal === 'overtimeRules' ? '600px' : '420px')))), isConfirmModal: modal === 'confirm', confirmTitle: cp.title, confirmMessage: cp.message, confirmLabel: cp.label,
       confirmAction: () => this.confirmAction(), closeModal: () => this.closeModal(),
-      isAddEmployeeModal: modal === 'addEmployee', empModalTitle: s.editingEmpId ? 'Edit Employee' : 'Add Employee', empModalSubmitLabel: s.editingEmpId ? 'Save changes' : 'Add employee',
+      isAddEmployeeModal: modal === 'addEmployee', empModalTitle: s.editingEmpId ? 'Edit Employee' : 'Add Employee', empModalSubmitLabel: pending.submitAddEmployee ? 'Saving...' : (s.editingEmpId ? 'Save changes' : 'Add employee'),
+      isSubmittingEmployee: !!pending.submitAddEmployee, employeeButtonBg: buttonBg('submitAddEmployee'), employeeButtonCursor: buttonCursor('submitAddEmployee'),
       empModalPhotoUrl: s.empPhotoPreviewUrl || s.formEmpPhotoDataUrl || '', onEmpModalPhotoChange: (e) => this.onEmpModalPhotoChange(e),
       formEmpName: s.formEmpName, formEmpEmail: s.formEmpEmail, formEmpDept: s.formEmpDept, formEmpTitle: s.formEmpTitle, departmentOptions: data.departments,
       formEmpPhone: s.formEmpPhone, formEmpEmploymentType: s.formEmpEmploymentType,
@@ -2909,7 +3012,8 @@ class Component extends DCLogic {
       onFormEmpBankAccountChange: (e) => this.onFormEmpBankAccountChange(e), onFormEmpNameChange: (e) => this.onFormEmpNameChange(e),
       onFormEmpEmailChange: (e) => this.onFormEmpEmailChange(e), onFormEmpDeptChange: (e) => this.onFormEmpDeptChange(e), onFormEmpTitleChange: (e) => this.onFormEmpTitleChange(e), submitAddEmployee: () => this.submitAddEmployee(),
 
-      isAddDeptModal: modal === 'addDept', deptModalTitle: s.editingDeptId ? 'Edit Department' : 'Create Department', deptModalSubmitLabel: s.editingDeptId ? 'Save changes' : 'Create department',
+      isAddDeptModal: modal === 'addDept', deptModalTitle: s.editingDeptId ? 'Edit Department' : 'Create Department', deptModalSubmitLabel: pending.submitDept ? 'Saving...' : (s.editingDeptId ? 'Save changes' : 'Create department'),
+      isSubmittingDept: !!pending.submitDept, deptButtonBg: buttonBg('submitDept'), deptButtonCursor: buttonCursor('submitDept'),
       formDeptName: s.formDeptName, formDeptCode: s.formDeptCode, formDeptDescription: s.formDeptDescription, formDeptHeadId: s.formDeptHeadId, formDeptParentId: s.formDeptParentId,
       formDeptStatus: s.formDeptStatus, deptStatusTrackBg: s.formDeptStatus === 'Active' ? '#4f46e5' : '#e0e2ee', deptStatusKnobLeft: s.formDeptStatus === 'Active' ? '21px' : '3px',
       onFormDeptNameChange: (e) => this.onFormDeptNameChange(e), onFormDeptCodeChange: (e) => this.onFormDeptCodeChange(e), onFormDeptDescriptionChange: (e) => this.onFormDeptDescriptionChange(e),
@@ -2917,6 +3021,7 @@ class Component extends DCLogic {
 
 
       openCreateShift: () => this.openCreateShift(), isCreateShiftModal: modal === 'createShift',
+      isSubmittingShift: !!pending.submitCreateShift, shiftButtonBg: buttonBg('submitCreateShift'), shiftButtonCursor: buttonCursor('submitCreateShift'), shiftSubmitLabel: pending.submitCreateShift ? 'Creating...' : 'Create shift',
       formShiftName: s.formShiftName, formShiftStart: s.formShiftStart, formShiftEnd: s.formShiftEnd, formShiftDays: s.formShiftDays,
       formShiftBreak: s.formShiftBreak, formShiftGrace: s.formShiftGrace, formShiftOvertimeAfter: s.formShiftOvertimeAfter, formShiftColor: s.formShiftColor,
       formShiftOvertimeEnabled: s.formShiftOvertimeEnabled, toggleFormShiftOvertime: () => this.toggleFormShiftOvertime(),
@@ -2930,7 +3035,8 @@ class Component extends DCLogic {
       isAssignShiftModal: modal === 'assignShift', formAssignTarget: s.formAssignTarget, formAssignDept: s.formAssignDept, formAssignEmployeeId: s.formAssignEmployeeId,
       formAssignStartDate: s.formAssignStartDate, formAssignEndDate: s.formAssignEndDate,
       onFormAssignStartDateChange: (e) => this.onFormAssignStartDateChange(e), onFormAssignEndDateChange: (e) => this.onFormAssignEndDateChange(e),
-      assignModalTitle: s.editingAssignmentId ? 'Edit Shift Assignment' : 'Assign Shift', assignSubmitLabel: s.editingAssignmentId ? 'Save changes' : 'Assign shift',
+      assignModalTitle: s.editingAssignmentId ? 'Edit Shift Assignment' : 'Assign Shift', assignSubmitLabel: pending.submitAssignShift ? 'Saving...' : (s.editingAssignmentId ? 'Save changes' : 'Assign shift'),
+      isSubmittingAssignment: !!pending.submitAssignShift, assignmentButtonBg: buttonBg('submitAssignShift'), assignmentButtonCursor: buttonCursor('submitAssignShift'),
       assignShiftName: (s.data.shifts.find(sh => sh.id === s.formAssignShiftId) || {}).name || '',
       setAssignDeptTarget: () => this.setAssignTarget('department'), setAssignEmployeeTarget: () => this.setAssignTarget('employee'),
       isAssignDeptTarget: s.formAssignTarget === 'department', isAssignEmployeeTarget: s.formAssignTarget === 'employee',
@@ -2939,6 +3045,7 @@ class Component extends DCLogic {
       onFormAssignDeptChange: (e) => this.onFormAssignDeptChange(e), onFormAssignEmployeeChange: (e) => this.onFormAssignEmployeeChange(e), submitAssignShift: () => this.submitAssignShift(),
 
       isRequestLoanModal: modal === 'requestLoan', formLoanEmployeeId: s.formLoanEmployeeId, formLoanType: s.formLoanType, formLoanAmount: s.formLoanAmount, formLoanInstallments: s.formLoanInstallments,
+      isSubmittingLoan: !!pending.submitRequestLoan, loanButtonBg: buttonBg('submitRequestLoan'), loanButtonCursor: buttonCursor('submitRequestLoan'), loanSubmitLabel: pending.submitRequestLoan ? 'Submitting...' : 'Submit request',
       onFormLoanEmployeeChange: (e) => this.onFormLoanEmployeeChange(e), onFormLoanTypeChange: (e) => this.onFormLoanTypeChange(e), onFormLoanAmountChange: (e) => this.onFormLoanAmountChange(e),
       onFormLoanInstallmentsChange: (e) => this.onFormLoanInstallmentsChange(e), submitRequestLoan: () => this.submitRequestLoan(),
 

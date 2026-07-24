@@ -50,6 +50,10 @@ async function uniqueDepartmentCode(organizationId: string, inputCode: string, n
 }
 
 export async function createDepartment(organizationId: string, data: { name: string; code: string; description?: string }) {
+  const existing = await prisma.department.findUnique({ where: { organizationId_name: { organizationId, name: data.name } } });
+  if (existing) {
+    return prisma.department.update({ where: { id: existing.id }, data: { description: data.description ?? existing.description } });
+  }
   const code = await uniqueDepartmentCode(organizationId, data.code, data.name);
   return prisma.department.create({ data: { organizationId, name: data.name, code, description: data.description } });
 }
@@ -57,6 +61,13 @@ export async function createDepartment(organizationId: string, data: { name: str
 export async function updateDepartment(organizationId: string, id: string, data: { name?: string; code?: string; description?: string; parentId?: string | null; headId?: string | null; isActive?: boolean }) {
   const current = await prisma.department.findFirst({ where: { id, organizationId } });
   if (!current) throw new AppError(404, "Department not found");
+  if (data.parentId) {
+    if (data.parentId === id) throw new AppError(422, "Department cannot be its own parent");
+    await assertDepartmentInOrganization(organizationId, data.parentId);
+  }
+  if (data.headId) {
+    await assertEmployeeInOrganization(organizationId, data.headId);
+  }
   const code = data.code ? await uniqueDepartmentCode(organizationId, data.code, data.name ?? current.name, id) : undefined;
   return prisma.department.update({
     where: { id },
@@ -127,11 +138,18 @@ function employeeDetailsData(input: Partial<EmployeeInput>) {
 
 async function resolveDepartmentId(organizationId: string, input: Pick<EmployeeInput, "departmentId" | "departmentName">) {
   let departmentId = input.departmentId;
+  if (departmentId) {
+    await assertDepartmentInOrganization(organizationId, departmentId);
+  }
   if (!departmentId && input.departmentName) {
-    const dept = await prisma.department.upsert({
-      where: { organizationId_code: { organizationId, code: input.departmentName.slice(0, 8).toUpperCase().replace(/\W/g, "") || "GEN" } },
-      update: {},
-      create: { organizationId, name: input.departmentName, code: input.departmentName.slice(0, 8).toUpperCase().replace(/\W/g, "") || "GEN" }
+    const name = input.departmentName.trim();
+    const existing = await prisma.department.findUnique({ where: { organizationId_name: { organizationId, name } } });
+    const dept = existing ?? await prisma.department.create({
+      data: {
+        organizationId,
+        name,
+        code: await uniqueDepartmentCode(organizationId, name.slice(0, 8), name)
+      }
     });
     departmentId = dept.id;
   }
@@ -201,6 +219,7 @@ export async function updateEmployee(organizationId: string, id: string, input: 
 
 export async function createManualAttendance(organizationId: string, createdById: string | undefined, input: { employeeId?: string; date?: Date; checkIn?: Date; checkOut?: Date; status: AttendanceStatus; notes?: string }) {
   if (!input.employeeId) throw new AppError(422, "employeeId is required");
+  await assertEmployeeInOrganization(organizationId, input.employeeId);
   const date = normalizeDate(input.date ?? new Date());
   return prisma.attendance.upsert({
     where: { organizationId_employeeId_date: { organizationId, employeeId: input.employeeId, date } },
@@ -267,13 +286,17 @@ export async function syncBiometricAttendance(organizationId: string, createdByI
 }
 
 export async function createLeaveRequest(organizationId: string, employeeId: string, input: { type: string; fromDate: Date; toDate: Date; reason?: string }) {
+  await assertEmployeeInOrganization(organizationId, employeeId);
+  if (input.toDate < input.fromDate) throw new AppError(422, "Leave end date cannot be before start date");
   const days = Math.max(1, Math.ceil((input.toDate.getTime() - input.fromDate.getTime()) / 86400000) + 1);
   const leaveType = await prisma.leaveType.findFirst({ where: { organizationId, name: input.type } });
   return prisma.leaveRequest.create({ data: { organizationId, employeeId, type: input.type, leaveTypeId: leaveType?.id, fromDate: input.fromDate, toDate: input.toDate, days, reason: input.reason } });
 }
 
 export async function decideLeave(organizationId: string, id: string, status: LeaveStatus, decidedById?: string) {
-  return prisma.leaveRequest.update({ where: { id, organizationId }, data: { status, decidedById, decidedAt: new Date() }, include: { employee: true } });
+  const leave = await prisma.leaveRequest.findFirst({ where: { id, organizationId }, select: { id: true } });
+  if (!leave) throw new AppError(404, "Leave request not found");
+  return prisma.leaveRequest.update({ where: { id }, data: { status, decidedById, decidedAt: new Date() }, include: { employee: true } });
 }
 
 export async function runPayroll(organizationId: string, period: string) {
@@ -285,18 +308,23 @@ export async function runPayroll(organizationId: string, period: string) {
   });
   const grossCents = items.reduce((sum: number, item: { baseCents: number }) => sum + item.baseCents, 0);
   const deductionCents = items.reduce((sum: number, item: { deductionCents: number }) => sum + item.deductionCents, 0);
+  const existing = await prisma.payrollRun.findUnique({ where: { organizationId_period: { organizationId, period } } });
+  if (existing) {
+    await prisma.payrollItem.deleteMany({ where: { payrollRunId: existing.id } });
+    return prisma.payrollRun.update({
+      where: { id: existing.id },
+      data: {
+        status: "PAID",
+        grossCents,
+        deductionCents,
+        netCents: grossCents - deductionCents,
+        items: { create: items }
+      },
+      include: { items: { include: { employee: { include: { department: true } } } } }
+    });
+  }
   return prisma.payrollRun.create({
-    data: {
-      organizationId,
-      period,
-      status: "PAID",
-      grossCents,
-      deductionCents,
-      netCents: grossCents - deductionCents,
-      items: {
-        create: items
-      }
-    },
+    data: { organizationId, period, status: "PAID", grossCents, deductionCents, netCents: grossCents - deductionCents, items: { create: items } },
     include: { items: { include: { employee: { include: { department: true } } } } }
   });
 }
@@ -316,7 +344,11 @@ export async function upsertAttendancePolicy(organizationId: string, input: { id
   if (input.id && !input.id.startsWith("ap")) {
     return prisma.attendancePolicy.update({ where: { id: input.id, organizationId }, data });
   }
-  return prisma.attendancePolicy.create({ data });
+  return prisma.attendancePolicy.upsert({
+    where: { organizationId_name: { organizationId, name: input.name } },
+    update: data,
+    create: data
+  });
 }
 
 export async function deleteAttendancePolicy(organizationId: string, id: string) {
@@ -324,23 +356,34 @@ export async function deleteAttendancePolicy(organizationId: string, id: string)
 }
 
 export async function createShift(organizationId: string, input: { name: string; startTime: string; endTime: string; workingDays: string; breakMinutes?: number; graceMinutes?: number; overtimeAfter?: string }) {
-  return prisma.shift.create({
-    data: {
-      organizationId,
-      name: input.name,
+  const data = {
       startTime: input.startTime,
       endTime: input.endTime,
       workingDays: input.workingDays,
       breakMinutes: input.breakMinutes ?? 60,
       graceMinutes: input.graceMinutes ?? 15,
       overtimeAfter: input.overtimeAfter
-    },
+  };
+  return prisma.shift.upsert({
+    where: { organizationId_name: { organizationId, name: input.name } },
+    update: data,
+    create: { organizationId, name: input.name, ...data },
     include: { assignments: true }
   });
 }
 
 export async function upsertShiftAssignment(organizationId: string, input: { id?: string; shiftId: string; targetType: string; targetId?: string; employeeId?: string; effectiveFrom?: Date; effectiveTo?: Date }) {
   await prisma.shift.findFirstOrThrow({ where: { id: input.shiftId, organizationId } });
+  if (input.id && !input.id.startsWith("sa")) {
+    const assignment = await prisma.shiftAssignment.findFirst({ where: { id: input.id, shift: { organizationId } }, select: { id: true } });
+    if (!assignment) throw new AppError(404, "Shift assignment not found");
+  }
+  if (input.employeeId) {
+    await assertEmployeeInOrganization(organizationId, input.employeeId);
+  }
+  if (input.targetType === "Department" && input.targetId) {
+    await assertDepartmentInOrganization(organizationId, input.targetId);
+  }
   const data = {
     shiftId: input.shiftId,
     targetType: input.targetType,
@@ -350,6 +393,15 @@ export async function upsertShiftAssignment(organizationId: string, input: { id?
     effectiveTo: input.effectiveTo
   };
   if (input.id && !input.id.startsWith("sa")) return prisma.shiftAssignment.update({ where: { id: input.id }, data, include: { shift: true, employee: { include: { department: true } } } });
+  const existing = await prisma.shiftAssignment.findFirst({
+    where: {
+      shiftId: input.shiftId,
+      targetType: input.targetType,
+      employeeId: input.employeeId ?? null,
+      targetId: input.targetId ?? null
+    }
+  });
+  if (existing) return prisma.shiftAssignment.update({ where: { id: existing.id }, data, include: { shift: true, employee: { include: { department: true } } } });
   return prisma.shiftAssignment.create({ data, include: { shift: true, employee: { include: { department: true } } } });
 }
 
@@ -381,7 +433,11 @@ export async function updateEmployeePhoto(organizationId: string, employeeId: st
 }
 
 export async function createHoliday(organizationId: string, input: { name: string; date: Date; type?: string }) {
-  return prisma.holiday.create({ data: { organizationId, name: input.name, date: input.date, type: input.type ?? "Public" } });
+  return prisma.holiday.upsert({
+    where: { organizationId_name_date: { organizationId, name: input.name, date: input.date } },
+    update: { type: input.type ?? "Public" },
+    create: { organizationId, name: input.name, date: input.date, type: input.type ?? "Public" }
+  });
 }
 
 export async function deleteHoliday(organizationId: string, id: string) {
@@ -400,6 +456,7 @@ export async function deleteRole(organizationId: string, id: string) {
 
 export async function createLoanRequest(organizationId: string, input: { employeeId: string; type: string; amount: number; installments?: number; salary?: number }) {
   const installments = input.installments ?? 1;
+  await assertEmployeeInOrganization(organizationId, input.employeeId);
   return prisma.loanRequest.create({
     data: {
       organizationId,
@@ -449,4 +506,14 @@ function normalizeDate(date: Date) {
   const normalized = new Date(date);
   normalized.setHours(0, 0, 0, 0);
   return normalized;
+}
+
+async function assertEmployeeInOrganization(organizationId: string, employeeId: string) {
+  const employee = await prisma.employee.findFirst({ where: { id: employeeId, organizationId }, select: { id: true } });
+  if (!employee) throw new AppError(404, "Employee not found");
+}
+
+async function assertDepartmentInOrganization(organizationId: string, departmentId: string) {
+  const department = await prisma.department.findFirst({ where: { id: departmentId, organizationId }, select: { id: true } });
+  if (!department) throw new AppError(404, "Department not found");
 }
